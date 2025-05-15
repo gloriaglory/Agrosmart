@@ -1,0 +1,18 @@
+{
+  "location": {
+    "latitude": -5.0721976,
+    "longitude": 39.0993457,
+    "address": "N/A"
+  },
+  "soil_properties": {
+    "Nitrogen Total (0-20cm)": 1.0,
+    "Potassium Extractable (0-20cm)": 108.9,
+    "Phosphorus Extractable (0-20cm)": 10.0,
+    "Soil pH (0-20cm)": 6.4,
+    "Bulk Density (0-20cm)": 1.31,
+    "Land Cover (2019)": "Urban / built up",
+    "Cation Exchange Capacity (0-20cm)": 8.0
+  },
+  "weather": { "temperature": 27.59, "humidity": 76, "rainfall": 0.33 },
+  "ai_recommendations": { "predicted_crop": "Mchele" }
+}

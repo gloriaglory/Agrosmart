@@ -1,0 +1,27 @@
+label,description,price,food_type,category,planting_season,harvesting_season
+Rice,"It requires plenty of water and fertile, well-drained soils,often grown in lowland areas, along riverbanks, or in paddy fields.",280000,Food Crop,Cereals,December-February,May-July
+Maize,"It requires well-drained, fertile soils and full sun and adequate rainfall. It can also be grown in areas with short dry seasons.",63591,Food Crop,Cereals,November-February,May-August
+Chickpea,"It require well-drained, sandy-loam soils and well-distributed rainfall. A drought-tolerant and can be grown as a rain-fed crop.",0,Food Crop,Legumes,November-January,May-July
+Kidney Beans,"It require well-drained, fertile soils and adequate moisture. They are often grown in rotation with maize.",202273,Food Crop,Legumes,December-February,May-July
+Pigeonpeas,"Drought-tolerant and grow well in a variety of soils, from sandy to clayey, as long as they are well-drained and places with moderate rainfall.",0,Food Crop,Legumes,November-January,May-July
+Mothbeans,"Prefers a warm, arid climate with well-distributed rainfall, survives in poor soil and requires well-drained, sandy soils and warm temperatures.",0,Food Crop,Legumes,December-February,May-July
+Mungbean,"It require well-drained, sandy-loam soils and plenty of sunlight and often grown as a rotation crop with cereals such as maize.",0,Food Crop,Legumes,December-February,May-July
+Blackgram,"A humid climate with well-distributed rainfall regions, well-drained, fertile soils and plenty of sunlight. It is often grown as a rotation crop with rice or maize.",0,Food Crop,Legumes,December-February,May-July
+Lentil,It thrive in cool climates and are grown in the highlands. They require well-drained soil and moderate rainfall.,0,Food Crop,Legumes,November-January,May-July
+Pomegranate,"It requires well-drained, loamy soils and plenty of sunlight. They are drought-tolerant but need regular watering during the growing season.",0,Food Crop,Fruit,Year-round,Year-round
+Banana,"It thrive in well-drained, fertile soils with high organic matter content, require regular watering and protection from strong winds.",0,Food Crop,Fruit,Year-round,Year-round
+Mango,"It require well-drained, sandy or loamy soils and plenty of sunlight, drought-tolerant but need regular watering during the fruiting season.",0,Food Crop,Fruit,March-May,November-January
+Grapes,"It require well-drained, sandy-loam soils and plenty of sunlight also a dry climate during the fruiting season to prevent fungal diseases.",0,Cash Crop,Fruit,July-August,February-April
+Watermelon,"It require well-drained, sandy soils and plenty of space to spread along with regular watering, especially during fruit development.",0,Food Crop,Fruit,November-December,March-April
+Muskmelon,"It prefer warm, dry climates and require plenty of sunlight and moderate rainfall, sandy soils, plenty of space to spread, regular watering especially during fruit development.",0,Food Crop,Fruit,November-December,March-April
+Apple,"It require well-drained, loamy soils and a chilling period during the winter, full sun and regular pruning for proper fruit development.",0,Food Crop,Fruit,December-January,May-June
+Orange,"It require well-drained, sandy-loam soils, plenty of sunlight and regular watering especially during the fruiting season.",0,Food Crop,Fruit,March-April,June-September
+Papaya,"It thrive in tropical coastal climates, they are drought-tolerant and require well-drained, sandy soil, plenty of sunlight, space between them to allow proper growth and development.",0,Food Crop,Fruit,Year-round,Year-round
+Coconut,"It thrive in tropical coastal climates, they are drought-tolerant and require well-drained, sandy soil, plenty of sunlight, space between them to allow proper growth and development.",0,Cash Crop,Fruit,Year-round,Year-round
+Cotton,"It requires well-drained, sandy loam soil, regular watering, plenty of sunlight. It is susceptible to pests and diseases hence pest management is essential for successful cultivation.",0,Cash Crop,Fibers,December-January,May-July
+Jute,"It requires slightly acidic soils, adequate drainage, and moderate rainfall and often to areas with warm temperatures and well-drained soils.",0,Cash Crop,Fibers,April-May,July-August
+Coffee,"It requires well-drained volcanic soil and cool temperatures, grows best at high altitudes and need regular rainfall and protection from strong winds.",0,Cash Crop,Beverage,December-March,May-October
+Sorghum,"It requires well-drained, fertile soil and warm temperatures, thrives in semi-arid regions with moderate rainfall, and is drought-resistant.",,Food Crop,Cereals,November-January,May-July
+Wheat,"It grows best in well-drained loamy soil with cool temperatures, requires regular moderate rainfall, and protection from frost and strong winds.",,Food Crop,Cereals,December-February,May-June
+Millet,"It thrives in well-drained sandy or loamy soils, tolerates poor soil conditions, needs moderate rainfall, and withstands high temperatures.",,Food Crop,Cereals,November-January,May-July
+Sugarcane,"It requires well-drained fertile loamy, grows best in tropical climates with abundant sunlight, and needs regular irrigation or rainfall.",,Cash Crop,Grass plant,Year-round,12-18 months after planting
