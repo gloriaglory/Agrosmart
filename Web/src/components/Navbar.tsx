@@ -61,9 +61,9 @@ const Navbar = () => {
       {/* Menu Items */}
       <div className="hidden md:flex gap-6 text-gray-700">
         <Link to="/" className="hover:text-green-600 transition duration-300">{translatedMenu.home}</Link>
-        <Link to="/marketplace" className="hover:text-green-600 transition duration-300">{translatedMenu.marketplace}</Link>
-        <Link to="/recommendations" className="hover:text-green-600 transition duration-300">{translatedMenu.recommendations}</Link>
-        <Link to="/disease" className="hover:text-green-600 transition duration-300">{translatedMenu.disease}</Link>
+        <Link to="/market" className="hover:text-green-600 transition duration-300">{translatedMenu.marketplace}</Link>
+        <Link to="/crop_recommendation" className="hover:text-green-600 transition duration-300">{translatedMenu.recommendations}</Link>
+        <Link to="/disease_detection" className="hover:text-green-600 transition duration-300">{translatedMenu.disease}</Link>
       </div>
 
       {/* Right Section */}

@@ -1,109 +1,24 @@
-import {  useState, useEffect, useRef } from "react";
-import rice from "../assets/images/rice.png";
-import soybeans from "../assets/images/soybeans.png";
-import wheat from "../assets/images/wheat.png";
-import maize from "../assets/images/maize.png";
-import nuts from "../assets/images/nuts.png";
+import { useEffect, useRef, useState } from "react";
+import { crops } from "../components/Crops";
+import Map from "../components/map";
 
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  Legend,
+  BarChart,
+  Bar,
+} from "recharts";
 
-// Define a type for crop
-type Crop = {
-  name: string;
-  price: string;
-  image: string;
-  seller: string;
-  date: string;
-  wholesale: boolean;
-  contact: string;
-};
-
-// Sample crop data
-const crops: Crop[] = [
-  {
-    name: "Maize",
-    price: "TZS 800/kg",
-    image: rice,
-    seller: "John",
-    date: "2025-05-20",
-    wholesale: true,
-    contact: "0712345678",
-  },
-  {
-    name: "Beans",
-    price: "TZS 2000/kg",
-    image: soybeans,
-    seller: "Asha",
-    date: "2025-05-19",
-    wholesale: false,
-    contact: "0789123456",
-  },
-  {
-    name: "Wheat",
-    price: "TZS 1000/kg",
-    image: wheat,
-    seller: "John",
-    date: "2025-05-20",
-    wholesale: true,
-    contact: "0712345678",
-  },
-  {
-    name: "Millet",
-    price: "TZS 900/kg",
-    image: maize,
-    seller: "John",
-    date: "2025-05-20",
-    wholesale: true,
-    contact: "0712345678",
-  },
-  {
-    name: "Ground Nuts",
-    price: "TZS 1200/kg",
-    image: nuts,
-    seller: "John",
-    date: "2025-05-20",
-    wholesale: true,
-    contact: "0712345678",
-  },
-  {
-    name: "Maize",
-    price: "TZS 800/kg",
-    image: rice,
-    seller: "John",
-    date: "2025-05-20",
-    wholesale: true,
-    contact: "0712345678",
-  },
-  {
-    name: "Beans",
-    price: "TZS 2000/kg",
-    image: soybeans,
-    seller: "Asha",
-    date: "2025-05-19",
-    wholesale: false,
-    contact: "0789123456",
-  },
-  {
-    name: "Wheat",
-    price: "TZS 1000/kg",
-    image: wheat,
-    seller: "John",
-    date: "2025-05-20",
-    wholesale: true,
-    contact: "0712345678",
-  },
-  {
-    name: "Millet",
-    price: "TZS 900/kg",
-    image: maize,
-    seller: "John",
-    date: "2025-05-20",
-    wholesale: true,
-    contact: "0712345678",
-  },
-];
-
-
-// Crop slider component
+// Crop Slider Component
 const CropSlider = () => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -111,31 +26,32 @@ const CropSlider = () => {
     const container = containerRef.current;
     if (!container) return;
 
-    const scrollSpeed = 0.5; // Adjust for smoother/faster scroll
+    const scrollSpeed = 0.5;
     let animationFrameId: number;
 
     const scroll = () => {
-      if (container.scrollLeft >= container.scrollWidth / 2) {
-        container.scrollLeft = 0; // reset to start
-      } else {
-        container.scrollLeft += scrollSpeed;
-      }
+      const maxScrollLeft = container.scrollWidth - container.clientWidth;
+      container.scrollLeft =
+        container.scrollLeft >= maxScrollLeft ? 0 : container.scrollLeft + scrollSpeed;
       animationFrameId = requestAnimationFrame(scroll);
     };
 
     animationFrameId = requestAnimationFrame(scroll);
-
     return () => cancelAnimationFrame(animationFrameId);
   }, []);
+
+  // Repeat crops thrice for seamless scrolling effect
+  const repeatedCrops = [...crops, ...crops, ...crops];
 
   return (
     <div className="relative w-full overflow-hidden py-4">
       <h3 className="text-lg font-semibold text-center mb-4">Featured Crops</h3>
       <div
         ref={containerRef}
-        className="flex gap-4 overflow-x-auto whitespace-nowrap scroll-smooth no-scrollbar"
+        className="flex gap-4 whitespace-nowrap no-scrollbar"
+        style={{ overflowX: "scroll", scrollBehavior: "auto" }}
       >
-        {[...crops, ...crops].map((crop, index) => (
+        {repeatedCrops.map((crop, index) => (
           <div
             key={index}
             className="inline-block min-w-[160px] bg-white rounded-xl shadow p-2"
@@ -154,235 +70,201 @@ const CropSlider = () => {
   );
 };
 
-// Graph placeholder
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-  Legend,
-} from "recharts";
+// Extract numeric price from TZS string
+const parsePrice = (priceStr: string) => Number(priceStr.replace(/[^\d]/g, ""));
 
-const priceData = [
-  { date: "May 1", price: 800 },
-  { date: "May 5", price: 850 },
-  { date: "May 10", price: 900 },
-  { date: "May 15", price: 870 },
-  { date: "May 20", price: 890 },
-];
+// Get unique crop names for filter dropdown
+const uniqueCropNames = Array.from(new Set(crops.map((c) => c.name)));
 
-// Prepare pie data from crops array (make sure `crops` is in scope)
-// Parse prices to numbers (remove "TZS " and "/kg")
-const pieData = crops.map((crop) => ({
-  name: crop.name,
-  value: Number(crop.price.replace(/[^\d]/g, "")), // extract number from "TZS 800/kg"
-}));
+// Main Graph and Map Section
+const PriceTrendsGraph = () => {
+  const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
+  const [selectedCrop, setSelectedCrop] = useState<string>(uniqueCropNames[0]);
 
-// Colors for pie slices
-const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#AA336A"];
+  // Filter crops by selected crop name, sort by date asc
+  const cropPriceTrendData = crops
+    .filter((crop) => crop.name === selectedCrop)
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+    .map((crop) => ({
+      date: crop.date,
+      price: parsePrice(crop.price),
+    }));
 
-const PriceTrendsGraph = () => (
-  <div className="my-8">
-    <h3 className="text-lg font-semibold text-center mb-4">Price Trends & Crop Prices</h3>
-    <div className="flex gap-6">
-      {/* Line Chart */}
-      <div style={{ flex: 1, height: 300 }}>
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart
-            data={priceData}
-            margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-          >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="date" />
-            <YAxis domain={["dataMin - 50", "dataMax + 50"]} />
-            <Tooltip />
-            <Line
-              type="monotone"
-              dataKey="price"
-              stroke="#16a34a"
-              strokeWidth={2}
-            />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
+  // Filter available crops by region
+  const availableCrops = crops.filter((crop) => crop.status.toLowerCase() !== "sold");
 
-      {/* Pie Chart */}
-      <div style={{ flex: 1, height: 300 }}>
-        <ResponsiveContainer width="100%" height="100%">
-          <PieChart>
-            <Pie
-              data={pieData}
-              dataKey="value"
-              nameKey="name"
-              cx="50%"
-              cy="50%"
-              outerRadius={100}
-              fill="#8884d8"
-              label
-            >
-              {pieData.map((_, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-              ))}
-            </Pie>
-            <Tooltip />
-            <Legend verticalAlign="bottom" height={36} />
-          </PieChart>
-        </ResponsiveContainer>
-      </div>
-    </div>
-  </div>
-);
+  const regionCrops = selectedRegion
+    ? availableCrops.filter((crop) => crop.region === selectedRegion)
+    : [];
 
+  // Calculate average price per crop for Pie and Bar charts
+  const avgPricePerCrop: Record<string, { total: number; count: number }> = {};
+  crops.forEach(({ name, price }) => {
+    const p = parsePrice(price);
+    if (!avgPricePerCrop[name]) avgPricePerCrop[name] = { total: 0, count: 0 };
+    avgPricePerCrop[name].total += p;
+    avgPricePerCrop[name].count++;
+  });
 
-// CropMarket component
-const CropCard = ({
-  crop,
-  onViewDetails,
-}: {
-  crop: Crop;
-  onViewDetails: (crop: Crop) => void;
-}) => (
-  <div
-    className="bg-white shadow-md rounded-xl p-4 cursor-pointer transform transition-transform duration-300 hover:scale-105"
-    onClick={() => onViewDetails(crop)}
-  >
-    <img
-      src={crop.image}
-      alt={crop.name}
-      className="h-32 w-full object-cover rounded"
-    />
-    <h4 className="text-lg font-semibold mt-2">{crop.name}</h4>
-    <div className="text-sm text-gray-600 flex justify-between mt-1">
-      <span>{crop.seller}</span>
-      <span>{crop.date}</span>
-    </div>
-    <p className="text-green-700 font-bold mt-2">{crop.price}</p>
-    <button
-      onClick={(e) => {
-        e.stopPropagation(); // prevent card click event
-        onViewDetails(crop);
-      }}
-      className="mt-2 bg-green-600 text-white w-full py-1 rounded hover:bg-green-700"
-    >
-      View Details
-    </button>
-  </div>
-);
+  // Pie chart data with average price per crop (unique crops)
+  const pieData = Object.entries(avgPricePerCrop).map(([name, { total, count }]) => ({
+    name,
+    value: Math.round(total / count),
+  }));
 
-// Modal component
-// Modal component
-const Modal = ({
-  crop,
-  onClose,
-}: {
-  crop: Crop | null;
-  onClose: () => void;
-}) => {
-  if (!crop) return null;
+  // Bar chart data for average crop prices (same as pieData)
+  const priceBarData = pieData;
 
-  const handleContactSeller = () => {
-    window.location.href = `tel:${crop.contact}`;
+  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#AA336A"];
+  const BAR_COLORS = [
+    "#4ade80",
+    "#60a5fa",
+    "#facc15",
+    "#f472b6",
+    "#a78bfa",
+    "#fb923c",
+    "#22d3ee",
+  ];
+
+  const handleRegionSelect = (region: string) => {
+    setSelectedRegion(region);
   };
 
   return (
-    <>
-      {/* Background overlay with blur */}
-      <div
-        className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40"
-        onClick={onClose}
-      ></div>
+    <div className="my-8">
+      <h3 className="text-lg font-semibold text-center mb-4">Price Trends & Regional Analysis</h3>
 
-      {/* Modal content */}
-      <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-xl shadow-lg max-w-md w-full max-h-[90vh] overflow-y-auto p-6 relative">
-          <button
-            onClick={onClose}
-            className="absolute top-3 right-3 text-gray-600 hover:text-gray-900 font-bold text-xl"
-            aria-label="Close modal"
-          >
-            &times;
-          </button>
-          <img
-            src={crop.image}
-            alt={crop.name}
-            className="w-full h-48 object-cover rounded"
-          />
-          <h2 className="text-2xl font-bold mt-4 mb-2">{crop.name}</h2>
-          <p className="text-green-700 font-bold text-lg">{crop.price}</p>
-          <div className="mt-4 space-y-1">
-            <p>
-              <span className="font-semibold">Seller:</span> {crop.seller}
-            </p>
-            <p>
-              <span className="font-semibold">Date:</span> {crop.date}
-            </p>
-            <p>
-              <span className="font-semibold">Contact:</span> {crop.contact}
-            </p>
-            <p>
-              <span className="font-semibold">Wholesale:</span>{" "}
-              {crop.wholesale ? "Yes" : "No"}
-            </p>
-          </div>
-
-          {/* Contact Seller Button */}
-          <button
-            onClick={handleContactSeller}
-            className="mt-6 w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded"
-          >
-            Contact Seller
-          </button>
-        </div>
-      </div>
-    </>
-  );
-};
-
-
-const CropMarket = () => {
-  const [selectedCrop, setSelectedCrop] = useState<Crop | null>(null);
-
-  const handleViewDetails = (crop: Crop) => {
-    setSelectedCrop(crop);
-  };
-
-  const handleCloseModal = () => {
-    setSelectedCrop(null);
-  };
-
-  return (
-    <>
-      <div className="my-8">
-        <h3 className="text-lg font-semibold text-center mb-4">Crops for Sale</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          {crops.map((crop, idx) => (
-            <CropCard key={idx} crop={crop} onViewDetails={handleViewDetails} />
+      {/* Crop Selector */}
+      <div className="mb-4">
+        <label htmlFor="crop-select" className="mr-2 font-medium">
+          Select Crop:
+        </label>
+        <select
+          id="crop-select"
+          className="border border-gray-300 rounded px-2 py-1"
+          value={selectedCrop}
+          onChange={(e) => setSelectedCrop(e.target.value)}
+        >
+          {uniqueCropNames.map((cropName) => (
+            <option key={cropName} value={cropName}>
+              {cropName}
+            </option>
           ))}
+        </select>
+      </div>
+
+      <div className="flex flex-col lg:flex-row gap-6 mb-10">
+        {/* Line Chart for Selected Crop Price Trend */}
+        <div style={{ flex: 1, height: 300 }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={cropPriceTrendData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis
+                dataKey="date"
+                tickFormatter={(str) => {
+                  const date = new Date(str);
+                  return date.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+                }}
+              />
+              <YAxis domain={["dataMin - 100", "dataMax + 100"]} />
+              <Tooltip
+                labelFormatter={(label) =>
+                  new Date(label).toLocaleDateString(undefined, {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })
+                }
+                formatter={(value: unknown) => [`TZS ${value}`, "Price"]}
+              />
+              <Line type="monotone" dataKey="price" stroke="#16a34a" strokeWidth={2} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Pie Chart for Average Crop Prices */}
+        <div style={{ flex: 1, height: 300 }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={pieData}
+                dataKey="value"
+                nameKey="name"
+                cx="50%"
+                cy="50%"
+                outerRadius={100}
+                fill="#8884d8"
+                label
+              >
+                {pieData.map((_, index) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                ))}
+              </Pie>
+              <Tooltip formatter={(value) => `TZS ${value}`} />
+              <Legend verticalAlign="bottom" height={36} />
+            </PieChart>
+          </ResponsiveContainer>
         </div>
       </div>
 
-      {/* Modal */}
-      <Modal crop={selectedCrop} onClose={handleCloseModal} />
-    </>
+      <div className="flex flex-col lg:flex-row gap-8">
+        {/* Bar Chart for Average Crop Prices */}
+        <div className="w-full lg:w-1/2 h-[400px] bg-white p-4 rounded shadow">
+          <h4 className="text-md font-medium text-center mb-2">Average Crop Prices (TZS/kg)</h4>
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart
+              data={priceBarData}
+              layout="vertical"
+              margin={{ top: 10, right: 30, left: 60, bottom: 10 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis type="number" />
+              <YAxis dataKey="name" type="category" />
+              <Tooltip formatter={(value) => `TZS ${value}`} />
+              <Legend />
+              <Bar dataKey="value" fill="#34d399" barSize={14} isAnimationActive>
+                {priceBarData.map((_, index) => (
+                  <Cell key={`price-bar-${index}`} fill={BAR_COLORS[index % BAR_COLORS.length]} />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Map and Region Crop List */}
+        <div className="w-full lg:w-1/2 h-[400px] bg-white p-4 rounded shadow">
+          <h4 className="text-md font-medium text-center mb-2">Select Region on Map</h4>
+          <div className="h-[200px] mb-3">
+            <Map onSelectRegion={handleRegionSelect} />
+          </div>
+          {selectedRegion && (
+            <div className="mt-2 text-sm">
+              <p className="font-semibold text-center mb-1">Available Crops in {selectedRegion}:</p>
+              <ul className="list-disc ml-5">
+                {regionCrops.length > 0 ? (
+                  regionCrops.map((crop, index) => (
+                    <li key={index}>
+                      {crop.name} - {crop.price}
+                    </li>
+                  ))
+                ) : (
+                  <li>No available crops found.</li>
+                )}
+              </ul>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
   );
 };
 
-// Home component
+// Home Page Component
 function Home() {
-  
-
-
   return (
     <div className="px-4 py-6">
       <CropSlider />
       <PriceTrendsGraph />
-      <CropMarket />
     </div>
   );
 }
