@@ -12,7 +12,7 @@ def recommend_crop(request):
     address = request.data.get('address')
     lat = request.data.get('latitude')
     lon = request.data.get('longitude')
- 
+
     if address and (not lat or not lon):
         lat, lon = get_lat_lon(address)
 
@@ -44,11 +44,27 @@ def recommend_crop(request):
     except Exception as e:
         return Response({'error': f"Error in AI model prediction: {str(e)}"}, status=500)
 
-    # Crop explanation
-    crop = ai_recommendations.get("predicted_crop")
-    explanation = CROP_CONDITIONS.get(crop.title(), "Hakuna maelezo yaliyopatikana kwa zao hili.")
+    # crop details
+    recommended_crops = ai_recommendations.get("recommended_crops", [])
+    detailed_recommendations = {}
 
-    # Response
+    for item in recommended_crops:
+        crop_name = item.get("crop")
+        score = item.get("score", 0)
+        explanation = CROP_CONDITIONS.get(crop_name.title())
+
+        if explanation:
+         detailed_recommendations[crop_name.title()] = {
+        "explanation": explanation,
+        "score": score
+        }
+        else:
+           detailed_recommendations[crop_name.title()] = {
+           "explanation": "Hakuna maelezo yaliyopatikana kwa zao hili.",
+           "score": score
+        }
+
+
     response_data = {
         'location': {
             'latitude': lat,
@@ -61,8 +77,7 @@ def recommend_crop(request):
             'humidity': humidity,
             'rainfall': rainfall,
         },
-        'ai_recommendations': ai_recommendations,
-        'explanation': explanation
+        'recommendations': detailed_recommendations
     }
 
     return Response(response_data, status=200)
