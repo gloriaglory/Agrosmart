@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'crop_predictor',
     'prediction_api',
+    'disease_detection',
     'rest_framework',
     'corsheaders',
 ]
