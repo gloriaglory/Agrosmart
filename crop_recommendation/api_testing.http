@@ -1,0 +1,185 @@
+### API Testing for Agrosmart
+
+# This file contains HTTP requests to test all API endpoints of the Agrosmart application.
+# It can be used with HTTP client tools like VS Code's REST Client extension.
+#
+# USAGE INSTRUCTIONS:
+# 1. Replace 'your_auth_token_here' with an actual authentication token obtained from login
+# 2. For CSRF protection:
+#    - First run the "Get CSRF Token" request to get a CSRF token from the server
+#    - The token will be stored in the cookie and used automatically for subsequent requests
+#    - If you get a "CSRF Failed: CSRF token missing" error, run the "Get CSRF Token" request again
+# 3. If using VS Code REST Client extension:
+#    - You can create a .env file in the same directory with your variables
+#    - Or use the "REST Client: Switch Environment" command to select an environment
+#    - Or right-click on a request and select "Run Request" to execute without environment
+#
+# Environment variables
+@baseUrl = http://localhost:8000
+@authToken = e4bbda8064ebf49166be63989256aeb5d7340c0e
+
+### CSRF Token Handling ###
+
+### Get CSRF Token
+# @name getCsrf
+# This request gets a CSRF token from the server
+# The token will be stored in the cookie and can be used for subsequent requests
+GET {{baseUrl}}/api/auth/login/
+Content-Type: application/json
+
+### Authentication Tests ###
+
+### Register a new user
+# @name register
+POST {{baseUrl}}/api/auth/register/
+Content-Type: application/json
+
+{
+  "username": "tes2tuser",
+  "email": "testuser@ex2ample.com",
+  "password": "securepassword123",
+  "password2": "securepassword123",
+  "first_name": "Test",
+  "last_name": "User",
+  "phone_number": "+1234567890"
+}
+
+### Login with the registered user
+# @name login
+# After running this request, copy the token from the response and update the authToken variable above
+POST {{baseUrl}}/api/auth/login/
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "password": "securepassword123"
+}
+
+### Get user profile
+# Uses the token from the environment variable
+GET {{baseUrl}}/api/auth/profile/
+Authorization: Token {{authToken}}
+
+### Update user profile (become a seller by adding ID number)
+PATCH {{baseUrl}}/api/auth/profile/update/
+Authorization: Token {{authToken}}
+Content-Type: application/json
+
+{
+  "first_name": "Updated",
+  "last_name": "User",
+  "phone_number": "+9876543210",
+  "id_number": "ID123456789"
+}
+
+### Get updated user profile (should now be a seller)
+GET {{baseUrl}}/api/auth/profile/
+Authorization: Token {{authToken}}
+
+### Marketplace Tests ###
+
+### List all marketplace items
+GET {{baseUrl}}/api/marketplace/items/
+
+### Create a new marketplace item
+# @name createItem
+POST {{baseUrl}}/api/marketplace/items/
+Authorization: Token {{authToken}}
+Content-Type: application/json
+
+{
+  "name": "Maize Seeds",
+  "description": "High-quality maize seeds",
+  "price": "500.00",
+  "category": "OTHER",
+  "quantity": 100,
+  "location": "Nairobi",
+  "contact_info": "+254700000000"
+}
+
+### Get a specific marketplace item
+# Uses the ID from the creation response
+GET {{baseUrl}}/api/marketplace/items/{{createItem.response.body.id}}/
+
+### Update a marketplace item (full update)
+PUT {{baseUrl}}/api/marketplace/items/{{createItem.response.body.id}}/
+Authorization: Token {{authToken}}
+Content-Type: application/json
+
+{
+  "name": "Maize Seeds",
+  "description": "Premium high-quality maize seeds",
+  "price": "600.00",
+  "category": "OTHER",
+  "quantity": 50,
+  "location": "Nairobi",
+  "contact_info": "+254700000000"
+}
+
+### Partially update a marketplace item
+PATCH {{baseUrl}}/api/marketplace/items/{{createItem.response.body.id}}/
+Authorization: Token {{authToken}}
+Content-Type: application/json
+
+{
+  "price": "700.00",
+  "quantity": 30
+}
+
+### Delete a marketplace item
+DELETE {{baseUrl}}/api/marketplace/items/{{createItem.response.body.id}}/
+Authorization: Token {{authToken}}
+
+### Verify the item was deleted
+GET {{baseUrl}}/api/marketplace/items/{{createItem.response.body.id}}/
+
+### Error Handling Tests ###
+
+### Try to register with mismatched passwords
+POST {{baseUrl}}/api/auth/register/
+Content-Type: application/json
+
+{
+  "username": "erroruser",
+  "email": "erroruser@example.com",
+  "password": "password123",
+  "password2": "password456",
+  "first_name": "Error",
+  "last_name": "User",
+  "phone_number": "+1234567890"
+}
+
+### Try to login with invalid credentials
+POST {{baseUrl}}/api/auth/login/
+Content-Type: application/json
+
+{
+  "username": "nonexistentuser",
+  "password": "wrongpassword"
+}
+
+### Try to access protected endpoint without authentication
+GET {{baseUrl}}/api/auth/profile/
+
+### Try to create a marketplace item without authentication
+POST {{baseUrl}}/api/marketplace/items/
+Content-Type: application/json
+
+{
+  "name": "Unauthorized Item",
+  "description": "This should fail",
+  "price": "100.00",
+  "category": "OTHER",
+  "quantity": 10,
+  "location": "Unknown",
+  "contact_info": "+123456789"
+}
+
+### Social Authentication Tests ###
+# Note: These can only be tested in a browser due to OAuth flow requirements
+
+# Google Login URL (for reference)
+# GET {{baseUrl}}/api/auth/google/
+
+# Facebook Login URL (for reference)
+# GET {{baseUrl}}/api/auth/facebook/

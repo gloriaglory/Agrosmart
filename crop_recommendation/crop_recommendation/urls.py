@@ -19,7 +19,7 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('crop_predictor.urls')),
+    # path('', include('crop_predictor.urls')),
+    path('api/marketplace/', include('market_place.urls')),
+    path('api/auth/', include('authentication.urls')),
 ]
-
-
