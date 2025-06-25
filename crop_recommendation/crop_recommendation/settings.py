@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -80,9 +81,9 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ],
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
-    ],
+    # 'DEFAULT_PERMISSION_CLASSES': [
+    #     'rest_framework.permissions.IsAuthenticated',
+    # ],
 }
 
 MIDDLEWARE = [
@@ -122,24 +123,26 @@ WSGI_APPLICATION = 'crop_recommendation.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'crop_recommendation',
-#         'USER': 'agrosmart',
-#         'PASSWORD': '5py',
-#         'HOST': 'localhost',  
-#         'PORT': '5432',
-#     }
-# }
-
-
+# Database configuration
+# Use environment variables if available (for Docker), otherwise use default values
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('DATABASE_NAME', 'crop_recommendation'),
+        'USER': os.environ.get('DATABASE_USER', 'agrosmart'),
+        'PASSWORD': os.environ.get('DATABASE_PASSWORD', '5py'),
+        'HOST': os.environ.get('DATABASE_HOST', 'localhost'),  
+        'PORT': os.environ.get('DATABASE_PORT', '5432'),
     }
 }
+
+# SQLite configuration (commented out)
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 
 

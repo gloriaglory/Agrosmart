@@ -1,0 +1,50 @@
+# Comments are provided throughout this file to help you get started.
+# If you need more help, visit the Docker Compose reference guide at
+# https://docs.docker.com/go/compose-spec-reference/
+
+# Here the instructions define your application as a service called "server".
+# This service is built from the Dockerfile in the current directory.
+# You can add other services your application may depend on here, such as a
+# database or a cache. For examples, see the Awesome Compose repository:
+# https://github.com/docker/awesome-compose
+services:
+  server:
+    build:
+      context: .
+    ports:
+      - 8000:8000
+    environment:
+      - DATABASE_NAME=crop_recommendation
+      - DATABASE_USER=agrosmart
+      - DATABASE_PASSWORD=5py
+      - DATABASE_HOST=db
+      - DATABASE_PORT=5432
+
+    # Add dependency on the database service
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # PostgreSQL database service
+  db:
+    image: postgres
+    restart: always
+    user: postgres
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro
+
+    environment:
+      - POSTGRES_DB=crop_recommendation
+      - POSTGRES_USER=agrosmart
+      - POSTGRES_PASSWORD=5py         # Password for agrosmart user
+    ports:
+      - 5432:5432
+    healthcheck:
+      test: [ "CMD", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  db-data:
