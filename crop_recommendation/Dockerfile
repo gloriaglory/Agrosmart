@@ -39,6 +39,10 @@ RUN --mount=type=cache,target=/root/.cache/pip \
     --mount=type=bind,source=requirements.txt,target=requirements.txt \
     python -m pip install -r requirements.txt
 RUN pip install cryptography
+
+# Add path for the AI model
+RUN mkdir -p /app/staticfiles /app/media && \
+    chown -R "${UID}":"${UID}" /app/staticfiles /app/media
 # Switch to the non-privileged user to run the application.
 USER appuser
 
@@ -48,5 +52,13 @@ COPY . .
 # Expose the port that the application listens on.
 EXPOSE 8000
 
+
 # Run the application.
-CMD gunicorn 'crop_recommendation.wsgi' --bind=0.0.0.0:8000
+# Command to run migrations and start the server
+# Run the application.
+# Command to run migrations and start the server
+CMD python manage.py migrate --noinput && \
+    python manage.py createsuperuser --noinput --username admin --email admin@example.com || echo "Superuser already exists" && \
+    python manage.py collectstatic --noinput && \
+    gunicorn crop_recommendation.wsgi --bind=0.0.0.0:8000
+
