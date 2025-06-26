@@ -1,0 +1,12 @@
+{
+  "Powdery Mildew": {
+    "description": "Powdery mildew is a common fungal disease that primarily affects the leaves of many plants. It appears as white or grayish powdery spots on the surface of leaves, stems, and sometimes flowers. This fungus thrives in warm, dry climates but requires high humidity to germinate. Infected leaves may become distorted, yellow, and drop prematurely, reducing the plant's photosynthetic ability and overall vigor.",
+    "treatment": "To control powdery mildew, apply sulfur-based fungicides or other fungicides labeled for powdery mildew management early in the infection process. Neem oil and potassium bicarbonate sprays can also be effective. It is important to follow the recommended application rates and intervals for your specific crop. Remove and destroy heavily infected plant parts to reduce the spread.",
+    "preventive_measures": "Prevent powdery mildew by ensuring good air circulation around plants through proper spacing and pruning. Avoid overhead watering to reduce leaf wetness, which encourages fungal growth. Choose resistant plant varieties if available, and maintain overall plant health with adequate fertilization and watering to improve disease tolerance."
+  },
+  "Leaf Rust": {
+    "description": "Leaf rust is a fungal disease characterized by the appearance of small, rust-colored pustules or spots on the upper and lower surfaces of leaves. The disease primarily weakens plants by reducing photosynthesis and causing premature leaf drop. It often spreads rapidly in warm, moist conditions and can lead to significant yield losses if not managed timely.",
+    "treatment": "Management of leaf rust involves the application of appropriate fungicides such as those containing chlorothalonil, propiconazole, or myclobutanil. It's best to start fungicide treatment as soon as symptoms appear or when environmental conditions favor disease development. Regular monitoring of fields helps in early detection and timely application.",
+    "preventive_measures": "To prevent leaf rust, practice crop rotation and avoid planting susceptible crops in the same area consecutively. Remove and destroy crop residues that may harbor rust spores. Use resistant or tolerant varieties when available. Ensure proper fertilization and irrigation practices to maintain healthy plants, as stressed plants are more vulnerable to rust infections."
+  }
+}

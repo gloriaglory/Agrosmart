@@ -42,7 +42,7 @@ export default function CropDiseaseDetection() {
       const formData = new FormData();
       formData.append("image", file);
 
-      const response = await fetch("http://localhost:8000/detect-crop-disease", {
+      const response = await fetch("http://localhost:8000/detector/detect", {
         method: "POST",
         body: formData,
       });
