@@ -122,16 +122,16 @@ WSGI_APPLICATION = 'crop_recommendation.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'crop_recommendation',
-#         'USER': 'agrosmart',
-#         'PASSWORD': '5py',
-#         'HOST': 'localhost',  
-#         'PORT': '5432',
-#     }
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'crop_recommendation',
+        'USER': 'agrosmart',
+        'PASSWORD': '5py',
+        'HOST': 'localhost',  
+         'PORT': '5432',
+    }
+ }
 
 
 DATABASES = {
