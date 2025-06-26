@@ -20,3 +20,10 @@ docs for more detail on building and pushing.
 
 ### References
 * [Docker's Python guide](https://docs.docker.com/language/python/)
+
+
+
+To create super user
+```
+docker compose exec server python manage.py createsuperuser 
+```
