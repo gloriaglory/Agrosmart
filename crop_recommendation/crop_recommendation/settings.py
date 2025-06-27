@@ -10,10 +10,6 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
-<<<<<<< HEAD
-=======
-import os
->>>>>>> beb9e6f3902f60b23d0c278d47f70d33cfd52f70
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -84,22 +80,12 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ],
-<<<<<<< HEAD
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
 }
 
 MIDDLEWARE = [
-=======
-    # 'DEFAULT_PERMISSION_CLASSES': [
-    #     'rest_framework.permissions.IsAuthenticated',
-    # ],
-}
-
-MIDDLEWARE = [
-    'whitenoise.middleware.WhiteNoiseMiddleware',
->>>>>>> beb9e6f3902f60b23d0c278d47f70d33cfd52f70
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -136,7 +122,6 @@ WSGI_APPLICATION = 'crop_recommendation.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-<<<<<<< HEAD
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -156,29 +141,6 @@ DATABASES = {
     }
 }
 
-=======
-# Database configuration
-# Use environment variables if available (for Docker), otherwise use default values
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DATABASE_NAME', 'crop_recommendation'),
-        'USER': os.environ.get('DATABASE_USER', 'agrosmart'),
-        'PASSWORD': os.environ.get('DATABASE_PASSWORD', '5py'),
-        'HOST': os.environ.get('DATABASE_HOST', 'localhost'),  
-        'PORT': os.environ.get('DATABASE_PORT', '5432'),
-    }
-}
-
-# SQLite configuration (commented out)
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
->>>>>>> beb9e6f3902f60b23d0c278d47f70d33cfd52f70
 
 
 
@@ -216,17 +178,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-<<<<<<< HEAD
 STATIC_URL = 'static/'
-=======
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-# WhiteNoise configuration
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
->>>>>>> beb9e6f3902f60b23d0c278d47f70d33cfd52f70
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
