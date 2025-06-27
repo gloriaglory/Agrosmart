@@ -130,7 +130,7 @@ def main(address):
 
 def get_district_and_region(address):
     # Dummy logic for example
-    parts = address.split(",")  # Assume address like "Kibaha, Pwani"
+    parts = address.split(",") 
     
     if len(parts) >= 2:
         district = parts[0].strip()
