@@ -4,7 +4,6 @@ import numpy as np
 import pandas as pd
 import joblib
 
-<<<<<<< HEAD
 # Define model, scaler, and explanation paths
 BASE_MODEL_PATH = os.path.join("D:\\", 'agrosmart', 'crop_recommendation', 'crop_predictor', 'ml_models', 'crop')
 MODEL_PATH = os.path.join(BASE_MODEL_PATH, "crop_recomendation.joblib")
@@ -22,25 +21,10 @@ except Exception as e:
 # Load the trained model
 try:
     crop_model = joblib.load(MODEL_PATH)
-=======
-
-# Correct model path
-model_path = os.path.join("D:\\", 'agrosmart', 'crop_recommendation', 'crop_predictor', 'ml_models', 'crop', 'crop_recomendation0.joblib')
-file_path = os.path.join(os.path.dirname(__file__), 'crop_explanations.json')
-
-with open(file_path, "r", encoding="utf-8") as file:
-    CROP_CONDITIONS = json.load(file)
-
-
-# Load model
-try:
-    crop_model = joblib.load(model_path) 
->>>>>>> beb9e6f3902f60b23d0c278d47f70d33cfd52f70
 except Exception as e:
     print(f"Error loading model: {e}")
     crop_model = None
 
-<<<<<<< HEAD
 # Load the scaler
 try:
     scaler = joblib.load(SCALER_PATH)
@@ -89,45 +73,13 @@ def predict_crop_new(N, P, K, temperature, humidity, ph, rainfall):
 
             output = {
                 "recommended_crops": [
-=======
-def predict_crop_new(N, P, K, temperature, humidity, ph, rainfall):
-    try:
-        if crop_model is None:
-            raise Exception("Model not loaded properly.")
-
-        # Prepare input
-        data = np.array([[N, P, K, temperature, humidity, ph, rainfall]])
-        df = pd.DataFrame(data, columns=[
-            'Nitrogen', 'Phosphorus', 'Potassium',
-            'Temperature', 'Humidity', 'pH_Value', 'Rainfall'
-        ])
-
-        # Get class probabilities
-        if hasattr(crop_model, "predict_proba"):
-            probabilities = crop_model.predict_proba(df)[0]
-            class_labels = crop_model.classes_
-
-            # Pair classes with probabilities and sort
-            crop_scores = sorted(zip(class_labels, probabilities), key=lambda x: x[1], reverse=True)
-
-            # Get top 2 crops
-            top_crops = crop_scores[:2]
-
-            output = {
-                "recommended_crops": [ 
->>>>>>> beb9e6f3902f60b23d0c278d47f70d33cfd52f70
                     {"crop": crop, "score": round(score, 4)}
                     for crop, score in top_crops
                 ]
             }
         else:
-<<<<<<< HEAD
             # Fallback: predict only the best crop
             crop_prediction = crop_model.predict(scaled_df)
-=======
-            # Fallback: Just predict the top crop if probabilities not available
-            crop_prediction = crop_model.predict(df)
->>>>>>> beb9e6f3902f60b23d0c278d47f70d33cfd52f70
             output = {
                 "recommended_crops": [
                     {"crop": str(crop_prediction[0]), "score": 1.0}

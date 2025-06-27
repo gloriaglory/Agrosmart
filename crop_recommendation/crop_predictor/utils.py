@@ -1,7 +1,4 @@
-<<<<<<< HEAD
 import time
-=======
->>>>>>> beb9e6f3902f60b23d0c278d47f70d33cfd52f70
 import httpx
 import json
 
@@ -31,16 +28,11 @@ def get_lat_lon(address):
         return None, None
 
 # Function to fetch a single soil property
-<<<<<<< HEAD
 def get_soil_property(lat, lon, property, depth="0-20", retries=3, delay=3):
-=======
-def get_soil_property(lat, lon, property, depth="0-20"):
->>>>>>> beb9e6f3902f60b23d0c278d47f70d33cfd52f70
     url = (
         f"https://api.isda-africa.com/v1/soilproperty"
         f"?key={ISDA_API_KEY}&lat={lat}&lon={lon}&property={property}&depth={depth}"
     )
-<<<<<<< HEAD
     
     for attempt in range(retries):
         try:
@@ -65,19 +57,6 @@ def get_soil_property(lat, lon, property, depth="0-20"):
         except Exception as e:
             print(f"Unexpected error when fetching {property}: {e}")
             return None
-=======
-    with httpx.Client() as client:
-        response = client.get(url)
-    if response.status_code == 200:
-        try:
-            return response.json()["property"][property][0]["value"]["value"]
-        except (json.JSONDecodeError, KeyError) as e:
-            print(f"Failed to decode or find {property}: {e}")
-            return None
-    else:
-        print(f"Failed to fetch {property} data, status code: {response.status_code}")
-        return None
->>>>>>> beb9e6f3902f60b23d0c278d47f70d33cfd52f70
 
 # Function to fetch multiple soil properties
 def get_soil_properties(lat, lon):
