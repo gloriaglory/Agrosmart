@@ -11,28 +11,48 @@ const Chatbot: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
 
-  const BOT_RESPONSE: Message = {
-    from: 'bot',
-    text: "Hello, I am your AI assistant for Agro Smart. How can I help you today?",
-  };
-
   const toggleChat = () => {
     setIsOpen(!isOpen);
     if (!isOpen) {
-      setMessages([BOT_RESPONSE]);
+      setMessages([
+        {
+          from: 'bot',
+          text: "Hello, I am your AI assistant for Agro Smart. How can I help you today?",
+        },
+      ]);
     }
   };
 
-  const sendMessage = () => {
+  const sendMessage = async () => {
     if (input.trim() !== '') {
       const userMessage: Message = { from: 'user', text: input };
       setMessages((prev) => [...prev, userMessage]);
       setInput('');
 
-      // Simulate 2-second delay for bot response
-      setTimeout(() => {
-        setMessages((prev) => [...prev, BOT_RESPONSE]);
-      }, 2000);
+      try {
+        const res = await fetch('http://localhost:8000/api/bot/ask/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ question: input }),
+        });
+
+        const data = await res.json();
+
+        const botReply: Message = {
+          from: 'bot',
+          text: data.answer || 'Sorry, I could not understand your question.',
+        };
+
+        setMessages((prev) => [...prev, botReply]);
+      } catch (error) {
+        console.error('Error contacting backend:', error);
+        setMessages((prev) => [
+          ...prev,
+          { from: 'bot', text: 'Something went wrong. Please try again later.' },
+        ]);
+      }
     }
   };
 
