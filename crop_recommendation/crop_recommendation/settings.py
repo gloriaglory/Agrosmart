@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+from decouple import config
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -42,6 +43,7 @@ INSTALLED_APPS = [
     'disease_detection',
     'market_place',
     'authentication',
+    'bot',
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
@@ -57,6 +59,8 @@ INSTALLED_APPS = [
 
 # Custom user model
 AUTH_USER_MODEL = 'authentication.User'
+
+OPENAI_API_KEY = config("OPENAI_API_KEY")
 
 # Django AllAuth settings
 SITE_ID = 1
