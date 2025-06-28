@@ -70,6 +70,7 @@ const CropSlider = () => {
   );
 };
 
+
 // Extract numeric price from TZS string
 const parsePrice = (priceStr: string) => Number(priceStr.replace(/[^\d]/g, ""));
 
@@ -132,7 +133,16 @@ const PriceTrendsGraph = () => {
 
   return (
     <div className="my-8">
-      <h3 className="text-lg font-semibold text-center mb-4">Price Trends & Regional Analysis</h3>
+
+      <div className="bg-green-100 rounded-lg p-6 mb-6 text-center shadow">
+        <h1 className="text-3xl font-extrabold mb-2 text-green-900">
+          Price Trends & Regional Analysis
+        </h1>
+        <p className="text-green-800">
+          visualisation of crop prices and trends.
+        </p>
+      </div>
+
 
       {/* Crop Selector */}
       <div className="mb-4">
