@@ -86,4 +86,4 @@ EXPOSE 8000
 # Command to run migrations and start the server
 CMD python manage.py migrate --noinput && \
     python manage.py collectstatic --noinput || echo "Collectstatic failed" && \
-    gunicorn crop_recommendation.wsgi --bind=0.0.0.0:8000
+    gunicorn crop_recommendation.wsgi --bind=0.0.0.0:8000 --timeout 120 --workers 4

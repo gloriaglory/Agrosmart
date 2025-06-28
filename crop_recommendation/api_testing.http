@@ -76,6 +76,49 @@ Content-Type: application/json
 GET {{baseUrl}}/api/auth/profile/
 Authorization: Token {{authToken}}
 
+### Password Reset Tests ###
+
+### Request password reset
+# @name requestPasswordReset
+POST {{baseUrl}}/api/auth/password-reset/request/
+Content-Type: application/json
+
+{
+  "email": "testuser@example.com"
+}
+
+### Verify password reset token
+# Note: Replace 'your_reset_token' with an actual token received via email
+# @name verifyPasswordResetToken
+POST {{baseUrl}}/api/auth/password-reset/verify/
+Content-Type: application/json
+
+{
+  "token": "your_reset_token"
+}
+
+### Reset password
+# Note: Replace 'your_reset_token' with an actual token received via email
+# @name resetPassword
+POST {{baseUrl}}/api/auth/password-reset/confirm/
+Content-Type: application/json
+
+{
+  "token": "your_reset_token",
+  "password": "newpassword123",
+  "password2": "newpassword123"
+}
+
+### Login with new password
+# @name loginWithNewPassword
+POST {{baseUrl}}/api/auth/login/
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "password": "newpassword123"
+}
+
 ### Marketplace Tests ###
 
 ### List all marketplace items
@@ -88,13 +131,18 @@ Authorization: Token {{authToken}}
 Content-Type: application/json
 
 {
-  "name": "Maize Seeds",
+  "name": "Maize",
   "description": "High-quality maize seeds",
   "price": "500.00",
   "category": "OTHER",
   "quantity": 100,
   "location": "Nairobi",
-  "contact_info": "+254700000000"
+  "contact_info": "+254700000000",
+  "idealTemperature": "18-30°C",
+  "suitability": "High",
+  "imageUrl": "assets/images/maize.png",
+  "seller": "John Doe",
+  "date": "10/2/25"
 }
 
 ### Get a specific marketplace item
@@ -113,7 +161,12 @@ Content-Type: application/json
   "category": "OTHER",
   "quantity": 50,
   "location": "Nairobi",
-  "contact_info": "+254700000000"
+  "contact_info": "+254700000000",
+  "idealTemperature": "20-32°C",
+  "suitability": "Medium",
+  "imageUrl": "assets/images/maize.png",
+  "seller": "Jane Smith",
+  "date": "15/2/25"
 }
 
 ### Partially update a marketplace item
@@ -123,7 +176,9 @@ Content-Type: application/json
 
 {
   "price": "700.00",
-  "quantity": 30
+  "quantity": 30,
+  "suitability": "High",
+  "idealTemperature": "22-28°C"
 }
 
 ### Delete a marketplace item
@@ -132,6 +187,76 @@ Authorization: Token {{authToken}}
 
 ### Verify the item was deleted
 GET {{baseUrl}}/api/marketplace/items/{{createItem.response.body.id}}/
+
+### Test image upload functionality
+# @name createItemWithImage
+# Note: This test requires a REST client that supports file uploads
+# Replace '/path/to/your/image.jpg' with an actual path to an image file
+POST {{baseUrl}}/api/marketplace/items/
+Authorization: Token {{authToken}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="name"
+
+Rice
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="description"
+
+High-quality rice grown in ideal conditions. Perfect for daily cooking.
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="price"
+
+450.00
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="category"
+
+OTHER
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="quantity"
+
+50
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="location"
+
+Arusha
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="contact_info"
+
++255123456789
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="image"; filename="rice.jpg"
+Content-Type: image/jpeg
+
+< /path/to/your/image.jpg
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+### Test simple recommendation API
+# @name simpleRecommend
+# This test uses the simplified recommendation API that doesn't make external API calls
+POST {{baseUrl}}/api/simple-recommend/
+Content-Type: application/json
+
+{
+  "address": "Nairobi, Kenya"
+}
+
+### Test recommendation API integration
+# @name createItemWithRecommendation
+# This test creates an item and lets the API fetch recommendation data based on location
+POST {{baseUrl}}/api/marketplace/items/
+Authorization: Token {{authToken}}
+Content-Type: application/json
+
+{
+  "name": "Rice",
+  "description": "High-quality rice grown in ideal conditions.",
+  "price": "450.00",
+  "category": "OTHER",
+  "quantity": 50,
+  "location": "Arusha",
+  "contact_info": "+255123456789"
+}
 
 ### Error Handling Tests ###
 
