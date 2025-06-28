@@ -310,6 +310,139 @@ Authorization: Token {{token}}
 6. Enter the request body as shown above
 7. Click "Send"
 
+### Request Password Reset
+
+**Endpoint:** `POST {{base_url}}/api/auth/password-reset/request/`
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+  "email": "your_email@example.com"
+}
+```
+
+**Response (200 OK):**
+```json
+{
+  "message": "If your email exists in our system, you will receive a password reset link."
+}
+```
+
+**Postman Example:**
+1. Create a new POST request
+2. Enter `{{base_url}}/api/auth/password-reset/request/` as the URL
+3. Go to the "Body" tab, select "raw" and "JSON"
+4. Enter the request body as shown above
+5. Click "Send"
+
+**Note:** For security reasons, the API returns the same response whether the email exists in the system or not. This prevents attackers from discovering valid email addresses.
+
+### Verify Password Reset Token
+
+**Endpoint:** `POST {{base_url}}/api/auth/password-reset/verify/`
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+  "token": "your_reset_token"
+}
+```
+
+**Response (200 OK) - If token is valid:**
+```json
+{
+  "message": "Token is valid",
+  "email": "your_email@example.com"
+}
+```
+
+**Response (400 Bad Request) - If token is invalid or expired:**
+```json
+{
+  "error": "Invalid token"
+}
+```
+or
+```json
+{
+  "error": "Token has expired"
+}
+```
+
+**Postman Example:**
+1. Create a new POST request
+2. Enter `{{base_url}}/api/auth/password-reset/verify/` as the URL
+3. Go to the "Body" tab, select "raw" and "JSON"
+4. Enter the request body with the token from the reset email
+5. Click "Send"
+
+### Reset Password
+
+**Endpoint:** `POST {{base_url}}/api/auth/password-reset/confirm/`
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+  "token": "your_reset_token",
+  "password": "your_new_password",
+  "password2": "your_new_password"
+}
+```
+
+**Response (200 OK) - If password reset is successful:**
+```json
+{
+  "message": "Password has been reset successfully"
+}
+```
+
+**Response (400 Bad Request) - If there are validation errors:**
+```json
+{
+  "error": "Passwords do not match"
+}
+```
+or
+```json
+{
+  "error": "Token, password, and password confirmation are required"
+}
+```
+or
+```json
+{
+  "error": "Invalid token"
+}
+```
+or
+```json
+{
+  "error": "Token has expired"
+}
+```
+
+**Postman Example:**
+1. Create a new POST request
+2. Enter `{{base_url}}/api/auth/password-reset/confirm/` as the URL
+3. Go to the "Body" tab, select "raw" and "JSON"
+4. Enter the request body with the token from the reset email and your new password
+5. Click "Send"
+
 ## Crop Recommendation API
 
 ### Recommend Crop
@@ -375,6 +508,68 @@ Content-Type: application/json
 4. Enter one of the request body options shown above
 5. Click "Send"
 
+### Simple Recommend Crop
+
+**Endpoint:** `POST {{base_url}}/api/simple-recommend/`
+
+**Description:**
+A simplified version of the crop recommendation API that uses default values instead of making external API calls. This is useful for testing or when external API calls are not needed.
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+  "address": "Nairobi, Kenya"
+}
+```
+Note: The address parameter is optional. If not provided, a default address will be used.
+
+**Response (200 OK):**
+```json
+{
+  "location": {
+    "latitude": -1.2921,
+    "longitude": 36.8219,
+    "address": "Nairobi, Kenya"
+  },
+  "soil_properties": {
+    "Nitrogen Total (0-20cm)": 0.5,
+    "Phosphorus Extractable (0-20cm)": 35.2,
+    "Potassium Extractable (0-20cm)": 145.8,
+    "Soil pH (0-20cm)": 6.2,
+    "Bulk Density (0-20cm)": 1.3,
+    "Land Cover (2019)": "Cropland",
+    "Cation Exchange Capacity (0-20cm)": 15.5
+  },
+  "weather": {
+    "temperature": 22.5,
+    "humidity": 65,
+    "rainfall": 0.5
+  },
+  "recommendations": {
+    "Maize": {
+      "explanation": "Maize grows well in warm areas with temperatures between 18-30°C and requires moderate rainfall of 600-1200mm annually. It prefers well-drained soils with a pH of 5.5-7.0 and good levels of nitrogen.",
+      "score": 0.85
+    },
+    "Beans": {
+      "explanation": "Beans thrive in temperatures of 18-25°C and require 300-500mm of rainfall per growing season. They prefer well-drained soils with a pH of 6.0-7.5 and can fix nitrogen from the atmosphere.",
+      "score": 0.75
+    }
+  }
+}
+```
+
+**Postman Example:**
+1. Create a new POST request
+2. Enter `{{base_url}}/api/simple-recommend/` as the URL
+3. Go to the "Body" tab, select "raw" and "JSON"
+4. Enter the request body as shown above (or leave it empty for default values)
+5. Click "Send"
+
 ## Disease Detection API
 
 ### Detect Plant Disease
@@ -427,6 +622,11 @@ All marketplace endpoints are prefixed with `/api/marketplace/`.
     "quantity": 100,
     "location": "Nairobi",
     "contact_info": "+254700000000",
+    "idealTemperature": "18-30°C",
+    "suitability": "High",
+    "imageUrl": "assets/images/maize.png",
+    "seller": "John Doe",
+    "date": "10/2/25",
     "created_at": "2023-08-01T12:00:00Z",
     "updated_at": "2023-08-01T12:00:00Z"
   },
@@ -439,6 +639,11 @@ All marketplace endpoints are prefixed with `/api/marketplace/`.
     "quantity": 50,
     "location": "Mombasa",
     "contact_info": "+254711111111",
+    "idealTemperature": null,
+    "suitability": null,
+    "imageUrl": null,
+    "seller": "Jane Smith",
+    "date": "15/2/25",
     "created_at": "2023-08-02T10:30:00Z",
     "updated_at": "2023-08-02T10:30:00Z"
   }
@@ -465,6 +670,11 @@ All marketplace endpoints are prefixed with `/api/marketplace/`.
   "quantity": 100,
   "location": "Nairobi",
   "contact_info": "+254700000000",
+  "idealTemperature": "18-30°C",
+  "suitability": "High",
+  "imageUrl": "assets/images/maize.png",
+  "seller": "John Doe",
+  "date": "10/2/25",
   "created_at": "2023-08-01T12:00:00Z",
   "updated_at": "2023-08-01T12:00:00Z"
 }
@@ -485,7 +695,7 @@ Content-Type: application/json
 Authorization: Token {{token}}
 ```
 
-**Request Body:**
+**Request Body (Basic):**
 ```json
 {
   "name": "Tomato Seedlings",
@@ -498,6 +708,31 @@ Authorization: Token {{token}}
 }
 ```
 
+**Request Body (With Optional Fields):**
+```json
+{
+  "name": "Tomato Seedlings",
+  "description": "Healthy tomato seedlings ready for transplanting",
+  "price": "300.00",
+  "category": "OTHER",
+  "quantity": 200,
+  "location": "Kisumu",
+  "contact_info": "+254722222222",
+  "idealTemperature": "20°C - 30°C",
+  "suitability": "High",
+  "imageUrl": "assets/images/tomato.png",
+  "seller": "John Doe",
+  "date": "03/07/25"
+}
+```
+
+**Note:** When creating a new item, the following fields can be auto-populated based on the location and crop name:
+- `idealTemperature`: Automatically extracted from the crop recommendation API based on the crop name and location
+- `suitability`: Set based on the recommendation score (High, Medium, or Low)
+- `imageUrl`: Default image URL based on the crop name if no image is uploaded
+- `seller`: Set to the authenticated user's username or "Anonymous" if not provided
+- `date`: Set to the current date if not provided
+
 **Response (201 Created):**
 ```json
 {
@@ -509,6 +744,11 @@ Authorization: Token {{token}}
   "quantity": 200,
   "location": "Kisumu",
   "contact_info": "+254722222222",
+  "idealTemperature": "20°C - 30°C",
+  "suitability": "High",
+  "imageUrl": "assets/images/tomato.png",
+  "seller": "John Doe",
+  "date": "03/07/25",
   "created_at": "2023-08-03T09:15:00Z",
   "updated_at": "2023-08-03T09:15:00Z"
 }
@@ -542,7 +782,12 @@ Authorization: Token {{token}}
   "category": "OTHER",
   "quantity": 150,
   "location": "Kisumu",
-  "contact_info": "+254722222222"
+  "contact_info": "+254722222222",
+  "idealTemperature": "20°C - 30°C",
+  "suitability": "High",
+  "imageUrl": "assets/images/tomato.png",
+  "seller": "John Doe",
+  "date": "03/07/25"
 }
 ```
 
@@ -557,6 +802,11 @@ Authorization: Token {{token}}
   "quantity": 150,
   "location": "Kisumu",
   "contact_info": "+254722222222",
+  "idealTemperature": "20°C - 30°C",
+  "suitability": "High",
+  "imageUrl": "assets/images/tomato.png",
+  "seller": "John Doe",
+  "date": "03/07/25",
   "created_at": "2023-08-03T09:15:00Z",
   "updated_at": "2023-08-03T10:20:00Z"
 }
@@ -585,7 +835,9 @@ Authorization: Token {{token}}
 ```json
 {
   "price": "375.00",
-  "quantity": 125
+  "quantity": 125,
+  "idealTemperature": "22°C - 28°C",
+  "suitability": "Medium"
 }
 ```
 
@@ -600,6 +852,11 @@ Authorization: Token {{token}}
   "quantity": 125,
   "location": "Kisumu",
   "contact_info": "+254722222222",
+  "idealTemperature": "22°C - 28°C",
+  "suitability": "Medium",
+  "imageUrl": "assets/images/tomato.png",
+  "seller": "John Doe",
+  "date": "03/07/25",
   "created_at": "2023-08-03T09:15:00Z",
   "updated_at": "2023-08-03T11:30:00Z"
 }
@@ -613,6 +870,54 @@ Authorization: Token {{token}}
 5. Go to the "Body" tab, select "raw" and "JSON"
 6. Enter the request body as shown above
 7. Click "Send"
+
+### Upload Image with Item
+
+**Endpoint:** `POST {{base_url}}/api/marketplace/items/`
+
+**Headers:**
+```
+Content-Type: multipart/form-data
+Authorization: Token {{token}}
+```
+
+**Request Body:**
+- Form data with key-value pairs for all fields
+- For the image, use key `image` with a file value
+
+**Response (201 Created):**
+```json
+{
+  "id": 4,
+  "name": "Rice",
+  "description": "High-quality rice grown in ideal conditions. Perfect for daily cooking.",
+  "price": "450.00",
+  "category": "OTHER",
+  "quantity": 50,
+  "location": "Arusha",
+  "contact_info": "+255123456789",
+  "idealTemperature": "25°C - 30°C",
+  "suitability": "High",
+  "image": "/media/marketplace_images/rice_image.jpg",
+  "imageUrl": "/media/marketplace_images/rice_image.jpg",
+  "seller": "Thomas John",
+  "date": "03/07/25",
+  "created_at": "2023-08-04T14:20:00Z",
+  "updated_at": "2023-08-04T14:20:00Z"
+}
+```
+
+**Postman Example:**
+1. Create a new POST request
+2. Enter `{{base_url}}/api/marketplace/items/` as the URL
+3. Go to the "Headers" tab
+4. Add `Authorization` as key and `Token {{token}}` as value
+5. Go to the "Body" tab, select "form-data"
+6. Add key-value pairs for all fields (name, description, price, etc.)
+7. For the "image" key, select "File" as the type and choose an image file
+8. Click "Send"
+
+**Note:** When an image is uploaded, the `imageUrl` field will be automatically set to the URL of the uploaded image. The image will be stored in the `media/marketplace_images/` directory on the server.
 
 ### Delete Item
 
