@@ -70,7 +70,7 @@ export default function CropDiseaseDetection() {
       <div className="bg-green-100 rounded-lg p-6 mb-6 text-center shadow">
         <h1 className="text-3xl font-extrabold mb-2 text-green-900">
           Welcome to Crop Disease Detector
-        </h1>
+        </h1> 
         <p className="text-green-800">
           Upload a picture of your crop and let our AI detect possible diseases.
         </p>
