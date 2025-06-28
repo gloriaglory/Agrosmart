@@ -17,7 +17,35 @@ ENV PYTHONDONTWRITEBYTECODE=1
 # the application crashes without emitting any logs due to buffering.
 ENV PYTHONUNBUFFERED=1
 
+
 WORKDIR /app
+
+# Install required library for joblib/OpenMP support
+RUN apt-get update && apt-get install -y libgomp1
+
+
+# Create directory structure for ML model files
+RUN mkdir -p /app/ml_model/crop /app/disease_detection/ml_models
+
+# Copy model files
+# Note: These files must exist in your build context
+# If they're in your local project, make sure to include them when building the Docker image
+RUN pwd
+COPY ./crop_predictor/ml_models/crop/ /app/ml_model/crop/
+COPY ./disease_detection/ml_models/ /app/disease_detection/ml_models/
+RUN pwd
+# COPY ./ml_model_files/scaler.joblib /app/ml_model/crop/
+
+# Check if the model files exist
+RUN if [ ! -f /app/ml_model/crop/crop_recomendation.joblib ] || [ ! -f /app/ml_model/crop/scaler.joblib ]; then \
+    echo "Error: Crop model files not found. Ensure they exist in your build context."; \
+    exit 1; \
+    fi && \
+    if [ ! -f /app/disease_detection/ml_models/plant_disease_model.keras ]; then \
+    echo "Error: Disease detection model file not found. Ensure it exists in your build context."; \
+    exit 1; \
+    fi
+
 
 # Create a non-privileged user that the app will run under.
 # See https://docs.docker.com/go/dockerfile-user-best-practices/
@@ -42,12 +70,13 @@ RUN pip install cryptography
 
 # Add path for the AI model
 RUN mkdir -p /app/staticfiles /app/media && \
-    chown -R "${UID}":"${UID}" /app/staticfiles /app/media
+    chown -R "${UID}":"${UID}" /app
 # Switch to the non-privileged user to run the application.
 USER appuser
 
 # Copy the source code into the container.
 COPY . .
+
 
 # Expose the port that the application listens on.
 EXPOSE 8000
@@ -55,10 +84,6 @@ EXPOSE 8000
 
 # Run the application.
 # Command to run migrations and start the server
-# Run the application.
-# Command to run migrations and start the server
 CMD python manage.py migrate --noinput && \
-    python manage.py createsuperuser --noinput --username admin --email admin@example.com || echo "Superuser already exists" && \
-    python manage.py collectstatic --noinput && \
+    python manage.py collectstatic --noinput || echo "Collectstatic failed" && \
     gunicorn crop_recommendation.wsgi --bind=0.0.0.0:8000
-

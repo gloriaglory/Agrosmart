@@ -1,62 +1,57 @@
 import os
 import zipfile
-import json
 import numpy as np
 import requests
 from PIL import Image
 import tensorflow as tf
+import json
 
-# === Download Helper Functions ===
-
-def download_from_google_drive(file_id: str, dest_path: str):
-    """Downloads a file from Google Drive using a confirmation token if necessary."""
+# Google Drive Download Logic 
+def download_from_google_drive(file_id, dest_path):
+    """Downloads a file from Google Drive handling confirmation token."""
     URL = "https://docs.google.com/uc?export=download"
     session = requests.Session()
 
     response = session.get(URL, params={"id": file_id}, stream=True)
-    token = _get_confirm_token(response)
+    token = get_confirm_token(response)
 
     if token:
         response = session.get(URL, params={"id": file_id, "confirm": token}, stream=True)
 
-    _save_response_content(response, dest_path)
+    save_response_content(response, dest_path)
 
-def _get_confirm_token(response):
+def get_confirm_token(response):
     for key, value in response.cookies.items():
         if key.startswith("download_warning"):
             return value
     return None
 
-def _save_response_content(response, destination):
+def save_response_content(response, destination):
     CHUNK_SIZE = 32768
     with open(destination, "wb") as f:
         for chunk in response.iter_content(CHUNK_SIZE):
             if chunk:
                 f.write(chunk)
 
-# === Paths and Constants ===
-
+# Paths
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-MODEL_NAME = "plant_disease_model1.keras"
-MODEL_PATH = os.path.join(BASE_DIR, "disease_detection", "ml_models", MODEL_NAME)
+MODEL_PATH = os.path.join("./disease_detection/ml_models", "plant_disease_model.keras")
 ZIP_PATH = MODEL_PATH + ".zip"
-DISEASE_INFO_PATH = os.path.join(BASE_DIR, "disease_detection", "ml_models", "disease_info.json")
-GOOGLE_DRIVE_FILE_ID = "1dZbPBuPFqyYjvBOXBnEuT4GE9RsdS-4F"
+DISEASE_INFO_PATH = os.path.join("./disease_detection/ml_models", "disease_info.json")
 
-# === Model Setup ===
+# Download model zip from Google Drive 
+if not os.path.exists(MODEL_PATH):
+    if not os.path.exists(ZIP_PATH):
+        print("Downloading model...")
+        FILE_ID = "1dZbPBuPFqyYjvBOXBnEuT4GE9RsdS-4F"  
+        try:
+            download_from_google_drive(FILE_ID, ZIP_PATH)
+            print("Model zip downloaded.")
+        except Exception as e:
+            print(f"Failed to download model zip: {e}")
 
-def ensure_model_exists():
-    """Download and unzip the model if it doesn't already exist."""
-    if not os.path.exists(MODEL_PATH):
-        if not os.path.exists(ZIP_PATH):
-            print("Downloading model from Google Drive...")
-            try:
-                download_from_google_drive(GOOGLE_DRIVE_FILE_ID, ZIP_PATH)
-                print("Model zip downloaded.")
-            except Exception as e:
-                print(f"Failed to download model zip: {e}")
-                return
-
+    # Decompress
+    if os.path.exists(ZIP_PATH):
         print("Extracting model zip...")
         try:
             with zipfile.ZipFile(ZIP_PATH, 'r') as zipf:
@@ -64,60 +59,48 @@ def ensure_model_exists():
             print("Model extracted.")
         except Exception as e:
             print(f"Failed to unzip model: {e}")
+    else:
+        print("Model zip not found, cannot continue.")
 
-# Ensure model is ready
-ensure_model_exists()
-
-# Load model
+# Load model 
 try:
     model = tf.keras.models.load_model(MODEL_PATH)
-    print("Model loaded successfully.")
+    print("Model loaded.")
 except Exception as e:
     print(f"Error loading model: {e}")
     model = None
 
 # Load disease info
 try:
-    with open(DISEASE_INFO_PATH, "r", encoding="utf-8") as f:
-        disease_data = json.load(f)
-        disease_info = disease_data["diseases"]
-        CLASS_NAMES = list(disease_info.keys())
+    with open(DISEASE_INFO_PATH, "r", encoding="utf-8") as file:
+        disease_info = json.load(file)
 except Exception as e:
     print(f"Error loading disease info: {e}")
     disease_info = {}
-    CLASS_NAMES = []
 
-# === Image Preprocessing ===
+# Class names 
+CLASS_NAMES = list(disease_info.keys())
 
+#Image Preprocessing 
 def preprocess_image(image: Image.Image, target_size=(224, 224)) -> np.ndarray:
-    """Resize and normalize image to model's input format."""
     image = image.resize(target_size)
-    img_array = np.array(image) / 255.0  # Normalize
-    img_array = np.expand_dims(img_array, axis=0)  # Add batch dimension
+    img_array = np.array(image)
+    img_array = img_array / 255.0
+    img_array = np.expand_dims(img_array, axis=0)
     return img_array
 
-# === Prediction ===
-
+# Prediction 
 def predict_disease(image_file) -> dict:
-    """Predict plant disease from an image file."""
     if model is None:
-        raise RuntimeError("Model not loaded.")
-    
-    if not CLASS_NAMES:
-        raise RuntimeError("CLASS_NAMES list is empty. Check disease_info.json format.")
+        raise Exception("Model not loaded.")
 
-    # Open and preprocess the image
     image = Image.open(image_file).convert("RGB")
     processed_img = preprocess_image(image)
 
-    # Predict
-    predictions = model.predict(processed_img)[0]
+    predictions = model.predict(processed_img)
+    predictions = predictions[0]
+
     pred_idx = int(np.argmax(predictions))
-
-    # Fallback in case of mismatch
-    if pred_idx >= len(CLASS_NAMES):
-        pred_idx = int(np.argmax(predictions[:len(CLASS_NAMES)]))
-
     disease_name = CLASS_NAMES[pred_idx]
     confidence = float(predictions[pred_idx])
     disease_details = disease_info.get(disease_name, {})

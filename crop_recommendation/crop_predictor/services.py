@@ -4,32 +4,72 @@ import numpy as np
 import pandas as pd
 import joblib
 
-# Define model, scaler, and explanation paths
-BASE_MODEL_PATH = os.path.join("D:\\", 'agrosmart', 'crop_recommendation', 'crop_predictor', 'ml_models', 'crop')
+# Define model, scaler, and explanation paths using relative paths
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_MODEL_PATH = os.path.join(BASE_DIR, 'ml_model', 'crop')
 MODEL_PATH = os.path.join(BASE_MODEL_PATH, "crop_recomendation.joblib")
 SCALER_PATH = os.path.join(BASE_MODEL_PATH, "scaler.joblib")
 EXPLANATION_PATH = os.path.join(os.path.dirname(__file__), "crop_explanations.json")
+
+# Print absolute paths for debugging
+print("="*80)
+print(f"Current working directory: {os.getcwd()}")
+print(f"BASE_DIR: {BASE_DIR}")
+print(f"BASE_MODEL_PATH: {BASE_MODEL_PATH}")
+print(f"MODEL_PATH: {MODEL_PATH}")
+print(f"SCALER_PATH: {SCALER_PATH}")
+print(f"EXPLANATION_PATH: {EXPLANATION_PATH}")
+print("="*80)
+
+# Check if model path exists
+if os.path.exists(MODEL_PATH):
+    print(f"✓ Model file exists at: {MODEL_PATH}")
+else:
+    print(f"✗ Model file NOT FOUND at: {MODEL_PATH}")
+
+# Check if scaler path exists
+if os.path.exists(SCALER_PATH):
+    print(f"✓ Scaler file exists at: {SCALER_PATH}")
+else:
+    print(f"✗ Scaler file NOT FOUND at: {SCALER_PATH}")
+
+# List directory contents for debugging
+try:
+    if os.path.exists(BASE_MODEL_PATH):
+        print(f"Contents of {BASE_MODEL_PATH}:")
+        for file in os.listdir(BASE_MODEL_PATH):
+            print(f" - {file}")
+    else:
+        print(f"Directory {BASE_MODEL_PATH} does not exist!")
+except Exception as e:
+    print(f"Error listing directory contents: {e}")
+print("="*80)
 
 # Load crop explanations
 try:
     with open(EXPLANATION_PATH, "r", encoding="utf-8") as file:
         CROP_CONDITIONS = json.load(file)
+        print(f"Successfully loaded crop explanations from {EXPLANATION_PATH}")
 except Exception as e:
     print(f"Error loading crop explanations: {e}")
     CROP_CONDITIONS = {}
 
 # Load the trained model
 try:
+    print(f"Attempting to load model from: {MODEL_PATH}")
     crop_model = joblib.load(MODEL_PATH)
+    print("✓ Model loaded successfully")
 except Exception as e:
-    print(f"Error loading model: {e}")
+    print(f"✗ Error loading model: {e}")
     crop_model = None
 
 # Load the scaler
 try:
+    print(f"Attempting to load scaler from: {SCALER_PATH}")
     scaler = joblib.load(SCALER_PATH)
+    print("✓ Scaler loaded successfully")
 except Exception as e:
-    print(f"Error loading scaler: {e}")
+    print(f"✗ Error loading scaler: {e}")
     scaler = None
 
 def predict_crop_new(N, P, K, temperature, humidity, ph, rainfall):
