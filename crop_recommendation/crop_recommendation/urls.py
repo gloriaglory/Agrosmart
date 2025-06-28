@@ -7,4 +7,5 @@ urlpatterns = [
     path('detector/', include('disease_detection.urls')),  
     path('market/', include('market_place.urls')),
     path('api/auth/', include('authentication.urls')),
+    path('api/bot/', include('bot.urls')),
 ]
