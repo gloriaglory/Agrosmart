@@ -16,7 +16,7 @@ from allauth.socialaccount.providers.facebook.views import FacebookOAuth2Adapter
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from dj_rest_auth.registration.views import SocialLoginView
 from .models import MarketplaceItem
-from .serializers import MarketplaceItemSerializer
+from .serializers import MarketplaceItemSerializer, RecommendationMarketplaceItemSerializer
 
 User = get_user_model()
 
@@ -274,3 +274,70 @@ class MarketplaceItemViewSet(viewsets.ModelViewSet):
     queryset = MarketplaceItem.objects.all()
     serializer_class = MarketplaceItemSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def retrieve(self, request, *args, **kwargs):
+        """
+        Override retrieve to ensure phone field is included in the response.
+        """
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        data = serializer.data
+
+        # Ensure phone field is included
+        if 'phone' not in data and hasattr(serializer, 'get_phone'):
+            data['phone'] = serializer.get_phone(instance)
+
+        return Response(data)
+
+    def list(self, request, *args, **kwargs):
+        """
+        Override list to ensure phone field is included in the response for all items.
+        """
+        queryset = self.filter_queryset(self.get_queryset())
+        page = self.paginate_queryset(queryset)
+
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            data = serializer.data
+            for item_data, item in zip(data, page):
+                if 'phone' not in item_data and hasattr(serializer, 'get_phone'):
+                    item_data['phone'] = serializer.get_phone(item)
+            return self.get_paginated_response(data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        data = serializer.data
+        for item_data, item in zip(data, queryset):
+            if 'phone' not in item_data and hasattr(serializer, 'get_phone'):
+                item_data['phone'] = serializer.get_phone(item)
+        return Response(data)
+
+    def get_serializer_class(self):
+        """
+        Return different serializer class based on the request path.
+        If the request is coming from the recommendation API, use the RecommendationMarketplaceItemSerializer.
+        """
+        referer = self.request.META.get('HTTP_REFERER', '')
+        if 'api/recommend' in referer or self.request.query_params.get('from_recommend', False):
+            return RecommendationMarketplaceItemSerializer
+        return MarketplaceItemSerializer
+
+    def get_serializer_context(self):
+        """
+        Add crop scores to the serializer context if available.
+        """
+        context = super().get_serializer_context()
+        if hasattr(self.request, 'crop_scores'):
+            context['crop_scores'] = self.request.crop_scores
+        return context
+
+    def create(self, request, *args, **kwargs):
+        """
+        Create a new marketplace item with auto-generated fields.
+        """
+        # Use the same serializer class selection logic as get_serializer_class
+        serializer_class = self.get_serializer_class()
+        serializer = serializer_class(data=request.data, context=self.get_serializer_context())
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)

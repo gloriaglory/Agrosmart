@@ -1,19 +1,13 @@
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .services import CROP_CONDITIONS
 from .utils import get_default_values
 from .services import predict_crop_new
 import os
 import random
-from .services import CROP_CONDITIONS, predict_crop_new
-from .utils import get_lat_lon, get_soil_properties, get_weather_data
-from .utils import get_lat_lon, get_soil_properties, get_weather_data, reverse_geocode
-
-
+from django.middleware.csrf import get_token
 
 @api_view(['POST'])
-@permission_classes([AllowAny])
 def recommend_crop(request):
      """
    API endpoint to recommend crops based on location and environmental conditions.
@@ -80,22 +74,27 @@ def recommend_crop(request):
             "score": score
          }
 
-    region = reverse_geocode(float(lat), float(lon))
 
-    response_data = {
-        'location': {
-            'latitude': lat,
-            'longitude': lon,
-            'region': region,
-            'address': address if address else 'N/A'
-        },
-        'soil_properties': soil_data,
-        'weather': {
-            'temperature': temperature,
-            'humidity': humidity,
-            'rainfall': rainfall,
-        },
-        'recommendations': detailed_recommendations
-    }
+     # Store crop scores in request for use by marketplace serializer
+     request.crop_scores = detailed_recommendations
 
-    return Response(response_data, status=200)
+     # Get CSRF token for frontend use
+     csrf_token = get_token(request)
+
+     response_data = {
+         'location': {
+             'latitude': lat,
+             'longitude': lon,
+             'address': address if address else 'N/A'
+         },
+         'soil_properties': soil_data,
+         'weather': {
+             'temperature': temperature,
+             'humidity': humidity,
+             'rainfall': rainfall,
+         },
+         'recommendations': detailed_recommendations,
+         'csrf_token': csrf_token
+     }
+
+     return Response(response_data, status=200)
