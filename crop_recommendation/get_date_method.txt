@@ -1,0 +1,15 @@
+def get_date(self, obj):
+    """
+    Get the date for the marketplace item.
+    Returns the date from the object, the creation date, or the current date.
+    """
+    # Return existing date if available and not null
+    if obj.date:
+        return obj.date
+
+    # Return formatted creation date
+    if obj.created_at:
+        return obj.created_at.strftime("%Y-%m-%d")
+
+    # Always return today's date if nothing else is available
+    return timezone.now().strftime("%Y-%m-%d")

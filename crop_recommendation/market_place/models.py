@@ -17,6 +17,7 @@ class MarketplaceItem(models.Model):
     imageUrl = models.CharField(max_length=255, blank=True, null=True)
     seller = models.CharField(max_length=100, blank=True, null=True)
     date = models.CharField(max_length=20, blank=True, null=True)
+    phone = models.CharField(max_length=20, blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
 

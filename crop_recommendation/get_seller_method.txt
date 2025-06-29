@@ -1,0 +1,25 @@
+def get_seller(self, obj):
+    """
+    Get the seller name for the marketplace item.
+    Returns the seller name from the object, the authenticated user, or generates a default value.
+    """
+    # Return existing seller if available and not null
+    if obj.seller:
+        return obj.seller
+
+    # Get user from token if available
+    request = self.context.get('request')
+    if request and request.user and request.user.is_authenticated:
+        user_name = f"{request.user.first_name} {request.user.last_name}".strip()
+        return user_name or request.user.username
+
+    # If no authenticated user or seller, generate a seller name based on the item name
+    if obj.name:
+        # Generate a consistent seller name based on the item name
+        seed = sum(ord(c) for c in obj.name)
+        random.seed(seed)
+        sellers = ["Farmer John", "Green Thumb Farms", "Harvest Solutions", "AgriTech Suppliers", "EcoFarm Kenya"]
+        return sellers[seed % len(sellers)]
+
+    # Always return a default value
+    return "Unknown Seller"
