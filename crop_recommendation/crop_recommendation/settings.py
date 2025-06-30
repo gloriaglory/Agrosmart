@@ -225,44 +225,13 @@ FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:3000')
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
-    'formatters': {
-        'verbose': {
-            'format': '{levelname} {asctime} {module} {message}',
-            'style': '{',
-        },
-        'simple': {
-            'format': '{levelname} {message}',
-            'style': '{',
-        },
-        'ngrok_style': {
-            'format': '[NGROK-STYLE] {message}',
-            'style': '{',
-        },
-    },
     'handlers': {
         'console': {
-            'level': 'INFO',
             'class': 'logging.StreamHandler',
-            'formatter': 'ngrok_style',
-        },
-        'file': {
-            'level': 'INFO',
-            'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_DIR, 'ngrok_style.log'),
-            'formatter': 'ngrok_style',
-        },
-        'debug_file': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_DIR, 'ngrok_style_debug.log'),
-            'formatter': 'verbose',
         },
     },
-    'loggers': {
-        'ngrok_style': {
-            'handlers': ['console', 'file', 'debug_file'],
-            'level': 'DEBUG',  # Set to DEBUG to capture all levels
-            'propagate': True,
-        },
+    'root': {
+        'handlers': ['console'],
+        'level': 'DEBUG',
     },
 }
