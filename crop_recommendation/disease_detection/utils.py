@@ -35,9 +35,25 @@ def save_response_content(response, destination):
 
 # Paths
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-MODEL_PATH = os.path.join("./disease_detection/ml_models", "plant_disease_model.keras")
+MODEL_PATH = os.path.join(BASE_DIR, 'disease_detection', 'ml_models','plant_disease_model.keras')
 ZIP_PATH = MODEL_PATH + ".zip"
-DISEASE_INFO_PATH = os.path.join("./disease_detection/ml_models", "disease_info.json")
+DISEASE_INFO_PATH = os.path.join(BASE_DIR, 'disease_detection', 'ml_models','disease_info.json')
+
+# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# BASE_MODEL_PATH = os.path.join(BASE_DIR, 'ml_model', 'crop')
+# MODEL_PATH = os.path.join(BASE_MODEL_PATH, "crop_recomendation.joblib")
+# SCALER_PATH = os.path.join(BASE_MODEL_PATH, "scaler.joblib")
+# EXPLANATION_PATH = os.path.join(os.path.dirname(__file__), "crop_explanations.json")
+
+
+# Ensure directories exist
+print("="*80)
+print("Setting up crop detection environment...")
+print(f"Current working directory: {os.getcwd()}")
+print(f"BASE_DIR: {BASE_DIR}")
+
+print(f"MODEL_PATH: {MODEL_PATH}")
+print("="*80)
 
 # Download model zip from Google Drive 
 if not os.path.exists(MODEL_PATH):
@@ -90,9 +106,18 @@ def preprocess_image(image: Image.Image, target_size=(224, 224)) -> np.ndarray:
     return img_array
 
 # Prediction 
+
+# Prediction
+
 def predict_disease(image_file) -> dict:
     if model is None:
         raise Exception("Model not loaded.")
+
+    # Debug: Check if CLASS_NAMES is loaded properly
+    if not CLASS_NAMES:
+        raise Exception("CLASS_NAMES list is empty. Disease info may not be loaded properly.")
+
+    print(f"Number of classes available: {len(CLASS_NAMES)}")
 
     image = Image.open(image_file).convert("RGB")
     processed_img = preprocess_image(image)
@@ -100,7 +125,19 @@ def predict_disease(image_file) -> dict:
     predictions = model.predict(processed_img)
     predictions = predictions[0]
 
+    # Safe handling for prediction index
     pred_idx = int(np.argmax(predictions))
+
+    # Debug: Check pred_idx against CLASS_NAMES length
+    print(f"Predicted class index: {pred_idx}, Number of classes: {len(CLASS_NAMES)}")
+
+    # Handle out-of-range prediction gracefully
+    if pred_idx >= len(CLASS_NAMES):
+        # Fallback to most confident prediction within the available class range
+        valid_predictions = predictions[:len(CLASS_NAMES)]
+        pred_idx = int(np.argmax(valid_predictions))
+        print(f"Adjusted prediction index to: {pred_idx}")
+
     disease_name = CLASS_NAMES[pred_idx]
     confidence = float(predictions[pred_idx])
     disease_details = disease_info.get(disease_name, {})
