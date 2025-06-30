@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate, login, get_user_model
-from .serializers import UserSerializer, UserRegistrationSerializer, UserUpdateSerializer
+from .serializers import UserSerializer, UserRegistrationSerializer, UserUpdateSerializer, IdNumberUpdateSerializer
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from allauth.socialaccount.providers.facebook.views import FacebookOAuth2Adapter
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
@@ -100,3 +100,17 @@ class FacebookLogin(SocialLoginView):
     adapter_class = FacebookOAuth2Adapter
     callback_url = "http://localhost:8000/api/auth/facebook/callback/"
     client_class = OAuth2Client
+
+
+class UpdateIdNumberView(APIView):
+    """
+    API endpoint to update only the user's ID number.
+    """
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        serializer = IdNumberUpdateSerializer(request.user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "ID number updated successfully."}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

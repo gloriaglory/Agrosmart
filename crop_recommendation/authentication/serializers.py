@@ -53,3 +53,8 @@ class UserUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['first_name', 'last_name', 'phone_number', 'id_number']
+        
+class IdNumberUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id_number']
