@@ -6,7 +6,8 @@ from .views import (
     UserProfileView, 
     UserUpdateView,
     GoogleLogin,
-    FacebookLogin
+    FacebookLogin,
+    UpdateIdNumberView
 )
 
 urlpatterns = [
@@ -18,6 +19,7 @@ urlpatterns = [
     # User profile
     path('profile/', UserProfileView.as_view(), name='profile'),
     path('profile/update/', UserUpdateView.as_view(), name='profile_update'),
+    path("user/idnumber/", UpdateIdNumberView.as_view(), name="update-id-number"),
     
     # Social authentication
     path('google/', GoogleLogin.as_view(), name='google_login'),

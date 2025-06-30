@@ -3,26 +3,25 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
 import axios from "axios";
 
-const translateText = async (text: string, source: string, target: string) => {
-  const res = await fetch("https://libretranslate.com/translate", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      q: text,
-      source,
-      target,
-      format: "text",
-    }),
-  });
-  const data = await res.json();
-  return data.translatedText;
-};
+interface User {
+  id_number: string | null;
+  phone_number: string | null;
+  last_name: string | null;
+  first_name: string | null;
+  username: string;
+  email: string;
+}
 
 const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [language, setLanguage] = useState("en");
-  const [translatedMenu, setTranslatedMenu] = useState({
+
+  const [user, setUser] = useState<User | null>(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Static menu labels (no translation)
+  const menuLabels = {
     home: "Home",
     marketplace: "Marketplace",
     recommendations: "Recommendations",
@@ -32,19 +31,7 @@ const Navbar = () => {
     signup: "Sign Up",
     logout: "Logout",
     profile: "Profile",
-  });
-
-  // State for user and dropdown
-  const [user, setUser] = useState<{
-    id_number: any;
-    phone_number: any;
-    last_name: any;
-    first_name: any;
-    username: string;
-    email: string;
-  } | null>(null);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  };
 
   // Fetch user profile from backend using token on mount
   useEffect(() => {
@@ -84,40 +71,6 @@ const Navbar = () => {
     };
   }, []);
 
-  // Language switcher toggling English <-> Swahili
-  const switchLanguage = async () => {
-    const target = language === "en" ? "sw" : "en";
-    const texts = [
-      "Home",
-      "Marketplace",
-      "Recommendations",
-      "Disease Detection",
-      "Learn more",
-      "Login",
-      "Sign Up",
-      "Logout",
-      "Profile",
-    ];
-
-    const translated = await Promise.all(
-      texts.map((t) => translateText(t, language, target))
-    );
-
-    setTranslatedMenu({
-      home: translated[0],
-      marketplace: translated[1],
-      recommendations: translated[2],
-      disease: translated[3],
-      education: translated[4],
-      login: translated[5],
-      signup: translated[6],
-      logout: translated[7],
-      profile: translated[8],
-    });
-
-    setLanguage(target);
-  };
-
   const isActive = (path: string) => location.pathname === path;
 
   // Logout handler clears localStorage and state
@@ -148,7 +101,7 @@ const Navbar = () => {
             isActive("/") ? "font-semibold text-green-700" : ""
           }`}
         >
-          {translatedMenu.home}
+          {menuLabels.home}
         </Link>
         <Link
           to="/market"
@@ -156,7 +109,7 @@ const Navbar = () => {
             isActive("/market") ? "font-semibold text-green-700" : ""
           }`}
         >
-          {translatedMenu.marketplace}
+          {menuLabels.marketplace}
         </Link>
         <Link
           to="/crop_recommendation"
@@ -166,7 +119,7 @@ const Navbar = () => {
               : ""
           }`}
         >
-          {translatedMenu.recommendations}
+          {menuLabels.recommendations}
         </Link>
         <Link
           to="/disease_detection"
@@ -174,7 +127,7 @@ const Navbar = () => {
             isActive("/disease_detection") ? "font-semibold text-green-700" : ""
           }`}
         >
-          {translatedMenu.disease}
+          {menuLabels.disease}
         </Link>
         <Link
           to="/education"
@@ -182,20 +135,12 @@ const Navbar = () => {
             isActive("/education") ? "font-semibold text-green-700" : ""
           }`}
         >
-          {translatedMenu.education}
+          {menuLabels.education}
         </Link>
       </div>
 
       {/* Right Section */}
       <div className="flex items-center gap-4 relative">
-        <button
-          onClick={switchLanguage}
-          title="Switch Language"
-          className="px-2 py-1 border rounded hover:bg-green-100"
-        >
-          {language.toUpperCase()}
-        </button>
-
         {!user ? (
           <>
             <Link
@@ -206,7 +151,7 @@ const Navbar = () => {
                   : "text-gray-700 hover:text-green-600"
               }`}
             >
-              {translatedMenu.login}
+              {menuLabels.login}
             </Link>
 
             <Link
@@ -217,7 +162,7 @@ const Navbar = () => {
                   : "text-gray-700 hover:text-green-600"
               }`}
             >
-              {translatedMenu.signup}
+              {menuLabels.signup}
             </Link>
           </>
         ) : (
@@ -266,7 +211,7 @@ const Navbar = () => {
                   onClick={handleLogout}
                   className="mt-6 w-full text-center px-4 py-2 rounded bg-primary text-white hover:bg-primary/80 transition"
                 >
-                  {translatedMenu.logout}
+                  {menuLabels.logout}
                 </button>
               </div>
             )}

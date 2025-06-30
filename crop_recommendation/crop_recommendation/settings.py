@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'market_place',
     'authentication',
     'bot',
+    'education',
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
@@ -59,8 +60,7 @@ INSTALLED_APPS = [
 
 # Custom user model
 AUTH_USER_MODEL = 'authentication.User'
-
-OPENAI_API_KEY = config("OPENAI_API_KEY")
+GROQ_API_KEY = config('GROQ_API_KEY')
 
 # Django AllAuth settings
 SITE_ID = 1
@@ -203,3 +203,6 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
     'grizzly-magnetic-lionfish.ngrok-free.app', 
 ]
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
