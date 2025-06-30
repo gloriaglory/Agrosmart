@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import farm from "../assets/images/farm.jpeg";
 import irrigation from "../assets/images/farm1.jpeg";
 import soil from "../assets/images/farm2.jpeg";
+import { tanzaniaRegions } from "../components/regions";
 
 declare global {
   interface Window {
@@ -14,6 +15,7 @@ type RecommendationResponse = {
     latitude: number;
     longitude: number;
     address: string;
+    region?: string; 
   };
   soil_properties: Record<string, unknown>;
   weather: {
@@ -23,6 +25,7 @@ type RecommendationResponse = {
   };
   recommendations: Record<string, { explanation: string; score: number }>;
 };
+
 
 const CropRecommendation: React.FC = () => {
   const [, setMap] = useState<google.maps.Map | null>(null);
@@ -119,31 +122,18 @@ const CropRecommendation: React.FC = () => {
     setLoading(false);
   };
 
-  const handleSearch = async () => {
+  const handleSearch = () => {
     if (!region.trim()) return;
-    try {
-      const res = await fetch("https://api.tanzaniaregions.com/api/v1/regions");
-      if (!res.ok) throw new Error("Failed to fetch regions");
-      const json = await res.json();
-      const regions = json.data as Array<{
-        name: string;
-        latitude: number;
-        longitude: number;
-      }>;
 
-      const matchedRegion = regions.find(
-        (r) => r.name.toLowerCase() === region.toLowerCase()
-      );
+    const matchedRegion = tanzaniaRegions.find(
+      (r) => r.name.toLowerCase() === region.toLowerCase()
+    );
 
-      if (matchedRegion && matchedRegion.latitude && matchedRegion.longitude) {
-        setLatitude(matchedRegion.latitude);
-        setLongitude(matchedRegion.longitude);
-      } else {
-        alert("Region not found.");
-      }
-    } catch (error) {
-      console.error("Error fetching regions:", error);
-      alert("Could not fetch regions.");
+    if (matchedRegion) {
+      setLatitude(matchedRegion.latitude);
+      setLongitude(matchedRegion.longitude);
+    } else {
+      alert("Region not found. Please check spelling or try another region.");
     }
   };
 
@@ -158,7 +148,7 @@ const CropRecommendation: React.FC = () => {
         />
         <div className="absolute inset-0 bg-black bg-opacity-40 z-10"></div>
         <div className="absolute z-20 top-10 left-1/2 transform -translate-x-1/2 bg-white bg-opacity-90 px-6 py-4 rounded-xl shadow-xl text-center max-w-md">
-          <h1 className="text-2xl font-bold text-green-700 mb-2">
+          <h1 className="text-2xl font-bold text-primary mb-2">
             🌾 Welcome to Smart Crop Advisor
           </h1>
           <p className="text-gray-700 text-sm">
@@ -242,35 +232,34 @@ const CropRecommendation: React.FC = () => {
               🌧️ Rainfall: {result.weather.rainfall}mm
             </div>
             <div className="bg-green-100 p-5 rounded-lg shadow font-semibold truncate">
-              📍 Location: {result.location.latitude.toFixed(4)},{" "}
+              📍 Location: {result.location.region ?? "Unknown Region"} <br />
+              🧭 Coords: {result.location.latitude.toFixed(4)},{" "}
               {result.location.longitude.toFixed(4)}
             </div>
           </div>
 
           <h2 className="text-2xl font-bold mb-4">Recommendations</h2>
           <div className="flex flex-col gap-6">
-            {Object.entries(result.recommendations).map(
-              ([crop, info]) => (
-                <div
-                  key={crop}
-                  className="bg-yellow-50 rounded-xl shadow-md flex flex-col sm:flex-row overflow-hidden"
-                >
-                  <img
-                    src={farm}
-                    alt={crop}
-                    className="w-full sm:w-44 h-32 sm:h-auto object-cover"
-                  />
+            {Object.entries(result.recommendations).map(([crop, info]) => (
+              <div
+                key={crop}
+                className="bg-yellow-50 rounded-xl shadow-md flex flex-col sm:flex-row overflow-hidden"
+              >
+                <img
+                  src={farm}
+                  alt={crop}
+                  className="w-full sm:w-44 h-32 sm:h-auto object-cover"
+                />
 
-                  <div className="p-4 flex flex-col justify-between">
-                    <h3 className="text-xl font-semibold">{crop}</h3>
-                    <p className="text-gray-700">{info.explanation}</p>
-                    <p className="text-green-700 font-bold">
-                      Score: {(info.score * 100).toFixed(2)}%
-                    </p>
-                  </div>
+                <div className="p-4 flex flex-col justify-between">
+                  <h3 className="text-xl font-semibold">{crop}</h3>
+                  <p className="text-gray-700">{info.explanation}</p>
+                  <p className="text-green-700 font-bold">
+                    Score: {(info.score * 100).toFixed(2)}%
+                  </p>
                 </div>
-              )
-            )}
+              </div>
+            ))}
           </div>
         </section>
       )}

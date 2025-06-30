@@ -96,7 +96,9 @@ def get_weather_data(lat, lon):
         if data['cod'] == 200:
             temperature = data['main']['temp']
             humidity = data['main']['humidity']
-            rainfall = data['rain'].get('1h', 0) if 'rain' in data else 0
+            rainfall = 0
+            if 'rain' in data:
+                rainfall = data['rain'].get('1h', 0) or data['rain'].get('3h', 0)
             return temperature, humidity, rainfall
         else:
             print(f"Error from OpenWeatherMap API: {data.get('message', 'Unknown error')}")
@@ -104,6 +106,7 @@ def get_weather_data(lat, lon):
     else:
         print(f"HTTP error {response.status_code} from OpenWeatherMap API")
         return None, None, None
+
 
 # Main function
 def main(address):
@@ -145,3 +148,17 @@ def get_district_and_region(address):
 def get_crops_regional(address):  
     # function body
     pass
+
+
+def reverse_geocode(lat: float, lon: float) -> str:
+    try:
+        url = f"https://nominatim.openstreetmap.org/reverse?format=json&lat={lat}&lon={lon}&zoom=10&addressdetails=1"
+        headers = {"User-Agent": "agrosmart-app/1.0"}  # Required by Nominatim
+        response = httpx.get(url, headers=headers, timeout=10.0)
+        response.raise_for_status()
+
+        data = response.json()
+        return data.get("address", {}).get("state", "Unknown Region")
+    except Exception as e:
+        print("Reverse geocoding failed:", e)
+        return "Unknown Region"

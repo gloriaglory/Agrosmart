@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import { FaGoogle, FaFacebook } from "react-icons/fa"; // Social icons
+import { useNavigate, useLocation } from "react-router-dom";
+import { FaGoogle, FaFacebook } from "react-icons/fa";
 
 const API_BASE = "http://localhost:8000/api/auth/login/";
 
@@ -9,7 +9,12 @@ export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Get 'from' path from location state or fallback to "/"
+  const from = (location.state as { from?: string })?.from || "/";
 
   const handleLogin = async () => {
     setError(null);
@@ -17,7 +22,8 @@ export default function Login() {
       const res = await axios.post(API_BASE, { username, password });
       localStorage.setItem("token", res.data.token);
       alert("Login successful");
-      navigate("/");
+      // Redirect to 'from' location after login
+      navigate(from, { replace: true });
     } catch (err: any) {
       setError(err.response?.data?.error || "Login failed.");
     }
@@ -45,7 +51,7 @@ export default function Login() {
         onChange={(e) => setPassword(e.target.value)}
         className="w-full mb-4 p-2 border rounded"
       />
-      {error && <p className="text-white mb-2">{error}</p>}
+      {error && <p className="text-red-600 mb-2">{error}</p>}
       <button
         onClick={handleLogin}
         className="w-full bg-primary text-white py-2 rounded hover:bg-blue-700"

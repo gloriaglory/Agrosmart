@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { crops } from "../components/Crops";
-import Map from "../components/map";
+import { crops, type crop } from "../components/Crops";
+import OurServices from "./OurServices";
+import Maps from "../components/maps";
 
 import {
   LineChart,
@@ -18,6 +19,7 @@ import {
   Bar,
 } from "recharts";
 
+
 // Crop Slider Component
 const CropSlider = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -32,7 +34,9 @@ const CropSlider = () => {
     const scroll = () => {
       const maxScrollLeft = container.scrollWidth - container.clientWidth;
       container.scrollLeft =
-        container.scrollLeft >= maxScrollLeft ? 0 : container.scrollLeft + scrollSpeed;
+        container.scrollLeft >= maxScrollLeft
+          ? 0
+          : container.scrollLeft + scrollSpeed;
       animationFrameId = requestAnimationFrame(scroll);
     };
 
@@ -40,8 +44,14 @@ const CropSlider = () => {
     return () => cancelAnimationFrame(animationFrameId);
   }, []);
 
-  // Repeat crops thrice for seamless scrolling effect
-  const repeatedCrops = [...crops, ...crops, ...crops];
+  // Filter for unique crops by name (show one card per crop type)
+  const uniqueCropsMap: Map<string, crop> = new Map();
+  for (const crop of crops) {
+    if (!uniqueCropsMap.has(crop.name)) {
+      uniqueCropsMap.set(crop.name, crop);
+    }
+  }
+  const uniqueCrops = Array.from(uniqueCropsMap.values());
 
   return (
     <div className="relative w-full overflow-hidden py-4">
@@ -51,7 +61,7 @@ const CropSlider = () => {
         className="flex gap-4 whitespace-nowrap no-scrollbar"
         style={{ overflowX: "scroll", scrollBehavior: "auto" }}
       >
-        {repeatedCrops.map((crop, index) => (
+        {uniqueCrops.map((crop, index) => (
           <div
             key={index}
             className="inline-block min-w-[160px] bg-white rounded-xl shadow p-2"
@@ -69,7 +79,6 @@ const CropSlider = () => {
     </div>
   );
 };
-
 
 // Extract numeric price from TZS string
 const parsePrice = (priceStr: string) => Number(priceStr.replace(/[^\d]/g, ""));
@@ -92,10 +101,32 @@ const PriceTrendsGraph = () => {
     }));
 
   // Filter available crops by region
-  const availableCrops = crops.filter((crop) => crop.status.toLowerCase() !== "sold");
+  const availableCrops = crops.filter(
+    (crop) => crop.status.toLowerCase() !== "sold"
+  );
 
-  const regionCrops = selectedRegion
-    ? availableCrops.filter((crop) => crop.region === selectedRegion)
+  const regionCropAverages = selectedRegion
+    ? (() => {
+        const filtered = availableCrops.filter(
+          (crop) => crop.region === selectedRegion
+        );
+
+        const priceMap: Record<string, { total: number; count: number }> = {};
+
+        for (const crop of filtered) {
+          const price = parsePrice(crop.price);
+          if (!priceMap[crop.name]) {
+            priceMap[crop.name] = { total: 0, count: 0 };
+          }
+          priceMap[crop.name].total += price;
+          priceMap[crop.name].count++;
+        }
+
+        return Object.entries(priceMap).map(([name, { total, count }]) => ({
+          name,
+          avgPrice: Math.round(total / count),
+        }));
+      })()
     : [];
 
   // Calculate average price per crop for Pie and Bar charts
@@ -108,10 +139,12 @@ const PriceTrendsGraph = () => {
   });
 
   // Pie chart data with average price per crop (unique crops)
-  const pieData = Object.entries(avgPricePerCrop).map(([name, { total, count }]) => ({
-    name,
-    value: Math.round(total / count),
-  }));
+  const pieData = Object.entries(avgPricePerCrop)
+    .map(([name, { total, count }]) => ({
+      name,
+      value: Math.round(total / count),
+    }))
+    .filter((item) => item.value > 2000);
 
   // Bar chart data for average crop prices (same as pieData)
   const priceBarData = pieData;
@@ -133,7 +166,6 @@ const PriceTrendsGraph = () => {
 
   return (
     <div className="my-8">
-
       <div className="bg-green-100 rounded-lg p-6 mb-6 text-center shadow">
         <h1 className="text-3xl font-extrabold mb-2 text-green-900">
           Price Trends & Regional Analysis
@@ -142,7 +174,6 @@ const PriceTrendsGraph = () => {
           visualisation of crop prices and trends.
         </p>
       </div>
-
 
       {/* Crop Selector */}
       <div className="mb-4">
@@ -163,17 +194,23 @@ const PriceTrendsGraph = () => {
         </select>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-6 mb-10">
+      <div className="flex flex-col py-14 lg:flex-row gap-6 mb-10">
         {/* Line Chart for Selected Crop Price Trend */}
         <div style={{ flex: 1, height: 300 }}>
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={cropPriceTrendData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+            <LineChart
+              data={cropPriceTrendData}
+              margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+            >
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis
                 dataKey="date"
                 tickFormatter={(str) => {
                   const date = new Date(str);
-                  return date.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+                  return date.toLocaleDateString(undefined, {
+                    month: "short",
+                    day: "numeric",
+                  });
                 }}
               />
               <YAxis domain={["dataMin - 100", "dataMax + 100"]} />
@@ -187,13 +224,21 @@ const PriceTrendsGraph = () => {
                 }
                 formatter={(value: unknown) => [`TZS ${value}`, "Price"]}
               />
-              <Line type="monotone" dataKey="price" stroke="#16a34a" strokeWidth={2} />
+              <Line
+                type="monotone"
+                dataKey="price"
+                stroke="#16a34a"
+                strokeWidth={2}
+              />
             </LineChart>
           </ResponsiveContainer>
         </div>
 
         {/* Pie Chart for Average Crop Prices */}
         <div style={{ flex: 1, height: 300 }}>
+          <h2 className="text-center py-4">
+            crops with price greater than 2000/=
+          </h2>
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
@@ -207,7 +252,10 @@ const PriceTrendsGraph = () => {
                 label
               >
                 {pieData.map((_, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
                 ))}
               </Pie>
               <Tooltip formatter={(value) => `TZS ${value}`} />
@@ -220,7 +268,9 @@ const PriceTrendsGraph = () => {
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Bar Chart for Average Crop Prices */}
         <div className="w-full lg:w-1/2 h-[400px] bg-white p-4 rounded shadow">
-          <h4 className="text-md font-medium text-center mb-2">Average Crop Prices (TZS/kg)</h4>
+          <h4 className="text-md font-medium text-center mb-2">
+            Average Crop Prices (TZS/kg)
+          </h4>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
               data={priceBarData}
@@ -232,9 +282,17 @@ const PriceTrendsGraph = () => {
               <YAxis dataKey="name" type="category" />
               <Tooltip formatter={(value) => `TZS ${value}`} />
               <Legend />
-              <Bar dataKey="value" fill="#34d399" barSize={14} isAnimationActive>
+              <Bar
+                dataKey="value"
+                fill="#34d399"
+                barSize={14}
+                isAnimationActive
+              >
                 {priceBarData.map((_, index) => (
-                  <Cell key={`price-bar-${index}`} fill={BAR_COLORS[index % BAR_COLORS.length]} />
+                  <Cell
+                    key={`price-bar-${index}`}
+                    fill={BAR_COLORS[index % BAR_COLORS.length]}
+                  />
                 ))}
               </Bar>
             </BarChart>
@@ -243,18 +301,22 @@ const PriceTrendsGraph = () => {
 
         {/* Map and Region Crop List */}
         <div className="w-full lg:w-1/2 h-[400px] bg-white p-4 rounded shadow">
-          <h4 className="text-md font-medium text-center mb-2">Select Region on Map</h4>
+          <h4 className="text-md font-medium text-center mb-2">
+            Select Region on Map
+          </h4>
           <div className="h-[200px] mb-3">
-            <Map onSelectRegion={handleRegionSelect} />
+            <Maps onSelectRegion={handleRegionSelect} />
           </div>
           {selectedRegion && (
             <div className="mt-2 text-sm">
-              <p className="font-semibold text-center mb-1">Available Crops in {selectedRegion}:</p>
+              <p className="font-semibold text-center mb-1">
+                Available Crops in {selectedRegion}:
+              </p>
               <ul className="list-disc ml-5">
-                {regionCrops.length > 0 ? (
-                  regionCrops.map((crop, index) => (
+                {regionCropAverages.length > 0 ? (
+                  regionCropAverages.map((crop, index) => (
                     <li key={index}>
-                      {crop.name} - {crop.price}
+                      {crop.name} – Avg: TZS {crop.avgPrice}
                     </li>
                   ))
                 ) : (
@@ -275,6 +337,7 @@ function Home() {
     <div className="px-4 py-6">
       <CropSlider />
       <PriceTrendsGraph />
+      <OurServices />
     </div>
   );
 }
