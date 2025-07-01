@@ -25,6 +25,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('crop_predictor.urls')),
+    path('api/education/', include('education.urls')),
     path('detector/', include('disease_detection.urls')),  
     path('api/marketplace/', include('market_place.urls')),
     path('api/auth/', include('authentication.urls'))

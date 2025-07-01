@@ -10,20 +10,21 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
-from decouple import config
+import environ
 from pathlib import Path
 import os
 
+env = environ.Env()
+environ.Env.read_env()  # reads .env file
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-7e-d$xm)!mic)(q6wrkz^hg%hw+0q*xh7dy%5d(w(*ccfwg3(l'
+SECRET_KEY = env('SECRET_KEY', default='django-insecure-7e-d$xm)!mic)(q6wrkz^hg%hw+0q*xh7dy%5d(w(*ccfwg3(l')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -62,7 +63,8 @@ INSTALLED_APPS = [
 
 # Custom user model
 AUTH_USER_MODEL = 'authentication.User'
-GROQ_API_KEY = config('GROQ_API_KEY')
+GROQ_API_KEY = env('GROQ_API_KEY', default='')
+
 
 # Django AllAuth settings
 SITE_ID = 1
@@ -80,7 +82,7 @@ ACCOUNT_SIGNUP_FIELDS = {
     'password1': {'required': False},
     'password2': {'required': False},
 }
-ACCOUNT_LOGIN_METHODS = {'username', 'email'}
+ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
 ACCOUNT_EMAIL_VERIFICATION = 'optional'
 
 # REST Framework settings

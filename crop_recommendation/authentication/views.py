@@ -259,3 +259,5 @@ class FacebookLogin(SocialLoginView):
     adapter_class = FacebookOAuth2Adapter
     callback_url = "http://localhost:8000/api/auth/facebook/callback/"
     client_class = OAuth2Client
+
+
