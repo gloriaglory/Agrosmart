@@ -25,10 +25,19 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('crop_predictor.urls')),
-    path('api/education/', include('education.urls')),
+    # path('api/education/', include('education.urls')),
     path('detector/', include('disease_detection.urls')),  
-    path('api/marketplace/', include('market_place.urls')),
-    path('api/auth/', include('authentication.urls'))
+    # path('api/marketplace/', include('market_place.urls')),
+    path('api/auth/', include('authentication.urls')),
+
+
+        
+    
+      
+    path('market/', include('market_place.urls')),
+    path('api/bot/', include('bot.urls')),
+    path('api/education/', include('education.urls')),
+
 ]
 
 # Serve media files in development

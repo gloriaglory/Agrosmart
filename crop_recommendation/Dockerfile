@@ -91,5 +91,6 @@ EXPOSE 8000
 # Use the setup_database.sh script to handle migrations and database setup
 
 CMD /app/setup_database.sh && \
+
     python manage.py collectstatic --noinput || echo "Collectstatic failed" && \
     gunicorn crop_recommendation.wsgi --bind=0.0.0.0:8000 --timeout 120 --workers 4
