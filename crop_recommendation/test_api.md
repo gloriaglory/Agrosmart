@@ -9,9 +9,10 @@ This document provides comprehensive documentation for the Agrosmart API, includ
 4. [Crop Recommendation API](#crop-recommendation-api)
 5. [Disease Detection API](#disease-detection-api)
 6. [Marketplace API](#marketplace-api)
-7. [Testing Seller and Buyer Roles](#testing-seller-and-buyer-roles)
-8. [Error Handling](#error-handling)
-9. [Rate Limiting](#rate-limiting)
+7. [Education API](#education-api)
+8. [Testing Seller and Buyer Roles](#testing-seller-and-buyer-roles)
+9. [Error Handling](#error-handling)
+10. [Rate Limiting](#rate-limiting)
 
 ## Overview
 
@@ -20,6 +21,7 @@ The Agrosmart API provides several services:
 - Crop recommendation based on soil and weather conditions
 - Plant disease detection from images
 - Agricultural marketplace for buying and selling products
+- Educational content and resources for farmers
 
 Base URL: `http://localhost:8000` (for local development)
 
@@ -937,6 +939,458 @@ Authorization: Token {{token}}
 4. Add `Authorization` as key and `Token {{token}}` as value
 5. Click "Send"
 
+## Education API
+
+All education endpoints are prefixed with `/api/education/`.
+
+### List All Educational Content
+
+**Endpoint:** `GET {{base_url}}/api/education/contents/`
+
+**Response (200 OK):**
+```json
+[
+  {
+    "id": 1,
+    "title": "Sustainable Farming Practices",
+    "type": "article",
+    "url_or_text": "Sustainable farming practices are methods that protect the environment, public health, human communities, and animal welfare...",
+    "thumbnail": "http://localhost:8000/media/education_thumbnails/sustainable_farming.jpg",
+    "comments": [
+      {
+        "id": 1,
+        "text": "This article was very helpful!",
+        "content": 1,
+        "parent": null,
+        "replies": [],
+        "created_at": "2023-08-10T09:30:00Z"
+      }
+    ],
+    "created_at": "2023-08-01T12:00:00Z"
+  },
+  {
+    "id": 2,
+    "title": "Crop Rotation Techniques",
+    "type": "youtube",
+    "url_or_text": "https://www.youtube.com/watch?v=example",
+    "thumbnail": "http://localhost:8000/media/education_thumbnails/crop_rotation.jpg",
+    "comments": [],
+    "created_at": "2023-08-02T14:30:00Z"
+  }
+]
+```
+
+**Postman Example:**
+1. Create a new GET request
+2. Enter `{{base_url}}/api/education/contents/` as the URL
+3. Click "Send"
+
+### Get Educational Content by ID
+
+**Endpoint:** `GET {{base_url}}/api/education/contents/{id}/`
+
+**Response (200 OK):**
+```json
+{
+  "id": 1,
+  "title": "Sustainable Farming Practices",
+  "type": "article",
+  "url_or_text": "Sustainable farming practices are methods that protect the environment, public health, human communities, and animal welfare...",
+  "thumbnail": "http://localhost:8000/media/education_thumbnails/sustainable_farming.jpg",
+  "comments": [
+    {
+      "id": 1,
+      "text": "This article was very helpful!",
+      "content": 1,
+      "parent": null,
+      "replies": [],
+      "created_at": "2023-08-10T09:30:00Z"
+    }
+  ],
+  "created_at": "2023-08-01T12:00:00Z"
+}
+```
+
+**Postman Example:**
+1. Create a new GET request
+2. Enter `{{base_url}}/api/education/contents/1/` as the URL (replace 1 with the actual content ID)
+3. Click "Send"
+
+### Create Educational Content
+
+**Endpoint:** `POST {{base_url}}/api/education/contents/`
+
+**Headers:**
+```
+Content-Type: multipart/form-data
+Authorization: Token {{token}}
+```
+
+**Request Body:**
+- Form data with the following fields:
+  - `title` (string): Content title
+  - `type` (string): Content type (either "article" or "youtube")
+  - `url_or_text` (string): Article text or YouTube video URL
+  - `thumbnail` (file, optional): Image file for the content thumbnail
+
+**Response (201 Created):**
+```json
+{
+  "id": 3,
+  "title": "Organic Pest Control",
+  "type": "article",
+  "url_or_text": "Organic pest control is a method of controlling pests without the use of synthetic chemicals...",
+  "thumbnail": "http://localhost:8000/media/education_thumbnails/pest_control.jpg",
+  "comments": [],
+  "created_at": "2023-08-15T10:45:00Z"
+}
+```
+
+**Postman Example:**
+1. Create a new POST request
+2. Enter `{{base_url}}/api/education/contents/` as the URL
+3. Go to the "Headers" tab
+4. Add `Authorization` as key and `Token {{token}}` as value
+5. Go to the "Body" tab, select "form-data"
+6. Add key-value pairs for all fields (title, type, url_or_text)
+7. For the "thumbnail" key, select "File" as the type and choose an image file
+8. Click "Send"
+
+### Update Educational Content
+
+**Endpoint:** `PUT {{base_url}}/api/education/contents/{id}/`
+
+**Headers:**
+```
+Content-Type: multipart/form-data
+Authorization: Token {{token}}
+```
+
+**Request Body:**
+- Form data with the following fields:
+  - `title` (string): Content title
+  - `type` (string): Content type (either "article" or "youtube")
+  - `url_or_text` (string): Article text or YouTube video URL
+  - `thumbnail` (file, optional): Image file for the content thumbnail
+
+**Response (200 OK):**
+```json
+{
+  "id": 3,
+  "title": "Updated: Organic Pest Control",
+  "type": "article",
+  "url_or_text": "Updated content about organic pest control methods...",
+  "thumbnail": "http://localhost:8000/media/education_thumbnails/pest_control_updated.jpg",
+  "comments": [],
+  "created_at": "2023-08-15T10:45:00Z"
+}
+```
+
+**Postman Example:**
+1. Create a new PUT request
+2. Enter `{{base_url}}/api/education/contents/3/` as the URL (replace 3 with the actual content ID)
+3. Go to the "Headers" tab
+4. Add `Authorization` as key and `Token {{token}}` as value
+5. Go to the "Body" tab, select "form-data"
+6. Add key-value pairs for all fields (title, type, url_or_text)
+7. For the "thumbnail" key, select "File" as the type and choose an image file (if updating)
+8. Click "Send"
+
+### Partially Update Educational Content
+
+**Endpoint:** `PATCH {{base_url}}/api/education/contents/{id}/`
+
+**Headers:**
+```
+Content-Type: multipart/form-data
+Authorization: Token {{token}}
+```
+
+**Request Body:**
+- Form data with any of the following fields:
+  - `title` (string, optional): Content title
+  - `type` (string, optional): Content type (either "article" or "youtube")
+  - `url_or_text` (string, optional): Article text or YouTube video URL
+  - `thumbnail` (file, optional): Image file for the content thumbnail
+
+**Response (200 OK):**
+```json
+{
+  "id": 3,
+  "title": "Updated: Organic Pest Control",
+  "type": "article",
+  "url_or_text": "Updated content about organic pest control methods...",
+  "thumbnail": "http://localhost:8000/media/education_thumbnails/pest_control_updated.jpg",
+  "comments": [],
+  "created_at": "2023-08-15T10:45:00Z"
+}
+```
+
+**Postman Example:**
+1. Create a new PATCH request
+2. Enter `{{base_url}}/api/education/contents/3/` as the URL (replace 3 with the actual content ID)
+3. Go to the "Headers" tab
+4. Add `Authorization` as key and `Token {{token}}` as value
+5. Go to the "Body" tab, select "form-data"
+6. Add key-value pairs for the fields you want to update
+7. Click "Send"
+
+### Delete Educational Content
+
+**Endpoint:** `DELETE {{base_url}}/api/education/contents/{id}/`
+
+**Headers:**
+```
+Authorization: Token {{token}}
+```
+
+**Response (204 No Content)**
+
+**Postman Example:**
+1. Create a new DELETE request
+2. Enter `{{base_url}}/api/education/contents/3/` as the URL (replace 3 with the actual content ID)
+3. Go to the "Headers" tab
+4. Add `Authorization` as key and `Token {{token}}` as value
+5. Click "Send"
+
+### List All Comments
+
+**Endpoint:** `GET {{base_url}}/api/education/comments/`
+
+**Response (200 OK):**
+```json
+[
+  {
+    "id": 1,
+    "text": "This article was very helpful!",
+    "content": 1,
+    "parent": null,
+    "replies": [
+      {
+        "id": 2,
+        "text": "I agree, it helped me a lot too!",
+        "content": 1,
+        "parent": 1,
+        "replies": [],
+        "created_at": "2023-08-10T10:15:00Z"
+      }
+    ],
+    "created_at": "2023-08-10T09:30:00Z"
+  }
+]
+```
+
+**Postman Example:**
+1. Create a new GET request
+2. Enter `{{base_url}}/api/education/comments/` as the URL
+3. Click "Send"
+
+### Get Comment by ID
+
+**Endpoint:** `GET {{base_url}}/api/education/comments/{id}/`
+
+**Response (200 OK):**
+```json
+{
+  "id": 1,
+  "text": "This article was very helpful!",
+  "content": 1,
+  "parent": null,
+  "replies": [
+    {
+      "id": 2,
+      "text": "I agree, it helped me a lot too!",
+      "content": 1,
+      "parent": 1,
+      "replies": [],
+      "created_at": "2023-08-10T10:15:00Z"
+    }
+  ],
+  "created_at": "2023-08-10T09:30:00Z"
+}
+```
+
+**Postman Example:**
+1. Create a new GET request
+2. Enter `{{base_url}}/api/education/comments/1/` as the URL (replace 1 with the actual comment ID)
+3. Click "Send"
+
+### Create Comment
+
+**Endpoint:** `POST {{base_url}}/api/education/comments/`
+
+**Headers:**
+```
+Content-Type: application/json
+Authorization: Token {{token}}
+```
+
+**Request Body:**
+```json
+{
+  "text": "Great content, thanks for sharing!",
+  "content": 1,
+  "parent": null
+}
+```
+
+**Response (201 Created):**
+```json
+{
+  "id": 3,
+  "text": "Great content, thanks for sharing!",
+  "content": 1,
+  "parent": null,
+  "replies": [],
+  "created_at": "2023-08-15T11:20:00Z"
+}
+```
+
+**Postman Example:**
+1. Create a new POST request
+2. Enter `{{base_url}}/api/education/comments/` as the URL
+3. Go to the "Headers" tab
+4. Add `Authorization` as key and `Token {{token}}` as value
+5. Go to the "Body" tab, select "raw" and "JSON"
+6. Enter the request body as shown above
+7. Click "Send"
+
+### Create Reply to Comment
+
+**Endpoint:** `POST {{base_url}}/api/education/comments/`
+
+**Headers:**
+```
+Content-Type: application/json
+Authorization: Token {{token}}
+```
+
+**Request Body:**
+```json
+{
+  "text": "I have a question about this topic...",
+  "content": 1,
+  "parent": 3
+}
+```
+
+**Response (201 Created):**
+```json
+{
+  "id": 4,
+  "text": "I have a question about this topic...",
+  "content": 1,
+  "parent": 3,
+  "replies": [],
+  "created_at": "2023-08-15T11:30:00Z"
+}
+```
+
+**Postman Example:**
+1. Create a new POST request
+2. Enter `{{base_url}}/api/education/comments/` as the URL
+3. Go to the "Headers" tab
+4. Add `Authorization` as key and `Token {{token}}` as value
+5. Go to the "Body" tab, select "raw" and "JSON"
+6. Enter the request body as shown above, with the parent field set to the ID of the comment you're replying to
+7. Click "Send"
+
+### Update Comment
+
+**Endpoint:** `PUT {{base_url}}/api/education/comments/{id}/`
+
+**Headers:**
+```
+Content-Type: application/json
+Authorization: Token {{token}}
+```
+
+**Request Body:**
+```json
+{
+  "text": "Updated comment text",
+  "content": 1,
+  "parent": null
+}
+```
+
+**Response (200 OK):**
+```json
+{
+  "id": 3,
+  "text": "Updated comment text",
+  "content": 1,
+  "parent": null,
+  "replies": [],
+  "created_at": "2023-08-15T11:20:00Z"
+}
+```
+
+**Postman Example:**
+1. Create a new PUT request
+2. Enter `{{base_url}}/api/education/comments/3/` as the URL (replace 3 with the actual comment ID)
+3. Go to the "Headers" tab
+4. Add `Authorization` as key and `Token {{token}}` as value
+5. Go to the "Body" tab, select "raw" and "JSON"
+6. Enter the request body as shown above
+7. Click "Send"
+
+### Partially Update Comment
+
+**Endpoint:** `PATCH {{base_url}}/api/education/comments/{id}/`
+
+**Headers:**
+```
+Content-Type: application/json
+Authorization: Token {{token}}
+```
+
+**Request Body:**
+```json
+{
+  "text": "Updated comment text"
+}
+```
+
+**Response (200 OK):**
+```json
+{
+  "id": 3,
+  "text": "Updated comment text",
+  "content": 1,
+  "parent": null,
+  "replies": [],
+  "created_at": "2023-08-15T11:20:00Z"
+}
+```
+
+**Postman Example:**
+1. Create a new PATCH request
+2. Enter `{{base_url}}/api/education/comments/3/` as the URL (replace 3 with the actual comment ID)
+3. Go to the "Headers" tab
+4. Add `Authorization` as key and `Token {{token}}` as value
+5. Go to the "Body" tab, select "raw" and "JSON"
+6. Enter the request body with only the fields you want to update
+7. Click "Send"
+
+### Delete Comment
+
+**Endpoint:** `DELETE {{base_url}}/api/education/comments/{id}/`
+
+**Headers:**
+```
+Authorization: Token {{token}}
+```
+
+**Response (204 No Content)**
+
+**Postman Example:**
+1. Create a new DELETE request
+2. Enter `{{base_url}}/api/education/comments/3/` as the URL (replace 3 with the actual comment ID)
+3. Go to the "Headers" tab
+4. Add `Authorization` as key and `Token {{token}}` as value
+5. Click "Send"
+
 ## Error Handling
 
 The API returns standard HTTP status codes:
@@ -1405,6 +1859,237 @@ You can create a complete Postman collection for testing all the APIs:
               "raw": "{{base_url}}/api/marketplace/items/3/",
               "host": ["{{base_url}}"],
               "path": ["api", "marketplace", "items", "3", ""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Education",
+      "item": [
+        {
+          "name": "List All Educational Content",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/education/contents/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "education", "contents", ""]
+            }
+          }
+        },
+        {
+          "name": "Get Educational Content by ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/education/contents/1/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "education", "contents", "1", ""]
+            }
+          }
+        },
+        {
+          "name": "Create Educational Content",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "title",
+                  "value": "Sustainable Farming Practices",
+                  "type": "text"
+                },
+                {
+                  "key": "type",
+                  "value": "article",
+                  "type": "text"
+                },
+                {
+                  "key": "url_or_text",
+                  "value": "Sustainable farming practices are methods that protect the environment, public health, human communities, and animal welfare...",
+                  "type": "text"
+                },
+                {
+                  "key": "thumbnail",
+                  "type": "file",
+                  "src": "/path/to/your/image.jpg"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/education/contents/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "education", "contents", ""]
+            }
+          }
+        },
+        {
+          "name": "Update Educational Content",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "title",
+                  "value": "Updated: Sustainable Farming Practices",
+                  "type": "text"
+                },
+                {
+                  "key": "type",
+                  "value": "article",
+                  "type": "text"
+                },
+                {
+                  "key": "url_or_text",
+                  "value": "Updated content about sustainable farming practices...",
+                  "type": "text"
+                },
+                {
+                  "key": "thumbnail",
+                  "type": "file",
+                  "src": "/path/to/your/updated_image.jpg"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/education/contents/1/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "education", "contents", "1", ""]
+            }
+          }
+        },
+        {
+          "name": "Delete Educational Content",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/education/contents/1/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "education", "contents", "1", ""]
+            }
+          }
+        },
+        {
+          "name": "List All Comments",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/education/comments/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "education", "comments", ""]
+            }
+          }
+        },
+        {
+          "name": "Create Comment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"text\": \"Great content, thanks for sharing!\",\n  \"content\": 1,\n  \"parent\": null\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/education/comments/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "education", "comments", ""]
+            }
+          }
+        },
+        {
+          "name": "Create Reply to Comment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"text\": \"I have a question about this topic...\",\n  \"content\": 1,\n  \"parent\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/education/comments/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "education", "comments", ""]
+            }
+          }
+        },
+        {
+          "name": "Update Comment",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"text\": \"Updated comment text\",\n  \"content\": 1,\n  \"parent\": null\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/education/comments/1/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "education", "comments", "1", ""]
+            }
+          }
+        },
+        {
+          "name": "Delete Comment",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/education/comments/1/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "education", "comments", "1", ""]
             }
           }
         }
