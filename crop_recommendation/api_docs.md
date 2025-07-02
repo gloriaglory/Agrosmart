@@ -304,6 +304,50 @@ All marketplace endpoints are prefixed with `/api/marketplace/`.
 | `/api/marketplace/items/{id}/` | PATCH | Partially update an item | Required |
 | `/api/marketplace/items/{id}/` | DELETE | Delete an item | Required |
 
+### Education API
+
+All education endpoints are prefixed with `/api/education/`.
+
+| Endpoint | Method | Description | Authentication |
+|----------|--------|-------------|----------------|
+| `/api/education/contents/` | GET | List all educational content | None |
+| `/api/education/contents/{id}/` | GET | Get specific educational content by ID | None |
+| `/api/education/contents/` | POST | Create new educational content | Required |
+| `/api/education/contents/{id}/` | PUT | Update educational content (full update) | Required |
+| `/api/education/contents/{id}/` | PATCH | Partially update educational content | Required |
+| `/api/education/contents/{id}/` | DELETE | Delete educational content | Required |
+| `/api/education/comments/` | GET | List all comments | None |
+| `/api/education/comments/{id}/` | GET | Get specific comment by ID | None |
+| `/api/education/comments/` | POST | Create new comment or reply | Required |
+| `/api/education/comments/{id}/` | PUT | Update comment (full update) | Required |
+| `/api/education/comments/{id}/` | PATCH | Partially update comment | Required |
+| `/api/education/comments/{id}/` | DELETE | Delete comment | Required |
+
+#### Content Object Structure
+```json
+{
+  "id": 1,
+  "title": "Sustainable Farming Practices",
+  "type": "article",
+  "url_or_text": "Content text or YouTube URL...",
+  "thumbnail": "http://localhost:8000/media/education_thumbnails/image.jpg",
+  "comments": [],
+  "created_at": "2023-08-01T12:00:00Z"
+}
+```
+
+#### Comment Object Structure
+```json
+{
+  "id": 1,
+  "text": "Comment text",
+  "content": 1,
+  "parent": null,
+  "replies": [],
+  "created_at": "2023-08-10T09:30:00Z"
+}
+```
+
 #### Item Object Structure
 ```json
 {

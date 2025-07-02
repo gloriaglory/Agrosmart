@@ -71,6 +71,11 @@ RUN pip install cryptography
 # Add path for the AI model
 RUN mkdir -p /app/staticfiles /app/media && \
     chown -R "${UID}":"${UID}" /app
+
+# Copy setup script before switching to non-privileged user
+COPY setup_database.sh /app/setup_database.sh
+RUN chmod +x /app/setup_database.sh
+
 # Switch to the non-privileged user to run the application.
 USER appuser
 
@@ -83,11 +88,8 @@ EXPOSE 8000
 
 
 # Run the application.
-# Command to handle migrations and start the server
-CMD python manage.py makemigrations --merge --noinput || echo "Merge migrations failed" && \
-    python manage.py migrate --noinput || echo "Migrations failed, attempting to create tables directly" && \
-    python manage.py shell -c "from django.db import connection; cursor = connection.cursor(); cursor.execute('CREATE TABLE IF NOT EXISTS education_content (id SERIAL PRIMARY KEY, title VARCHAR(255) NOT NULL, type VARCHAR(10) NOT NULL, url_or_text TEXT NOT NULL, thumbnail VARCHAR(100) NULL, created_at TIMESTAMP WITH TIME ZONE NOT NULL)'); cursor.execute('CREATE TABLE IF NOT EXISTS education_comment (id SERIAL PRIMARY KEY, text TEXT NOT NULL, parent_id INTEGER NULL REFERENCES education_comment(id) ON DELETE CASCADE, content_id INTEGER NOT NULL REFERENCES education_content(id) ON DELETE CASCADE, created_at TIMESTAMP WITH TIME ZONE NOT NULL)');" || echo "Failed to create education tables" && \
-    python manage.py shell -c "from django.db import connection; cursor = connection.cursor(); cursor.execute('CREATE TABLE IF NOT EXISTS authentication_user (id SERIAL PRIMARY KEY, password VARCHAR(128) NOT NULL, last_login TIMESTAMP WITH TIME ZONE NULL, is_superuser BOOLEAN NOT NULL, username VARCHAR(150) NOT NULL UNIQUE, email VARCHAR(254) NOT NULL, is_staff BOOLEAN NOT NULL, is_active BOOLEAN NOT NULL, date_joined TIMESTAMP WITH TIME ZONE NOT NULL, first_name VARCHAR(150) NOT NULL, last_name VARCHAR(150) NOT NULL)');" || echo "Failed to create authentication_user table" && \
-    python manage.py shell -c "from django.db import connection; cursor = connection.cursor(); cursor.execute('CREATE TABLE IF NOT EXISTS authtoken_token (key VARCHAR(40) NOT NULL PRIMARY KEY, created TIMESTAMP WITH TIME ZONE NOT NULL, user_id INTEGER NOT NULL UNIQUE)');" || echo "Failed to create authtoken_token table" && \
+# Use the setup_database.sh script to handle migrations and database setup
+
+CMD /app/setup_database.sh && \
     python manage.py collectstatic --noinput || echo "Collectstatic failed" && \
     gunicorn crop_recommendation.wsgi --bind=0.0.0.0:8000 --timeout 120 --workers 4

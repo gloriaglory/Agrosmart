@@ -1,0 +1,12 @@
+FROM crop_recommendation-server
+
+# Copy our migration fix script
+COPY docker_migration_fix.sh /app/docker_migration_fix.sh
+RUN chmod +x /app/docker_migration_fix.sh
+
+# Make directories writable
+RUN mkdir -p /app/market_place/migrations && \
+    chmod -R 777 /app/market_place/migrations
+
+# Override the CMD
+CMD ["/app/docker_migration_fix.sh"]
