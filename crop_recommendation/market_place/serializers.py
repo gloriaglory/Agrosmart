@@ -13,18 +13,24 @@ class MarketplaceItemSerializer(serializers.ModelSerializer):
     idealTemperature = serializers.CharField(required=False)
     suitability = serializers.CharField(required=False)
     seller = serializers.CharField(required=False)
+    user = serializers.SerializerMethodField()
+    def get_user(self, obj):
+        return obj.user.id if obj.user else None
     phone = serializers.SerializerMethodField()
     date = serializers.CharField(required=False)
 
     class Meta:
         model = MarketplaceItem
-        fields = ['id', 'name', 'description', 'price', 'category', 'quantity', 'location', 'contact_info', 'idealTemperature', 'suitability', 'image', 'imageUrl', 'seller', 'phone', 'date', 'created_at', 'updated_at']
+        fields = '__all__'
 
     def to_representation(self, instance):
         """
         Override to_representation to ensure all required fields are populated.
         """
         data = super().to_representation(instance)
+
+        # Set user field to the id of the user who created the product
+        data['user'] = instance.user.id if instance.user else None
 
         # Ensure idealTemperature is populated
         if not data.get('idealTemperature'):
@@ -176,7 +182,7 @@ class MarketplaceItemSerializer(serializers.ModelSerializer):
             phone_value = validated_data.pop('phone')
             validated_data['contact_info'] = phone_value
             validated_data['phone'] = phone_value
-        elif request and request.user and request.user.is_authenticated and request.user.phone_number:
+        elif request and request.user and request.user.is_authenticated and hasattr(request.user, 'phone_number') and request.user.phone_number:
             validated_data['contact_info'] = request.user.phone_number
             validated_data['phone'] = request.user.phone_number
         else:
@@ -192,12 +198,18 @@ class MarketplaceItemSerializer(serializers.ModelSerializer):
             # Set a default image URL (using a placeholder image service)
             validated_data['imageUrl'] = 'https://via.placeholder.com/300x200?text=Plant+Image'
 
+        # Set the user field from the request
+        if request and request.user and request.user.is_authenticated:
+            validated_data['user'] = request.user
+        # else: do not set user, let it fail if required
+
         return super().create(validated_data)
 
 class RecommendationMarketplaceItemSerializer(serializers.ModelSerializer):
     idealTemperature = serializers.SerializerMethodField()
     suitability = serializers.SerializerMethodField()
     seller = serializers.SerializerMethodField()
+    user = serializers.SerializerMethodField()
     phone = serializers.SerializerMethodField()
     date = serializers.SerializerMethodField()
     imageUrl = serializers.SerializerMethodField()
@@ -205,6 +217,8 @@ class RecommendationMarketplaceItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = MarketplaceItem
         fields = '__all__'
+    def get_user(self, obj):
+        return obj.user.id if obj.user else None
 
     def get_idealTemperature(self, obj):
         # Return existing idealTemperature if available and not null

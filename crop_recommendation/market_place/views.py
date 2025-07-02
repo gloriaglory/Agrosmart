@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from rest_framework.authentication import TokenAuthentication
 from rest_framework import generics, permissions, status, viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -272,8 +273,18 @@ class MarketplaceItemViewSet(viewsets.ModelViewSet):
     Allows listing, creating, updating, and deleting marketplace items.
     """
     queryset = MarketplaceItem.objects.all()
+    # permission_classes = [permissions.IsAuthenticated]
     serializer_class = MarketplaceItemSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    # Public API: no authentication required for GET/list
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve']:
+            return []
+        return [permissions.IsAuthenticated()]
+
+    def dispatch(self, request, *args, **kwargs):
+        # Disable CSRF checks for API requests
+        setattr(request, '_dont_enforce_csrf_checks', True)
+        return super().dispatch(request, *args, **kwargs)
 
     def retrieve(self, request, *args, **kwargs):
         """
