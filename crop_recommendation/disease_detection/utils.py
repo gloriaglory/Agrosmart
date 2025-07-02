@@ -1,74 +1,18 @@
 import os
-import zipfile
 import json
 import numpy as np
-import requests
-from PIL import Image
 import tensorflow as tf
+from PIL import Image
+import cv2
+import tempfile
 
-# === Download Helper Functions ===
-
-def download_from_google_drive(file_id: str, dest_path: str):
-    """Downloads a file from Google Drive using a confirmation token if necessary."""
-    URL = "https://docs.google.com/uc?export=download"
-    session = requests.Session()
-
-    response = session.get(URL, params={"id": file_id}, stream=True)
-    token = _get_confirm_token(response)
-
-    if token:
-        response = session.get(URL, params={"id": file_id, "confirm": token}, stream=True)
-
-    _save_response_content(response, dest_path)
-
-def _get_confirm_token(response):
-    for key, value in response.cookies.items():
-        if key.startswith("download_warning"):
-            return value
-    return None
-
-def _save_response_content(response, destination):
-    CHUNK_SIZE = 32768
-    with open(destination, "wb") as f:
-        for chunk in response.iter_content(CHUNK_SIZE):
-            if chunk:
-                f.write(chunk)
-
-# === Paths and Constants ===
-
+# === Paths ===
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-MODEL_NAME = "plant_disease_model1.keras"
-MODEL_PATH = os.path.join(BASE_DIR, "disease_detection", "ml_models", MODEL_NAME)
-ZIP_PATH = MODEL_PATH + ".zip"
+MODEL_PATH = os.path.join(BASE_DIR, "disease_detection", "ml_models", "plant_disease_model1.keras")
 DISEASE_INFO_PATH = os.path.join(BASE_DIR, "disease_detection", "ml_models", "disease_info.json")
-GOOGLE_DRIVE_FILE_ID = "1dZbPBuPFqyYjvBOXBnEuT4GE9RsdS-4F"
+CLASS_INDICES_PATH = os.path.join(BASE_DIR, "disease_detection", "ml_models", "class_indices.json")
 
-# === Model Setup ===
-
-def ensure_model_exists():
-    """Download and unzip the model if it doesn't already exist."""
-    if not os.path.exists(MODEL_PATH):
-        if not os.path.exists(ZIP_PATH):
-            print("Downloading model from Google Drive...")
-            try:
-                download_from_google_drive(GOOGLE_DRIVE_FILE_ID, ZIP_PATH)
-                print("Model zip downloaded.")
-            except Exception as e:
-                print(f"Failed to download model zip: {e}")
-                return
-
-        print("Extracting model zip...")
-        try:
-            with zipfile.ZipFile(ZIP_PATH, 'r') as zipf:
-                zipf.extractall(os.path.dirname(MODEL_PATH))
-            print("Model extracted.")
-        except Exception as e:
-            print(f"Failed to unzip model: {e}")
-
-# Ensure model is ready
-ensure_model_exists()
-
-# Load model
+# === Load Model ===
 try:
     model = tf.keras.models.load_model(MODEL_PATH)
     print("Model loaded successfully.")
@@ -76,51 +20,95 @@ except Exception as e:
     print(f"Error loading model: {e}")
     model = None
 
-# Load disease info
+# === Load Disease Info ===
 try:
     with open(DISEASE_INFO_PATH, "r", encoding="utf-8") as f:
-        disease_data = json.load(f)
-        disease_info = disease_data["diseases"]
-        CLASS_NAMES = list(disease_info.keys())
+        DISEASE_INFO = json.load(f)
 except Exception as e:
     print(f"Error loading disease info: {e}")
-    disease_info = {}
+    DISEASE_INFO = {}
+
+# === Load Class Names using class_indices.json ===
+try:
+    with open(CLASS_INDICES_PATH, "r", encoding="utf-8") as f:
+        class_indices = json.load(f)
+        CLASS_NAMES = [None] * len(class_indices)
+        for name, idx in class_indices.items():
+            CLASS_NAMES[idx] = name
+except Exception as e:
+    print(f"Error loading class indices: {e}")
     CLASS_NAMES = []
 
-# === Image Preprocessing ===
+# === Image Validation ===
+def is_valid_plant_image(image_path: str, green_threshold=2.0) -> bool:
+    """Check if image contains at least `green_threshold`% green pixels."""
+    try:
+        img = cv2.imread(image_path)
+        if img is None:
+            return False
+        hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+        
+        # Broaden green range to include more shades
+        lower_green = np.array([25, 40, 40])
+        upper_green = np.array([90, 255, 255])
+        
+        mask = cv2.inRange(hsv, lower_green, upper_green)
+        green_pixels = np.sum(mask > 0)
+        total_pixels = img.shape[0] * img.shape[1]
+        green_pct = (green_pixels / total_pixels) * 100
+        
+        print(f"Green pixels: {green_pct:.2f}%")
+        return green_pct >= green_threshold
+    except Exception as e:
+        print(f"Image validation error: {e}")
+        return False
 
-def preprocess_image(image: Image.Image, target_size=(224, 224)) -> np.ndarray:
-    """Resize and normalize image to model's input format."""
-    image = image.resize(target_size)
-    img_array = np.array(image) / 255.0  # Normalize
-    img_array = np.expand_dims(img_array, axis=0)  # Add batch dimension
-    return img_array
+# === Image Preprocessing ===
+def preprocess_image(image_path_or_file, target_size=(224, 224)) -> np.ndarray:
+    """Resize and normalize image for model input."""
+    if isinstance(image_path_or_file, str):
+        img = cv2.imread(image_path_or_file)
+        if img is None:
+            raise ValueError("Cannot read image at path")
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    else:
+        pil_img = Image.open(image_path_or_file).convert("RGB")
+        img = np.array(pil_img)
+
+    img = cv2.resize(img, target_size)
+    img = img / 255.0
+    return np.expand_dims(img, axis=0)
 
 # === Prediction ===
-
 def predict_disease(image_file) -> dict:
-    """Predict plant disease from an image file."""
     if model is None:
         raise RuntimeError("Model not loaded.")
-    
     if not CLASS_NAMES:
-        raise RuntimeError("CLASS_NAMES list is empty. Check disease_info.json format.")
+        raise RuntimeError("CLASS_NAMES is empty. Check class_indices.json.")
 
-    # Open and preprocess the image
-    image = Image.open(image_file).convert("RGB")
-    processed_img = preprocess_image(image)
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as tmp:
+        tmp.write(image_file.read())
+        tmp.flush()
+        tmp_path = tmp.name
 
-    # Predict
+    try:
+        if not is_valid_plant_image(tmp_path):
+            raise ValueError("Image is not a plant.")
+        image_file.seek(0)
+        processed_img = preprocess_image(image_file)
+    finally:
+        if os.path.exists(tmp_path):
+            os.remove(tmp_path)
+
     predictions = model.predict(processed_img)[0]
     pred_idx = int(np.argmax(predictions))
 
-    # Fallback in case of mismatch
     if pred_idx >= len(CLASS_NAMES):
         pred_idx = int(np.argmax(predictions[:len(CLASS_NAMES)]))
 
     disease_name = CLASS_NAMES[pred_idx]
     confidence = float(predictions[pred_idx])
-    disease_details = disease_info.get(disease_name, {})
+    disease_details = DISEASE_INFO.get(disease_name, {})
 
     return {
         "disease": disease_name,

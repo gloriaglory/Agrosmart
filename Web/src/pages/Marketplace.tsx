@@ -59,7 +59,7 @@ interface FormData {
   contact_info: string;
 }
 
-const API_BASE = "http://localhost:8000/market/items/";
+const API_BASE = "https://ewe-relevant-fox.ngrok-free.app/market/items/";
 
 export default function Marketplace() {
   const { user: currentUser, setUser } = User();

@@ -1,41 +1,25 @@
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.parsers import MultiPartParser, FormParser
-from rest_framework import status
-from rest_framework.permissions import AllowAny
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+from django.utils.decorators import method_decorator
+from django.views import View
 from .utils import predict_disease
 
-
-class PredictDiseaseView(APIView):
-    parser_classes = (MultiPartParser, FormParser)
-    permission_classes = [AllowAny]
-
-    def post(self, request, format=None):
-        file_obj = request.FILES.get("file")
-
-        if not file_obj:
-            return Response(
-                {"error": "No file provided."},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-        if file_obj.size > 5 * 1024 * 1024:  
-            return Response(
-                {"error": "File too large. Max size is 5MB."},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-        if not file_obj.content_type.startswith("image/"):
-            return Response(
-                {"error": "Unsupported file type. Please upload an image."},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
+@method_decorator(csrf_exempt, name='dispatch')  # Disable CSRF for testing only; enable in production
+class PredictDiseaseView(View):
+    def post(self, request, *args, **kwargs):
+        image_file = request.FILES.get('image')
+        if not image_file:
+            return JsonResponse({'error': 'No image file provided.'}, status=400)
+        
         try:
-            result = predict_disease(file_obj)
-            return Response(result, status=status.HTTP_200_OK)
+            prediction = predict_disease(image_file)
+            return JsonResponse(prediction)
+        except ValueError as ve:
+            # Raised when image is invalid (e.g., not enough green pixels)
+            return JsonResponse({'error': str(ve)}, status=400)
+        except RuntimeError as re:
+            # Raised if model is not loaded or class names missing
+            return JsonResponse({'error': str(re)}, status=500)
         except Exception as e:
-            return Response(
-                {"error": f"Failed to predict disease: {str(e)}"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
+            # Catch-all for unexpected errors
+            return JsonResponse({'error': 'Prediction failed.', 'details': str(e)}, status=500)
