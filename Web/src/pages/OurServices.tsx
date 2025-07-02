@@ -25,8 +25,8 @@ const OurServices: FC = () => {
       path: "/disease_detection",
     },
     {
-      name: "Offline Services (USSD)",
-      description: "Dial *00# on your phone to access services without internet.",
+      name: "Offline SMS Services",
+      description: "Dial *100# on your phone to access our services without internet.",
       icon: Smartphone, 
       path: null,
     },

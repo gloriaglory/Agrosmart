@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "https://your-api-url.com/api";
+const BASE_URL = "https://ewe-relevant-fox.ngrok-free.app/api";
 
 /**
  * Generic API call handler using Axios.
