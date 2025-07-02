@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.validators import FileExtensionValidator
+from django.conf import settings
 
 
 def upload_to(instance, filename):
@@ -14,6 +15,7 @@ class Content(models.Model):
     ]
 
     title = models.CharField(max_length=255)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='education_contents')
     type = models.CharField(max_length=10, choices=CONTENT_TYPES, default=ARTICLE)
     url_or_text = models.TextField()
     
@@ -32,6 +34,7 @@ class Content(models.Model):
 
 class Comment(models.Model):
     content = models.ForeignKey(Content, related_name='comments', on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='education_comments')
     text = models.TextField()
     parent = models.ForeignKey('self', null=True, blank=True, related_name='replies', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
