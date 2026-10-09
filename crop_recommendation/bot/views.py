@@ -1,8 +1,27 @@
+import re
+
 import httpx
 from django.conf import settings
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+
+def plain_text(answer):
+    """Remove Markdown markers the model sometimes adds anyway (**bold**, # headings)."""
+    answer = re.sub(r"(\*\*|__)(.+?)\1", r"\2", answer)
+    answer = re.sub(r"^\s{0,3}#{1,6}\s*", "", answer, flags=re.M)
+    return answer.strip()
+
+
+# The chat window shows plain text, so ask for short answers without Markdown.
+SYSTEM_PROMPT = (
+    "You are AgroSmart's farming assistant, helping small-scale farmers in Tanzania. "
+    "Answer in the same language as the question (Kiswahili or English). "
+    "Be practical and concise: at most about 120 words. "
+    "Use plain text only: no tables, no Markdown, no bold or headings. "
+    "Short numbered steps are fine when giving instructions."
+)
+
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -21,13 +40,15 @@ def agro_bot(request):
         "Content-Type": "application/json"
     }
     payload = {
-        "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+        "model": settings.CHAT_MODEL,
         "messages": [
-            {"role": "system", "content": "You are an expert agriculture assistant helping small-scale farmers in Africa. Answer clearly and concisely."},
+            {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": question}
         ],
-        "max_tokens": 200,
-        "temperature": 0.7
+        # gpt-oss models reason before answering; reasoning counts toward max_tokens
+        "max_tokens": 1200,
+        "temperature": 0.7,
+        **({"reasoning_effort": "low"} if settings.CHAT_MODEL.startswith("openai/gpt-oss") else {}),
     }
 
     try:
@@ -36,7 +57,7 @@ def agro_bot(request):
             response.raise_for_status()
             data = response.json()
             # OpenAI-compatible response format:
-            answer = data.get("choices", [{}])[0].get("message", {}).get("content", "")
+            answer = plain_text(data.get("choices", [{}])[0].get("message", {}).get("content") or "")
 
             if not answer:
                 return Response({'error': 'No answer received from Groq API'}, status=500)

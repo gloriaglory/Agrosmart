@@ -1,6 +1,12 @@
+import PageHero from "../components/PageHero";
+import marketHeroImg from "../assets/images/greengrams.png";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { tanzaniaRegions } from "../components/regions";
+import { MARKET_API, cropImage, type MarketplaceItem } from "../market";
+import { useUser } from "../UserContext";
+import { formatPrice } from "../format";
 
 class MarketplaceErrorBoundary extends React.Component<
   { children: React.ReactNode },
@@ -22,9 +28,9 @@ class MarketplaceErrorBoundary extends React.Component<
   render() {
     if (this.state.hasError) {
       return (
-        <div className="text-center text-red-600 p-10">
-          <h2 className="text-2xl font-bold mb-2">Something went wrong.</h2>
-          <p>{this.state.error?.message}</p>
+        <div className="page text-center">
+          <h2 className="section-title">Something went wrong.</h2>
+          <p className="muted mt-2">{this.state.error?.message}</p>
         </div>
       );
     }
@@ -32,144 +38,249 @@ class MarketplaceErrorBoundary extends React.Component<
   }
 }
 
-interface MarketplaceItem {
-  id: number | string;
-  name: string;
-  description: string;
-  price: number;
-  image?: string;
-  category: string;
-  quantity: number;
-  location: string;
-  contact_info: string;
-}
-
-const API_BASE = "http://localhost:8000/market/items/";
+const regionNames = tanzaniaRegions.map((r) => r.name).sort();
 
 export default function MarketplaceViewer() {
   const [items, setItems] = useState<MarketplaceItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [selectedItem, setSelectedItem] = useState<MarketplaceItem | null>(null);
+  const [selectedItem, setSelectedItem] = useState<MarketplaceItem | null>(
+    null,
+  );
+  const [searchParams, setSearchParams] = useSearchParams();
+  const region = searchParams.get("region") ?? "";
+  const [search, setSearch] = useState(searchParams.get("search") ?? "");
 
-  const navigate = useNavigate(); // 👈 Hook to navigate
+  const navigate = useNavigate();
+  const { user } = useUser();
 
   useEffect(() => {
-    fetchItems();
-  }, []);
+    const controller = new AbortController();
+    const timer = setTimeout(async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const res = await axios.get<MarketplaceItem[]>(MARKET_API, {
+          params: {
+            region: region || undefined,
+            search: search.trim() || undefined,
+          },
+          signal: controller.signal,
+        });
+        setItems(res.data);
+      } catch (err) {
+        if (!axios.isCancel(err)) setError("Failed to load marketplace items.");
+      } finally {
+        setLoading(false);
+      }
+    }, 250);
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
+  }, [region, search]);
 
-  const fetchItems = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await axios.get<MarketplaceItem[]>(API_BASE);
-      setItems(res.data);
-    } catch {
-      setError("Failed to load marketplace items.");
-    } finally {
-      setLoading(false);
-    }
+  const setRegion = (value: string) => {
+    const next = new URLSearchParams(searchParams);
+    if (value) next.set("region", value);
+    else next.delete("region");
+    setSearchParams(next, { replace: true });
   };
+
+  const selectedImage = selectedItem ? cropImage(selectedItem) : null;
 
   return (
     <MarketplaceErrorBoundary>
-      <div className="mb-4 flex justify-between items-center">
-          <h1 className="text-3xl font-bold">Marketplace</h1>
-
-          {/* Become a Seller button */}
-          <button
-            onClick={() => navigate("/products")}
-            className="bg-primary text-white px-4 py-4 rounded hover:bg-primary/80"
-          >
-            Become a Seller
+      <div>
+        <PageHero
+          image={marketHeroImg}
+          imageStyle="texture"
+          imagePosition="center 85%"
+          title="Marketplace"
+          subtitle="Fresh produce listed directly by farmers verified with their NIDA number."
+        >
+          <button onClick={() => navigate("/products")} className="btn-primary">
+            {user?.is_seller ? "Sell your produce" : "Become a seller"}
           </button>
-        </div>
-      <div className="max-w-6xl mx-auto p-4">
-        <div className="mb-4">
-          <h1 className="text-3xl font-bold">Marketplace</h1>
-        </div>
-
-        {loading && <p>Loading items...</p>}
-        {error && <p className="text-red-600">{error}</p>}
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {items.map((item) => (
-            <div
-              key={item.id}
-              className="border rounded shadow hover:shadow-lg p-4 flex flex-col"
-              onClick={() => setSelectedItem(item)}
+        </PageHero>
+        <div className="page">
+          <div className="mb-8 flex flex-col gap-3 sm:flex-row">
+            <input
+              type="search"
+              placeholder="Search crops, e.g. maize"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="input sm:max-w-sm"
+              aria-label="Search listings"
+            />
+            <select
+              value={region}
+              onChange={(e) => setRegion(e.target.value)}
+              className="input sm:w-56"
+              aria-label="Filter by region"
             >
-              {item.image ? (
-                <img
-                  src={item.image}
-                  alt={item.name}
-                  className="w-full h-40 object-cover rounded mb-3"
-                />
-              ) : (
-                <div className="w-full h-40 bg-gray-200 rounded mb-3 flex items-center justify-center text-gray-500">
-                  No image
-                </div>
-              )}
-              <h2 className="text-xl font-semibold">{item.name}</h2>
-              <p className="text-gray-700 flex-grow line-clamp-2">
-                {item.description}
+              <option value="">All regions</option>
+              {regionNames.map((r) => (
+                <option key={r} value={r}>
+                  {r}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {loading && items.length === 0 && (
+            <p className="muted">Loading items…</p>
+          )}
+          {error && <p className="alert-error">{error}</p>}
+          {!loading && !error && items.length === 0 && (
+            <div className="card p-10 text-center">
+              <p className="font-medium text-stone-900">
+                {region || search
+                  ? "No listings match your filters"
+                  : "No items listed yet"}
               </p>
-              <p className="text-gray-600 text-sm">Location: {item.location}</p>
-              <p className="font-bold mt-2">{Number(item.price).toFixed(2)} /=</p>
+              <p className="muted mt-1">
+                {region || search
+                  ? "Try another region or search term."
+                  : "Check back soon, or list your own produce."}
+              </p>
             </div>
-          ))}
-        </div>
+          )}
 
-        {selectedItem && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-6 w-full max-w-3xl flex gap-6">
-              <img
-                src={selectedItem.image || ""}
-                alt={selectedItem.name}
-                className="w-1/2 h-full object-cover rounded"
-              />
-              <div className="w-1/2 relative">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {items.map((item) => {
+              const img = cropImage(item);
+              return (
                 <button
-                  onClick={() => setSelectedItem(null)}
-                  className="absolute top-2 right-2 text-gray-500 hover:text-black text-xl"
-                  aria-label="Close content view"
+                  key={item.id}
+                  className="card card-hover flex flex-col overflow-hidden text-left"
+                  onClick={() => setSelectedItem(item)}
                 >
-                  &times;
+                  {img ? (
+                    <img
+                      src={img}
+                      alt={item.name}
+                      className="h-44 w-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-44 w-full items-center justify-center bg-stone-100 text-sm text-stone-400">
+                      No image
+                    </div>
+                  )}
+                  <div className="flex flex-1 flex-col p-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <h2 className="font-semibold text-stone-900">
+                        {item.name}
+                      </h2>
+                      <span className="shrink-0 font-semibold text-primary">
+                        {formatPrice(item.price)}
+                      </span>
+                    </div>
+                    <p className="mt-1 flex-1 text-sm text-stone-600 line-clamp-2">
+                      {item.description}
+                    </p>
+                    <p className="mt-3 text-xs text-stone-500">
+                      {[item.location, item.region].filter(Boolean).join(", ")}
+                    </p>
+                  </div>
                 </button>
-                <h2 className="text-2xl font-bold mb-2">{selectedItem.name}</h2>
-                <p className="text-gray-700 flex-grow pb-5">
-                  {selectedItem.description}
-                </p>
-                <div className="flex items-center justify-between gap-4 mb-2">
-                  <span className="text-gray-600">
-                    Category: {selectedItem.category}
-                  </span>
-                  <span className="text-gray-600">
-                    Quantity: {selectedItem.quantity}Kg
-                  </span>
-                </div>
-                <div className="flex items-center justify-between gap-4 mb-2">
-                  <span className="text-gray-600">
-                    Contact: {selectedItem.contact_info}
-                  </span>
-                  <span className="text-gray-600">
-                    Location: {selectedItem.location}
-                  </span>
-                </div>
-                <p className="font-bold text-xl mt-2">
-                  {Number(selectedItem.price).toFixed(2)} /=
-                </p>
+              );
+            })}
+          </div>
 
-                <a
-                  href={`tel:${selectedItem.contact_info}`}
-                  className="mt-4 text-center inline-block px-4 py-2 w-80 bg-primary text-white rounded hover:bg-primary/65"
-                >
-                  Contact Seller
-                </a>
+          {selectedItem && (
+            <div
+              className="modal-backdrop"
+              onClick={() => setSelectedItem(null)}
+            >
+              <div
+                className="modal max-w-3xl p-0"
+                onClick={(e) => e.stopPropagation()}
+                role="dialog"
+                aria-modal="true"
+              >
+                <div className="grid md:grid-cols-2">
+                  {selectedImage ? (
+                    <img
+                      src={selectedImage}
+                      alt={selectedItem.name}
+                      className="h-64 w-full object-cover md:h-full"
+                    />
+                  ) : (
+                    <div className="flex h-64 items-center justify-center bg-stone-100 text-sm text-stone-400 md:h-full">
+                      No image
+                    </div>
+                  )}
+                  <div className="flex flex-col p-6">
+                    <div className="flex items-start justify-between gap-4">
+                      <h2 className="text-xl font-semibold text-stone-900">
+                        {selectedItem.name}
+                      </h2>
+                      <button
+                        onClick={() => setSelectedItem(null)}
+                        className="btn-ghost -mr-2 -mt-1 px-2 py-1 text-xs"
+                      >
+                        Close
+                      </button>
+                    </div>
+                    <p className="mt-1 text-lg font-semibold text-primary">
+                      {formatPrice(selectedItem.price)}
+                    </p>
+                    <p className="mt-4 text-sm text-stone-600">
+                      {selectedItem.description}
+                    </p>
+
+                    <dl className="mt-6 grid grid-cols-2 gap-4 border-t border-stone-200 pt-4 text-sm">
+                      <div>
+                        <dt className="stat-label">Category</dt>
+                        <dd className="mt-1 text-stone-900">
+                          {selectedItem.category}
+                        </dd>
+                      </div>
+                      <div>
+                        <dt className="stat-label">Quantity</dt>
+                        <dd className="mt-1 text-stone-900">
+                          {selectedItem.quantity} kg
+                        </dd>
+                      </div>
+                      <div>
+                        <dt className="stat-label">Region</dt>
+                        <dd className="mt-1 text-stone-900">
+                          {selectedItem.region || "—"}
+                        </dd>
+                      </div>
+                      <div>
+                        <dt className="stat-label">Town / city</dt>
+                        <dd className="mt-1 text-stone-900">
+                          {selectedItem.location}
+                        </dd>
+                      </div>
+                      <div>
+                        <dt className="stat-label">Seller</dt>
+                        <dd className="mt-1 text-stone-900">
+                          {selectedItem.seller_name || "—"}
+                        </dd>
+                      </div>
+                      <div>
+                        <dt className="stat-label">Contact</dt>
+                        <dd className="mt-1 text-stone-900">
+                          {selectedItem.contact_info}
+                        </dd>
+                      </div>
+                    </dl>
+
+                    <a
+                      href={`tel:${selectedItem.contact_info}`}
+                      className="btn-primary mt-6 py-2.5"
+                    >
+                      Contact seller
+                    </a>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </MarketplaceErrorBoundary>
   );

@@ -30,6 +30,7 @@ export const tanzaniaRegions: Region[] = [
   { name: "Shinyanga", latitude: -3.6619, longitude: 33.4236 },
   { name: "Simiyu", latitude: -2.7786, longitude: 34.1535 },
   { name: "Singida", latitude: -4.8161, longitude: 34.7436 },
+  { name: "Songwe", latitude: -9.1072, longitude: 32.9361 },
   { name: "Tabora", latitude: -5.0151, longitude: 32.8045 },
   { name: "Tanga", latitude: -5.0697, longitude: 39.0726 },
   { name: "Zanzibar Central/South", latitude: -6.2167, longitude: 39.35 },

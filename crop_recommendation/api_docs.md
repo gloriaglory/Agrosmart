@@ -368,7 +368,7 @@ If you're using VS Code's REST Client extension, you can set up environment vari
 
 1. Create a `.env` file in the same directory with your variables:
    ```
-   @baseUrl = http://localhost:8000
+   @baseUrl = http://localhost:8765
    @authToken = your_actual_token_here
    ```
 

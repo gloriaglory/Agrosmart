@@ -1,80 +1,100 @@
+import { API_URL } from "../config";
 import { useState } from "react";
 import axios from "axios";
-import { useNavigate, useLocation } from "react-router-dom";
-import { FaGoogle, FaFacebook } from "react-icons/fa";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useUser } from "../UserContext";
+import SocialLogin from "../components/SocialLogin";
 
-const API_BASE = "http://localhost:8000/api/auth/login/";
+const API_BASE = `${API_URL}/api/auth/login/`;
+
+type LoginState = { from?: string; registered?: string } | null;
 
 export default function Login() {
-  const [username, setUsername] = useState("");
+  const location = useLocation();
+  const state = location.state as LoginState;
+  // Set when arriving here straight after signing up
+  const registered = state?.registered;
+
+  const [username, setUsername] = useState(registered ?? "");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
-  const location = useLocation();
+  const { refreshUser } = useUser();
 
-  // Get 'from' path from location state or fallback to "/"
-  const from = (location.state as { from?: string })?.from || "/";
+  // Redirect back to where the user came from, or home
+  const from = state?.from || "/";
 
-  const handleLogin = async () => {
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
     setError(null);
+    setLoading(true);
     try {
       const res = await axios.post(API_BASE, { username, password });
       localStorage.setItem("token", res.data.token);
-      alert("Login successful");
-      // Redirect to 'from' location after login
+      await refreshUser();
       navigate(from, { replace: true });
-    } catch (err: any) {
-      setError(err.response?.data?.error || "Login failed.");
+    } catch (err) {
+      setError(
+        (axios.isAxiosError(err) && err.response?.data?.error) || "Login failed."
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleSocialLogin = (provider: "google" | "facebook") => {
-    window.location.href = `http://localhost:8000/api/auth/${provider}/`;
-  };
 
   return (
-    <div className="max-w-md mx-auto mt-10 bg-white p-6 rounded shadow">
-      <h2 className="text-2xl font-bold mb-4">Login</h2>
+    <div className="mx-auto w-full max-w-sm px-4 py-16">
+      <h1 className="page-title">Log in</h1>
+      <p className="page-subtitle">Welcome back to AgroSmart.</p>
 
-      <input
-        type="text"
-        placeholder="Username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-        className="w-full mb-3 p-2 border rounded"
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        className="w-full mb-4 p-2 border rounded"
-      />
-      {error && <p className="text-red-600 mb-2">{error}</p>}
-      <button
-        onClick={handleLogin}
-        className="w-full bg-primary text-white py-2 rounded hover:bg-blue-700"
-      >
-        Login
-      </button>
+      {registered && (
+        <p className="alert-success mt-6">
+          Account created. Log in with your new password to continue.
+        </p>
+      )}
 
-      {/* Social login icons */}
-      <div className="mt-6 text-center">
-        <p className="text-gray-600 mb-2">Or login with</p>
-        <div className="flex justify-center space-x-6 text-3xl">
-          <FaGoogle
-            onClick={() => handleSocialLogin("google")}
-            className="cursor-pointer text-red-500 hover:scale-110 transition-transform"
-            title="Login with Google"
-          />
-          <FaFacebook
-            onClick={() => handleSocialLogin("facebook")}
-            className="cursor-pointer text-primary hover:scale-110 transition-transform"
-            title="Login with Facebook"
+      <form onSubmit={handleLogin} className="card mt-8 space-y-4 p-6">
+        <div>
+          <label htmlFor="username" className="label">Username</label>
+          <input
+            id="username"
+            type="text"
+            autoComplete="username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            className="input"
+            required
           />
         </div>
-      </div>
+        <div>
+          <label htmlFor="password" className="label">Password</label>
+          <input
+            id="password"
+            autoFocus={!!registered}
+            type="password"
+            autoComplete="current-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="input"
+            required
+          />
+        </div>
+        {error && <p className="alert-error">{error}</p>}
+        <button type="submit" disabled={loading} className="btn-primary w-full py-2.5">
+          {loading ? "Logging in…" : "Log in"}
+        </button>
+
+      </form>
+
+      <SocialLogin redirectTo={from} label="or log in with" />
+
+      <p className="mt-6 text-center text-sm text-stone-600">
+        Don't have an account?{" "}
+        <Link to="/register" className="link">Sign up</Link>
+      </p>
     </div>
   );
 }

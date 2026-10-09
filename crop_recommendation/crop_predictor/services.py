@@ -5,7 +5,7 @@ import pandas as pd
 import joblib
 
 # Define model, scaler, and explanation paths
-BASE_MODEL_PATH = os.path.join("D:\\", 'agrosmart', 'crop_recommendation', 'crop_predictor', 'ml_models', 'crop')
+BASE_MODEL_PATH = os.path.join(os.path.dirname(__file__), 'ml_models', 'crop')
 MODEL_PATH = os.path.join(BASE_MODEL_PATH, "crop_recomendation.joblib")
 SCALER_PATH = os.path.join(BASE_MODEL_PATH, "scaler.joblib")
 EXPLANATION_PATH = os.path.join(os.path.dirname(__file__), "crop_explanations.json")
@@ -32,9 +32,14 @@ except Exception as e:
     print(f"Error loading scaler: {e}")
     scaler = None
 
+# How many crops to recommend
+TOP_N = 3
+
+
 def predict_crop_new(N, P, K, temperature, humidity, ph, rainfall):
     """
-    Predicts the top crop(s) based on soil and weather parameters.
+    Predicts the top crops based on soil and weather parameters.
+    `rainfall` is the average monthly rainfall in mm.
     Returns a dictionary of recommended crops with their scores.
     """
     try:
@@ -51,7 +56,9 @@ def predict_crop_new(N, P, K, temperature, humidity, ph, rainfall):
             "Temperature": temperature,
             "Humidity": humidity,
             "pH_Value": ph,
-            "Rainfall": rainfall
+            # The model was trained with rainfall in metres (training mean ≈ 0.09,
+            # i.e. ~90 mm/month), so convert from mm.
+            "Rainfall": rainfall / 1000,
         }])
 
         print(f"Model Input: {df.values.tolist()}")
@@ -69,7 +76,7 @@ def predict_crop_new(N, P, K, temperature, humidity, ph, rainfall):
 
             # Pair crops with their probabilities and sort by score
             crop_scores = sorted(zip(class_labels, probabilities), key=lambda x: x[1], reverse=True)
-            top_crops = crop_scores[:2]  # Get top 2
+            top_crops = crop_scores[:TOP_N]
 
             output = {
                 "recommended_crops": [

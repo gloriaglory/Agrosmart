@@ -1,5 +1,7 @@
+import { API_URL } from "../config";
+import PageHero from "../components/PageHero";
+import diseaseHeroImg from "../assets/images/samp4.jpg";
 import React, { useState } from "react";
-import { Info, Bug, ShieldCheck } from "lucide-react";
 
 type DetectionResponse = {
   disease: string;
@@ -27,13 +29,21 @@ const commonDiseases = [
   },
 ];
 
+const tabs = [
+  { key: "details", label: "Details" },
+  { key: "treatment", label: "Treatment" },
+  { key: "prevention", label: "Prevention" },
+] as const;
+
 export default function CropDiseaseDetection() {
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [result, setResult] = useState<DetectionResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<"details" | "treatment" | "prevention">("details");
+  const [activeTab, setActiveTab] = useState<
+    "details" | "treatment" | "prevention"
+  >("details");
   const [expandedDisease, setExpandedDisease] = useState<string | null>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -47,167 +57,199 @@ export default function CropDiseaseDetection() {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  if (!file) {
-    setError("Please upload an image.");
-    return;
-  }
-
-  setLoading(true);
-  setError(null);
-  setResult(null);
-  setActiveTab("details");
-
-  try {
-    const formData = new FormData();
-    formData.append("image", file);  // key changed from 'file' to 'image'
-
-    const response = await fetch("http://localhost:8000/detector/detect", {
-      method: "POST",
-      body: formData,
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to detect disease");
+    e.preventDefault();
+    if (!file) {
+      setError("Please upload an image.");
+      return;
     }
 
-    const dataFromBackend = await response.json();
+    setLoading(true);
+    setError(null);
+    setResult(null);
+    setActiveTab("details");
 
-    const data: DetectionResponse = {
-      disease: dataFromBackend.disease,
-      confidence: dataFromBackend.confidence,
-      message: dataFromBackend.description,
-      treatment: dataFromBackend.treatment,
-      prevention: dataFromBackend.preventive_measures,
-    };
+    try {
+      const formData = new FormData();
+      formData.append("image", file);
 
-    setResult(data);
-  } catch (err: unknown) {
-    if (err instanceof Error) {
-      setError(err.message);
-    } else {
-      setError("Error detecting disease");
+      const response = await fetch(`${API_URL}/detector/detect`, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to detect disease");
+      }
+
+      const dataFromBackend = await response.json();
+
+      setResult({
+        disease: dataFromBackend.disease,
+        confidence: dataFromBackend.confidence,
+        message: dataFromBackend.description,
+        treatment: dataFromBackend.treatment,
+        prevention: dataFromBackend.preventive_measures,
+      });
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Error detecting disease");
+    } finally {
+      setLoading(false);
     }
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   return (
-    <div className="container mx-auto p-6">
-      {/* Full width top header */}
-      <div className="bg-green-100 rounded-lg p-6 mb-8 text-center shadow">
-        <h1 className="text-3xl font-extrabold mb-2 text-green-900">Crop Disease Detector</h1>
-        <p className="text-green-800">
-          Upload a picture of your crop and let our AI detect possible diseases.
-        </p>
-      </div>
-
-      <div className="flex flex-col lg:flex-row gap-8 items-stretch">
-        {/* Left side: Upload + Results */}
-        <div className="lg:w-2/3">
-          <form onSubmit={handleSubmit} className="mb-6">
-            <input type="file" accept="image/*" onChange={handleFileChange} className="mb-4" />
-
-            {previewUrl ? (
-              <img
-                src={previewUrl}
-                alt="Uploaded Preview"
-                className="mb-4 rounded border shadow-sm max-h-64"
+    <div>
+      <PageHero
+        image={diseaseHeroImg}
+        imageStyle="texture"
+        title="Disease Detection"
+        subtitle="Upload a clear photo of a single leaf to identify likely diseases, with treatment and prevention advice."
+      />
+      <div className="page">
+        <div className="grid gap-6 lg:grid-cols-3">
+          <div className="space-y-6 lg:col-span-2">
+            <form onSubmit={handleSubmit} className="card p-5">
+              <label
+                htmlFor="leaf-image"
+                className="flex min-h-[16rem] cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-stone-300 bg-stone-50 p-4 text-center transition-colors hover:border-primary/50"
+              >
+                {previewUrl ? (
+                  <img
+                    src={previewUrl}
+                    alt="Uploaded preview"
+                    className="max-h-72 rounded-md object-contain"
+                  />
+                ) : (
+                  <>
+                    <span className="text-sm font-medium text-stone-800">
+                      Click to choose an image
+                    </span>
+                    <span className="muted mt-1">JPG or PNG</span>
+                  </>
+                )}
+              </label>
+              <input
+                id="leaf-image"
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                className="sr-only"
               />
-            ) : (
-              <div className="mb-4 rounded border border-dashed border-gray-400 p-10 text-center text-gray-500">
-                No image uploaded yet
+
+              <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+                <span className="muted truncate">
+                  {file ? file.name : "No file selected"}
+                </span>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="btn-primary"
+                >
+                  {loading ? "Analysing…" : "Detect disease"}
+                </button>
+              </div>
+              {error && <p className="alert-error mt-4">{error}</p>}
+            </form>
+
+            {result && (
+              <div className="card">
+                <div className="flex border-b border-stone-200 px-5">
+                  {tabs.map((t) => (
+                    <button
+                      key={t.key}
+                      onClick={() => setActiveTab(t.key)}
+                      className={`-mb-px border-b-2 px-3 py-3 text-sm font-medium transition-colors ${
+                        activeTab === t.key
+                          ? "border-primary text-primary"
+                          : "border-transparent text-stone-500 hover:text-stone-800"
+                      }`}
+                    >
+                      {t.label}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="p-5 text-sm leading-relaxed text-stone-700">
+                  {activeTab === "details" && (
+                    <>
+                      <div className="flex flex-wrap items-baseline justify-between gap-2">
+                        <h3 className="text-lg font-semibold text-stone-900">
+                          {result.disease.replace(/_+/g, " ")}
+                        </h3>
+                        <span className="font-medium text-primary">
+                          {(result.confidence * 100).toFixed(1)}% confidence
+                        </span>
+                      </div>
+                      {result.message && (
+                        <p className="mt-3">{result.message}</p>
+                      )}
+                    </>
+                  )}
+                  {activeTab === "treatment" && (
+                    <>
+                      <h3 className="font-semibold text-stone-900">
+                        How to treat
+                      </h3>
+                      <p className="mt-2">
+                        {result.treatment ||
+                          "Treatment information not available."}
+                      </p>
+                    </>
+                  )}
+                  {activeTab === "prevention" && (
+                    <>
+                      <h3 className="font-semibold text-stone-900">
+                        How to prevent
+                      </h3>
+                      <p className="mt-2">
+                        {result.prevention ||
+                          "Prevention information not available."}
+                      </p>
+                    </>
+                  )}
+                </div>
               </div>
             )}
+          </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 disabled:opacity-50"
-            >
-              {loading ? "Detecting..." : "Detect Disease"}
-            </button>
-          </form>
-
-          {error && <p className="text-red-600 mb-4">{error}</p>}
-
-          {result && (
-            <div className="bg-white rounded-lg shadow-md border p-4">
-              <div className="flex space-x-4 border-b mb-4">
-                <button
-                  className={`px-4 py-2 ${
-                    activeTab === "details" ? "border-b-2 border-green-600 font-semibold" : ""
-                  }`}
-                  onClick={() => setActiveTab("details")}
-                >
-                  <Info className="inline w-4 h-4 mr-1" /> Details
-                </button>
-                <button
-                  className={`px-4 py-2 ${
-                    activeTab === "treatment" ? "border-b-2 border-green-600 font-semibold" : ""
-                  }`}
-                  onClick={() => setActiveTab("treatment")}
-                >
-                  <Bug className="inline w-4 h-4 mr-1" /> Treatment
-                </button>
-                <button
-                  className={`px-4 py-2 ${
-                    activeTab === "prevention" ? "border-b-2 border-green-600 font-semibold" : ""
-                  }`}
-                  onClick={() => setActiveTab("prevention")}
-                >
-                  <ShieldCheck className="inline w-4 h-4 mr-1" /> Prevention
-                </button>
-              </div>
-
-              <div>
-                {activeTab === "details" && (
-                  <div>
-                    <h3 className="text-xl font-bold mb-2">{result.disease}</h3>
-                    <p>
-                      <strong>Confidence:</strong> {(result.confidence * 100).toFixed(1)}%
-                    </p>
-                    {result.message && <p className="mt-2">{result.message}</p>}
-                  </div>
-                )}
-                {activeTab === "treatment" && (
-                  <div>
-                    <h3 className="text-lg font-semibold mb-2">How to Handle / Cure</h3>
-                    <p>{result.treatment || "Treatment information not available."}</p>
-                  </div>
-                )}
-                {activeTab === "prevention" && (
-                  <div>
-                    <h3 className="text-lg font-semibold mb-2">How to Prevent</h3>
-                    <p>{result.prevention || "Prevention information not available."}</p>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Right side*/}
-        <div className="lg:w-1/3 bg-gray-50 border rounded-lg shadow p-4 h-full overflow-auto">
-          <h3 className="text-xl font-bold mb-4 text-green-800">Common Crop Diseases</h3>
-          <ul className="space-y-4">
-            {commonDiseases.map((disease) => (
-              <li
-                key={disease.name}
-                className="cursor-pointer hover:bg-green-50 p-2 rounded border"
-                onClick={() =>
-                  setExpandedDisease(expandedDisease === disease.name ? null : disease.name)
-                }
-              >
-                <p className="font-semibold text-green-700">{disease.name}</p>
-                <p className="text-sm text-gray-600">{disease.description}</p>
-                {expandedDisease === disease.name && (
-                  <p className="mt-2 text-sm text-gray-700">{disease.more}</p>
-                )}
-              </li>
-            ))}
-          </ul>
+          <aside className="card h-fit p-5">
+            <h2 className="font-semibold text-stone-900">
+              Common crop diseases
+            </h2>
+            <ul className="mt-3 divide-y divide-stone-100">
+              {commonDiseases.map((disease) => {
+                const open = expandedDisease === disease.name;
+                return (
+                  <li key={disease.name}>
+                    <button
+                      onClick={() =>
+                        setExpandedDisease(open ? null : disease.name)
+                      }
+                      className="w-full py-3 text-left"
+                      aria-expanded={open}
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-sm font-medium text-stone-900">
+                          {disease.name}
+                        </span>
+                        <span className="text-stone-400">
+                          {open ? "−" : "+"}
+                        </span>
+                      </div>
+                      <p className="mt-0.5 text-sm text-stone-500">
+                        {disease.description}
+                      </p>
+                      {open && (
+                        <p className="mt-2 text-sm text-stone-700">
+                          {disease.more}
+                        </p>
+                      )}
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </aside>
         </div>
       </div>
     </div>

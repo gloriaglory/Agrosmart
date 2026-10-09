@@ -8,29 +8,25 @@ export default {
   ],
   theme: {
     extend: {
-      animation: {
-        fadeIn: 'fadeIn 1s ease-in forwards',
-        fadeInDown: 'fadeInDown 1s ease-out forwards',
-        slide: 'slide 12s infinite linear',
+      fontFamily: {
+        display: ['Poppins', 'Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
       },
       keyframes: {
-        fadeIn: {
-          '0%': { opacity: 0 },
-          '100%': { opacity: 1 },
-        },
-        fadeInDown: {
-          '0%': { opacity: 0, transform: 'translateY(-20px)' },
-          '100%': { opacity: 1, transform: 'translateY(0)' },
-        },
-        slide: {
-          '0%': { backgroundPosition: '0% 50%' },
-          '50%': { backgroundPosition: '100% 50%' },
-          '100%': { backgroundPosition: '0% 50%' },
+        marquee: {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-50%)' },
         },
       },
+      animation: {
+        marquee: 'marquee 40s linear infinite',
+      },
       colors: {
-        primary: '#16a34a',
-        secondary: '#bbf7d0',
+        primary: {
+          DEFAULT: '#166534',
+          hover: '#14532d',
+          soft: '#f0fdf4',
+        },
       },
     },
   },

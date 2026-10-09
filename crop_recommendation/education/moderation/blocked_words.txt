@@ -1,0 +1,37 @@
+# Words that block a post or comment outright (one per line, case-insensitive,
+# whole words only). Lines starting with # are ignored. Extend as needed.
+#
+# English
+fuck
+fucking
+motherfucker
+shit
+bitch
+bastard
+cunt
+pussy
+asshole
+porn
+porno
+pornography
+nude
+nudes
+xxx
+sex video
+rape
+rapist
+nigger
+faggot
+whore
+slut
+kill yourself
+# Kiswahili
+malaya
+kuma
+mboro
+msenge
+mavi
+kumamako
+kumamayo
+nyoko
+fala

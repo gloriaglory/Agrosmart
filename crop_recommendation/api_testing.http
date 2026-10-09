@@ -15,7 +15,7 @@
 #    - Or right-click on a request and select "Run Request" to execute without environment
 #
 # Environment variables
-@baseUrl = http://localhost:8000
+@baseUrl = http://localhost:8765
 @authToken = e4bbda8064ebf49166be63989256aeb5d7340c0e
 
 ### CSRF Token Handling ###

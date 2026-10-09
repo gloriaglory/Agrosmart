@@ -2,10 +2,234 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-stone-50 text-stone-900;
+  }
+  h1, h2, h3 {
+    @apply font-display;
+  }
+}
+
+@layer components {
+  /* Layout */
+  .container-x {
+    @apply w-full px-4 sm:px-6 lg:px-10;
+  }
+  .page {
+    @apply container-x py-12;
+  }
+  .page-title {
+    @apply font-display text-2xl font-bold tracking-tight text-stone-900 sm:text-3xl;
+  }
+  .page-subtitle {
+    @apply mt-2 max-w-2xl text-sm text-stone-600 sm:text-base;
+  }
+
+  /* Centered section heading, used across the home page */
+  .section-head {
+    @apply mx-auto mb-10 max-w-2xl text-center;
+  }
+  .section-head h2 {
+    @apply font-display text-3xl font-bold tracking-tight text-stone-900 sm:text-4xl;
+  }
+  .section-head p:not(.eyebrow) {
+    @apply mt-3 text-base text-stone-600 sm:text-lg;
+  }
+  .section-title {
+    @apply font-display text-lg font-semibold tracking-tight text-stone-900;
+  }
+  .eyebrow {
+    @apply text-xs font-semibold uppercase tracking-[0.18em] text-primary;
+  }
+
+  /* Inner page header band */
+  .page-hero {
+    @apply pattern-light relative border-b border-stone-200 bg-white;
+  }
+  .page-hero-inner {
+    @apply container-x flex flex-col items-center py-14 text-center sm:py-16;
+  }
+  .page-hero h1 {
+    @apply font-display text-3xl font-bold tracking-tight text-primary sm:text-5xl;
+  }
+  .page-hero p {
+    @apply mt-4 max-w-2xl text-base text-stone-600 sm:text-lg;
+  }
+  .page-hero-rule {
+    @apply mx-4 h-1 rounded-full bg-primary sm:mx-6 lg:mx-10;
+  }
+
+  /* Surfaces */
+  .card {
+    @apply rounded-2xl border border-stone-200 bg-white;
+  }
+  .card-hover {
+    @apply transition duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-stone-900/5;
+  }
+
+  /* Buttons */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2 text-sm font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply btn bg-primary text-white shadow-md shadow-primary/20 hover:-translate-y-0.5 hover:bg-primary-hover hover:shadow-lg hover:shadow-primary/25 disabled:translate-y-0;
+  }
+  .btn-secondary {
+    @apply btn border border-stone-300 bg-white text-stone-800 hover:border-stone-400 hover:bg-stone-50;
+  }
+  .btn-ghost {
+    @apply btn text-stone-700 hover:bg-stone-100;
+  }
+  .btn-danger {
+    @apply btn border border-red-200 bg-white text-red-700 hover:bg-red-50;
+  }
+  .btn-outline-light {
+    @apply btn border-2 border-white text-white hover:bg-white hover:text-primary;
+  }
+  .link {
+    @apply text-sm font-medium text-primary hover:underline;
+  }
+  .link-arrow {
+    @apply inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-primary transition-all hover:gap-2.5;
+  }
+
+  /* Forms */
+  .label {
+    @apply mb-1.5 block text-sm font-medium text-stone-700;
+  }
+  .input {
+    @apply block w-full rounded-xl border border-stone-300 bg-white px-3.5 py-2.5 text-sm text-stone-900 placeholder:text-stone-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20;
+  }
+  .input[readonly] {
+    @apply bg-stone-100 text-stone-600;
+  }
+  .input[type="file"] {
+    @apply p-1.5 file:mr-3 file:rounded-full file:border-0 file:bg-stone-100 file:px-4 file:py-1.5 file:text-sm file:font-medium file:text-stone-700 hover:file:bg-stone-200;
+  }
+
+  /* Feedback */
+  .alert-error {
+    @apply rounded-xl border border-red-200 bg-red-50 px-3.5 py-2.5 text-sm text-red-700;
+  }
+  .alert-success {
+    @apply rounded-xl border border-green-200 bg-green-50 px-3.5 py-2.5 text-sm text-green-800;
+  }
+  .muted {
+    @apply text-sm text-stone-500;
+  }
+
+  /* Modal */
+  .modal-backdrop {
+    @apply fixed inset-0 z-50 flex items-center justify-center bg-stone-900/50 p-4 backdrop-blur-sm;
+    animation: fade-in 0.2s ease-out;
+  }
+  .modal {
+    @apply card max-h-[90vh] w-full overflow-y-auto p-6 shadow-2xl;
+    animation: pop-in 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  /* Data */
+  .stat-label {
+    @apply text-xs font-medium uppercase tracking-wide text-stone-500;
+  }
+  .stat-value {
+    @apply mt-1 font-display text-2xl font-bold text-stone-900;
+  }
+
+  /* Subtle leaf pattern backgrounds */
+  .pattern-light {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72' viewBox='0 0 72 72'%3E%3Cg fill='none' stroke='%23166534' stroke-opacity='0.07' stroke-width='1.4'%3E%3Cpath d='M18 8c9 7 10 19 0 28C8 27 9 15 18 8zM18 12v22'/%3E%3Cpath d='M54 40c9 7 10 19 0 28-10-9-9-21 0-28zM54 44v22'/%3E%3C/g%3E%3C/svg%3E");
+  }
+  .pattern-dark {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72' viewBox='0 0 72 72'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='0.08' stroke-width='1.4'%3E%3Cpath d='M18 8c9 7 10 19 0 28C8 27 9 15 18 8zM18 12v22'/%3E%3Cpath d='M54 40c9 7 10 19 0 28-10-9-9-21 0-28zM54 44v22'/%3E%3C/g%3E%3C/svg%3E");
+  }
+}
+
+/* Scroll reveal (toggled by components/Reveal.tsx) */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.7s ease-out, transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Organic blob shape for the footer call-to-action */
+.blob {
+  border-radius: 58% 42% 52% 48% / 48% 56% 44% 52%;
+}
+
+/* Angled service cards */
+.clip-left {
+  clip-path: polygon(0 0, 100% 3%, 96% 100%, 0 96%);
+}
+.clip-right {
+  clip-path: polygon(4% 3%, 100% 0, 100% 100%, 0 97%);
+}
+
+/* Pause marquee on hover */
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes pop-in {
+  from { opacity: 0; transform: translateY(12px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .animate-marquee {
+    animation: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
+
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* Slow zoom on the home hero photo */
+@keyframes hero-zoom {
+  from { transform: scale(1); }
+  to { transform: scale(1.08); }
+}
+.hero-zoom {
+  animation: hero-zoom 18s ease-out forwards;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-zoom { animation: none; }
+}
+
+/* Tailwind's image reset breaks Leaflet tile layout */
+.leaflet-container img {
+  max-width: none !important;
+  max-height: none !important;
+}
+.leaflet-container {
+  font-family: inherit;
+}
+.leaflet-interactive:focus {
+  outline: none;
 }

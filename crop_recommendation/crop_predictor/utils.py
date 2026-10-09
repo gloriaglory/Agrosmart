@@ -1,11 +1,13 @@
 import time
 import httpx
 import json
+from datetime import date, timedelta
+from django.conf import settings
 
-#  API keys
-GOOGLE_API_KEY = '***REMOVED***'
-OPENWEATHER_API_KEY = '***REMOVED***'
-ISDA_API_KEY = '***REMOVED***'
+# API keys (loaded from .env via settings)
+GOOGLE_API_KEY = settings.GOOGLE_API_KEY
+OPENWEATHER_API_KEY = settings.OPENWEATHER_API_KEY
+ISDA_API_KEY = settings.ISDA_API_KEY
 
 # Function to fetch latitude and longitude from Google Maps API
 def get_lat_lon(address):
@@ -85,27 +87,67 @@ def get_soil_properties(lat, lon):
         "Cation Exchange Capacity (0-20cm)": results[6]
     }
 
+# Rainfall history from Open-Meteo (free, no API key needed)
+OPEN_METEO_ARCHIVE_URL = "https://archive-api.open-meteo.com/v1/archive"
+
+
+def get_monthly_rainfall(lat, lon):
+    """
+    Average monthly rainfall (mm) at this location over the last 12 months.
+
+    Current-weather APIs only report rain that is falling right now, which is
+    almost always 0. Crops depend on the rainfall over the seasons, so we use
+    a year of daily totals instead. The archive lags a few days behind, so the
+    window ends a week ago.
+    """
+    end = date.today() - timedelta(days=7)
+    start = end - timedelta(days=365)
+    try:
+        response = httpx.get(
+            OPEN_METEO_ARCHIVE_URL,
+            params={
+                "latitude": lat,
+                "longitude": lon,
+                "start_date": start.isoformat(),
+                "end_date": end.isoformat(),
+                "daily": "precipitation_sum",
+                "timezone": "auto",
+            },
+            timeout=20.0,
+        )
+        response.raise_for_status()
+        daily = [v for v in response.json()["daily"]["precipitation_sum"] if v is not None]
+    except Exception as e:
+        print(f"Rainfall history request failed: {e}")
+        return None
+    if not daily:
+        return None
+    return round(sum(daily) / len(daily) * 365 / 12, 1)
+
+
 # Function to fetch weather data
 def get_weather_data(lat, lon):
+    """
+    Returns (temperature °C, humidity %, average monthly rainfall mm).
+    Temperature and humidity are current readings from OpenWeatherMap;
+    rainfall is the 12-month average from get_monthly_rainfall.
+    """
     url = f'https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={OPENWEATHER_API_KEY}&units=metric'
     with httpx.Client() as client:
         response = client.get(url)
 
-    if response.status_code == 200:
-        data = response.json()
-        if data['cod'] == 200:
-            temperature = data['main']['temp']
-            humidity = data['main']['humidity']
-            rainfall = 0
-            if 'rain' in data:
-                rainfall = data['rain'].get('1h', 0) or data['rain'].get('3h', 0)
-            return temperature, humidity, rainfall
-        else:
-            print(f"Error from OpenWeatherMap API: {data.get('message', 'Unknown error')}")
-            return None, None, None
-    else:
+    if response.status_code != 200:
         print(f"HTTP error {response.status_code} from OpenWeatherMap API")
         return None, None, None
+    data = response.json()
+    if data.get('cod') != 200:
+        print(f"Error from OpenWeatherMap API: {data.get('message', 'Unknown error')}")
+        return None, None, None
+
+    temperature = data['main']['temp']
+    humidity = data['main']['humidity']
+    rainfall = get_monthly_rainfall(lat, lon)
+    return temperature, humidity, rainfall
 
 
 # Main function
@@ -123,7 +165,7 @@ def main(address):
             "weather_data": {
                 "temperature": weather_data[0],
                 "humidity": weather_data[1],
-                "rainfall_last_1h_mm": weather_data[2]
+                "avg_monthly_rainfall_mm": weather_data[2]
             }
         }
     else:

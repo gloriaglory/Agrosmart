@@ -1,61 +1,46 @@
 import { useState, useEffect, useRef } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { FaUserCircle } from "react-icons/fa";
-import axios from "axios";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
+import { useUser } from "../UserContext";
+import logoMark from "../assets/images/logo-mark.png";
 
-interface User {
-  id_number: string | null;
-  phone_number: string | null;
-  last_name: string | null;
-  first_name: string | null;
-  username: string;
-  email: string;
-}
+const links = [
+  { to: "/", label: "Home" },
+  { to: "/market", label: "Marketplace" },
+  { to: "/crop_recommendation", label: "Recommendations" },
+  { to: "/disease_detection", label: "Disease Detection" },
+  { to: "/education", label: "Learn" },
+];
+
+const linkClass = ({ isActive }: { isActive: boolean }) =>
+  `relative px-3 py-2 text-[15px] font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 rounded-md
+   after:absolute after:inset-x-3 after:-bottom-0.5 after:h-0.5 after:origin-left after:rounded-full after:bg-primary after:transition-transform after:duration-300 ${
+    isActive
+      ? "text-primary after:scale-x-100"
+      : "text-stone-700 hover:text-primary after:scale-x-0 hover:after:scale-x-100"
+  }`;
 
 const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const [user, setUser] = useState<User | null>(null);
+  const { user, logout } = useUser();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Static menu labels (no translation)
-  const menuLabels = {
-    home: "Home",
-    marketplace: "Marketplace",
-    recommendations: "Recommendations",
-    disease: "Disease Detection",
-    education: "Learn more",
-    login: "Login",
-    signup: "Sign Up",
-    logout: "Logout",
-    profile: "Profile",
-  };
-
-  // Fetch user profile from backend using token on mount
   useEffect(() => {
-    const fetchUser = async () => {
-      const token = localStorage.getItem("token");
-      if (!token) return;
-
-      try {
-        const res = await axios.get("http://localhost:8000/api/auth/profile/", {
-          headers: { Authorization: `Token ${token}` },
-        });
-        setUser(res.data);
-        localStorage.setItem("user", JSON.stringify(res.data)); // cache user
-      } catch {
-        setUser(null);
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-      }
-    };
-
-    fetchUser();
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Close dropdown on outside click
+  useEffect(() => {
+    setMenuOpen(false);
+    setDropdownOpen(false);
+  }, [location.pathname]);
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -66,159 +51,144 @@ const Navbar = () => {
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const isActive = (path: string) => location.pathname === path;
-
-  // Logout handler clears localStorage and state
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    setUser(null);
+    logout();
     setDropdownOpen(false);
     navigate("/");
   };
 
-  return (
-    <nav className="flex items-center justify-between p-4 bg-white shadow-md">
-      {/* Logo */}
-      <div
-        className="text-2xl font-bold cursor-pointer"
-        onClick={() => navigate("/")}
-      >
-        <span className="text-black">Agro</span>
-        <span className="text-primary">Smart</span>
-      </div>
+  const initials = user
+    ? (
+        (user.first_name?.[0] ?? user.username[0] ?? "") +
+        (user.last_name?.[0] ?? "")
+      ).toUpperCase()
+    : "";
 
-      {/* Menu Items */}
-      <div className="hidden md:flex gap-6 text-gray-700">
+  return (
+    <header
+      className={`sticky top-0 z-40 bg-white/95 backdrop-blur transition-shadow duration-300 ${
+        scrolled ? "shadow-[0_8px_30px_rgba(28,25,23,0.08)]" : "border-b border-stone-200"
+      }`}
+    >
+      <nav
+        className={`container-x grid items-center transition-[height] duration-300 md:grid-cols-[1fr_auto_1fr] grid-cols-[1fr_auto] ${
+          scrolled ? "h-16" : "h-20"
+        }`}
+      >
         <Link
           to="/"
-          className={`hover:text-primary transition duration-300 ${
-            isActive("/") ? "font-semibold text-green-700" : ""
-          }`}
+          className="flex items-center gap-2.5 font-display text-2xl font-bold tracking-tight"
+          aria-label="AgroSmart home"
         >
-          {menuLabels.home}
+          <img src={logoMark} alt="" className="h-9 w-auto" />
+          <span>
+            <span className="text-stone-900">Agro</span>
+            <span className="text-primary">Smart</span>
+          </span>
         </Link>
-        <Link
-          to="/market"
-          className={`hover:text-primary transition duration-300 ${
-            isActive("/market") ? "font-semibold text-green-700" : ""
-          }`}
-        >
-          {menuLabels.marketplace}
-        </Link>
-        <Link
-          to="/crop_recommendation"
-          className={`hover:text-primary transition duration-300 ${
-            isActive("/crop_recommendation")
-              ? "font-semibold text-green-700"
-              : ""
-          }`}
-        >
-          {menuLabels.recommendations}
-        </Link>
-        <Link
-          to="/disease_detection"
-          className={`hover:text-green-600 transition duration-300 ${
-            isActive("/disease_detection") ? "font-semibold text-green-700" : ""
-          }`}
-        >
-          {menuLabels.disease}
-        </Link>
-        <Link
-          to="/education"
-          className={`hover:text-green-600 transition duration-300 ${
-            isActive("/education") ? "font-semibold text-green-700" : ""
-          }`}
-        >
-          {menuLabels.education}
-        </Link>
-      </div>
 
-      {/* Right Section */}
-      <div className="flex items-center gap-4 relative">
-        {!user ? (
-          <>
-            <Link
-              to="/login"
-              className={`px-4 py-1 rounded transition duration-300 ${
-                isActive("/login")
-                  ? "bg-primary text-white"
-                  : "text-gray-700 hover:text-green-600"
-              }`}
-            >
-              {menuLabels.login}
-            </Link>
+        <div className="hidden items-center gap-1 md:flex">
+          {links.map((l) => (
+            <NavLink key={l.to} to={l.to} end={l.to === "/"} className={linkClass}>
+              {l.label}
+            </NavLink>
+          ))}
+        </div>
 
-            <Link
-              to="/register"
-              className={`px-4 py-2 rounded transition duration-300 ${
-                isActive("/register")
-                  ? "bg-primary text-white"
-                  : "text-gray-700 hover:text-green-600"
-              }`}
-            >
-              {menuLabels.signup}
-            </Link>
-          </>
-        ) : (
-          <div ref={dropdownRef} className="relative">
-            <FaUserCircle
-              className="text-3xl cursor-pointer text-green-700 hover:text-green-900"
-              onClick={() => setDropdownOpen((open) => !open)}
-              title="User Profile"
-            />
+        <div className="flex items-center justify-end gap-2">
+          {!user ? (
+            <div className="hidden items-center gap-2 sm:flex">
+              <Link to="/login" className="btn-ghost">
+                Log in
+              </Link>
+              <Link to="/register" className="btn-primary">
+                Sign up
+              </Link>
+            </div>
+          ) : (
+            <div ref={dropdownRef} className="relative">
+              <button
+                onClick={() => setDropdownOpen((open) => !open)}
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-sm font-semibold text-white ring-4 ring-primary/10 transition hover:ring-primary/25"
+                aria-label="Account menu"
+                aria-expanded={dropdownOpen}
+              >
+                {initials}
+              </button>
 
-            {dropdownOpen && (
-              <div className="absolute right-0 mt-2 w-80 bg-white border rounded-lg shadow-lg z-50 p-5">
-                <div className="border-b pb-4 mb-4 select-text">
-                  <p className="text-xl font-semibold text-gray-800">
-                    {user.username}
-                  </p>
-                  <p className="text-sm text-gray-600 truncate">{user.email}</p>
+              {dropdownOpen && (
+                <div className="card absolute right-0 mt-3 w-72 p-4 shadow-xl" style={{ animation: "pop-in 0.2s ease-out" }}>
+                  <div className="border-b border-stone-200 pb-3">
+                    <p className="font-semibold text-stone-900">{user.username}</p>
+                    <p className="truncate text-sm text-stone-500">{user.email}</p>
+                  </div>
+                  <dl className="space-y-2 py-3 text-sm">
+                    {[
+                      ["Name", [user.first_name, user.last_name].filter(Boolean).join(" ")],
+                      ["Phone", user.phone_number],
+                      ["Account", user.is_seller ? "Seller" : "Buyer"],
+                    ]
+                      .filter(([, v]) => v)
+                      .map(([k, v]) => (
+                        <div key={k} className="flex justify-between gap-4">
+                          <dt className="text-stone-500">{k}</dt>
+                          <dd className="truncate text-stone-800">{v}</dd>
+                        </div>
+                      ))}
+                  </dl>
+                  {user.is_seller && (
+                    <Link to="/products" className="btn-secondary mb-2 w-full">
+                      My products
+                    </Link>
+                  )}
+                  <div className="flex gap-2 border-t border-stone-200 pt-3">
+                    <Link to="/profile" className="btn-secondary flex-1">
+                      Profile
+                    </Link>
+                    <button onClick={handleLogout} className="btn-primary flex-1">
+                      Log out
+                    </button>
+                  </div>
                 </div>
-                <div className="space-y-3 text-gray-700">
-                  {user.first_name && (
-                    <div>
-                      <span className="font-medium">First Name:</span>{" "}
-                      {user.first_name}
-                    </div>
-                  )}
-                  {user.last_name && (
-                    <div>
-                      <span className="font-medium">Last Name:</span>{" "}
-                      {user.last_name}
-                    </div>
-                  )}
-                  {user.phone_number && (
-                    <div>
-                      <span className="font-medium">Phone Number:</span>{" "}
-                      {user.phone_number}
-                    </div>
-                  )}
-                  {user.id_number && (
-                    <div>
-                      <span className="font-medium">ID Number:</span>{" "}
-                      {user.id_number}
-                    </div>
-                  )}
-                </div>
-                <button
-                  onClick={handleLogout}
-                  className="mt-6 w-full text-center px-4 py-2 rounded bg-primary text-white hover:bg-primary/80 transition"
-                >
-                  {menuLabels.logout}
-                </button>
+              )}
+            </div>
+          )}
+
+          <button
+            className="btn-ghost md:hidden"
+            onClick={() => setMenuOpen((o) => !o)}
+            aria-expanded={menuOpen}
+          >
+            {menuOpen ? "Close" : "Menu"}
+          </button>
+        </div>
+      </nav>
+
+      {menuOpen && (
+        <div className="border-t border-stone-200 bg-white md:hidden">
+          <div className="container-x flex flex-col py-3">
+            {links.map((l) => (
+              <NavLink key={l.to} to={l.to} end={l.to === "/"} className={linkClass}>
+                {l.label}
+              </NavLink>
+            ))}
+            {!user && (
+              <div className="mt-3 flex gap-2 border-t border-stone-200 pt-3 sm:hidden">
+                <Link to="/login" className="btn-secondary flex-1">
+                  Log in
+                </Link>
+                <Link to="/register" className="btn-primary flex-1">
+                  Sign up
+                </Link>
               </div>
             )}
           </div>
-        )}
-      </div>
-    </nav>
+        </div>
+      )}
+    </header>
   );
 };
 

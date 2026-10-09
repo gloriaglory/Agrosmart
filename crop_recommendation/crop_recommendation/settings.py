@@ -10,6 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+import sys
+
 from decouple import config
 from pathlib import Path
 
@@ -21,10 +23,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '***REMOVED***'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = []
 
@@ -60,7 +62,26 @@ INSTALLED_APPS = [
 
 # Custom user model
 AUTH_USER_MODEL = 'authentication.User'
-GROQ_API_KEY = config('GROQ_API_KEY')
+GROQ_API_KEY = config('GROQ_API_KEY', default='')
+# Tests must never call Groq for real (slow, flaky, and uses up the free quota);
+# tests that need it fake the responses.
+if 'test' in sys.argv[1:2]:
+    GROQ_API_KEY = ''
+# Groq models. Groq retires models from time to time; change these in .env if one stops working.
+# Chatbot ("Ask a question")
+CHAT_MODEL = config('CHAT_MODEL', default='openai/gpt-oss-120b')
+# Safety checks for education posts and comments (text) and post thumbnails (images)
+MODERATION_MODEL = config('MODERATION_MODEL', default='openai/gpt-oss-safeguard-20b')
+# Used when MODERATION_MODEL is rate-limited (the free tier allows only a few checks per minute)
+MODERATION_FALLBACK_MODEL = config('MODERATION_FALLBACK_MODEL', default='openai/gpt-oss-20b')
+IMAGE_MODERATION_MODEL = config('IMAGE_MODERATION_MODEL', default='qwen/qwen3.8-27b')
+GOOGLE_API_KEY = config('GOOGLE_API_KEY', default='')
+OPENWEATHER_API_KEY = config('OPENWEATHER_API_KEY', default='')
+ISDA_API_KEY = config('ISDA_API_KEY', default='')
+
+# Port the backend runs on locally, and its public address
+PORT = config('PORT', default='8765')
+BACKEND_URL = config('BACKEND_URL', default=f'http://localhost:{PORT}').rstrip('/')
 
 # Django AllAuth settings
 SITE_ID = 1
@@ -72,11 +93,35 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 # AllAuth settings
-ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
-ACCOUNT_USERNAME_REQUIRED = True
-ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
+ACCOUNT_LOGIN_METHODS = {'username', 'email'}
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
 ACCOUNT_EMAIL_VERIFICATION = 'optional'
+
+# Google / Facebook login. Credentials come from .env; leave them empty to keep
+# social login switched off (the buttons are hidden on the website).
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'APP': {
+            'client_id': config('GOOGLE_OAUTH_CLIENT_ID', default=''),
+            'secret': config('GOOGLE_OAUTH_CLIENT_SECRET', default=''),
+            'key': '',
+        },
+        'SCOPE': ['openid', 'email', 'profile'],
+    },
+    'facebook': {
+        'APP': {
+            'client_id': config('FACEBOOK_APP_ID', default=''),
+            'secret': config('FACEBOOK_APP_SECRET', default=''),
+            'key': '',
+        },
+        'SCOPE': ['email', 'public_profile'],
+        'FIELDS': ['id', 'email', 'name', 'first_name', 'last_name'],
+    },
+}
+# Social sign-ups are created straight away as buyers; selling still needs NIDA.
+SOCIALACCOUNT_AUTO_SIGNUP = True
+SOCIALACCOUNT_EMAIL_REQUIRED = True
 
 # REST Framework settings
 REST_FRAMEWORK = {
@@ -90,6 +135,7 @@ REST_FRAMEWORK = {
 }
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -97,8 +143,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
     'allauth.account.middleware.AccountMiddleware',
 ]
 
@@ -126,26 +170,24 @@ WSGI_APPLICATION = 'crop_recommendation.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'crop_recommendation',
-        'USER': 'agrosmart',
-        'PASSWORD': '5py',
-        'HOST': 'localhost',  
-         'PORT': '5432',
+if config('USE_POSTGRES', default=False, cast=bool):
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': config('DB_NAME'),
+            'USER': config('DB_USER'),
+            'PASSWORD': config('DB_PASSWORD'),
+            'HOST': config('DB_HOST', default='localhost'),
+            'PORT': config('DB_PORT', default='5432'),
+        }
     }
- }
-
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
-
-
 
 
 # Password validation
@@ -193,8 +235,10 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 # CSRF settings
 CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:8000',
-    'http://127.0.0.1:8000',
+    f'http://localhost:{PORT}',
+    f'http://127.0.0.1:{PORT}',
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
     'https://grizzly-magnetic-lionfish.ngrok-free.app',
 ]
 
@@ -206,3 +250,11 @@ ALLOWED_HOSTS = [
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+# Tests save uploads to a throwaway folder instead of the real media folder
+if 'test' in sys.argv[1:2]:
+    import tempfile
+    MEDIA_ROOT = Path(tempfile.mkdtemp(prefix='agrosmart-test-media-'))
+
+# When NIDA integration is live, set this to True so only sellers with a
+# verified NIDA number can post marketplace listings.
+REQUIRE_NIDA_VERIFICATION = config('REQUIRE_NIDA_VERIFICATION', default=False, cast=bool)

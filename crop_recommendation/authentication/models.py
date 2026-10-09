@@ -7,10 +7,19 @@ class User(AbstractUser):
     """
     Custom User model that extends Django's AbstractUser.
     Adds fields for phone number and ID number.
-    A user with an ID number is considered a seller, otherwise a buyer.
+    A user with a NIDA number is considered a seller, otherwise a buyer.
     """
     phone_number = models.CharField(_('phone number'), max_length=20, blank=True, null=True)
-    id_number = models.CharField(_('ID number'), max_length=50, blank=True, null=True)
+    # NIDA number, stored as digits only. Required for sellers.
+    id_number = models.CharField(_('NIDA number'), max_length=50, blank=True, null=True, unique=True)
+    # Set once the NIDA number has been confirmed with the NIDA service.
+    nida_verified = models.BooleanField(_('NIDA verified'), default=False)
+
+    def save(self, *args, **kwargs):
+        # Store blanks as NULL so the unique constraint allows many users without a NIDA number.
+        if not self.id_number:
+            self.id_number = None
+        super().save(*args, **kwargs)
 
     @property
     def is_seller(self):

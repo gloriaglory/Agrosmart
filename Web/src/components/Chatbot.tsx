@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import { API_URL } from "../config";
+import React, { useEffect, useRef, useState } from 'react';
 
 type Message = {
   from: 'user' | 'bot';
@@ -10,6 +10,12 @@ const Chatbot: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
+  const [sending, setSending] = useState(false);
+  const listRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    listRef.current?.scrollTo({ top: listRef.current.scrollHeight });
+  }, [messages]);
 
   const toggleChat = () => {
     setIsOpen(!isOpen);
@@ -17,104 +23,89 @@ const Chatbot: React.FC = () => {
       setMessages([
         {
           from: 'bot',
-          text: "Hello, I am your AI assistant for Agro Smart. How can I help you today?",
+          text: 'Hello, I am the AgroSmart assistant. Ask me anything about farming.',
         },
       ]);
     }
   };
 
   const sendMessage = async () => {
-    if (input.trim() !== '') {
-      const userMessage: Message = { from: 'user', text: input };
-      setMessages((prev) => [...prev, userMessage]);
-      setInput('');
+    if (input.trim() === '' || sending) return;
+    const question = input;
+    setMessages((prev) => [...prev, { from: 'user', text: question }]);
+    setInput('');
+    setSending(true);
 
-      try {
-        const res = await fetch('http://localhost:8000/api/bot/ask/', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ question: input }),
-        });
-
-        const data = await res.json();
-
-        const botReply: Message = {
-          from: 'bot',
-          text: data.answer || 'Sorry, I could not understand your question.',
-        };
-
-        setMessages((prev) => [...prev, botReply]);
-      } catch (error) {
-        console.error('Error contacting backend:', error);
-        setMessages((prev) => [
-          ...prev,
-          { from: 'bot', text: 'Something went wrong. Please try again later.' },
-        ]);
-      }
+    try {
+      const res = await fetch(`${API_URL}/api/bot/ask/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question }),
+      });
+      const data = await res.json();
+      setMessages((prev) => [
+        ...prev,
+        { from: 'bot', text: data.answer || 'Sorry, I could not understand your question.' },
+      ]);
+    } catch (error) {
+      console.error('Error contacting backend:', error);
+      setMessages((prev) => [
+        ...prev,
+        { from: 'bot', text: 'Something went wrong. Please try again later.' },
+      ]);
+    } finally {
+      setSending(false);
     }
   };
 
   return (
     <div className="fixed bottom-4 right-4 z-50">
       {isOpen ? (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8, y: 50 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.8, y: 50 }}
-          className="w-80 h-96 bg-white rounded-2xl shadow-xl flex flex-col overflow-hidden"
-        >
-          <div className="bg-green-600 text-white px-4 py-3 flex justify-between items-center rounded-t-2xl shadow">
-            <span className="font-bold text-lg">
-              <span className="text-black">Agro</span>
-              <span className="text-white">Chat</span>
-            </span>
-            <button onClick={toggleChat} className="text-xl font-bold hover:text-gray-300">&times;</button>
+        <div className="card flex h-[28rem] w-[22rem] max-w-[calc(100vw-2rem)] flex-col overflow-hidden shadow-xl">
+          <div className="flex items-center justify-between border-b border-stone-200 px-4 py-3">
+            <div>
+              <p className="text-sm font-semibold text-stone-900">Ask AgroSmart</p>
+              <p className="text-xs text-stone-500">Farming questions and advice</p>
+            </div>
+            <button onClick={toggleChat} className="btn-ghost px-2 py-1 text-xs">
+              Close
+            </button>
           </div>
 
-          <div className="flex-1 bg-gray-50 p-4 space-y-2 overflow-y-auto">
+          <div ref={listRef} className="flex-1 space-y-2 overflow-y-auto bg-stone-50 p-4">
             {messages.map((msg, index) => (
               <div
                 key={index}
-                className={`max-w-[75%] p-2 rounded-lg text-sm ${
+                className={`max-w-[80%] whitespace-pre-line rounded-lg px-3 py-2 text-sm ${
                   msg.from === 'user'
-                    ? 'ml-auto bg-green-100 text-green-800'
-                    : 'mr-auto bg-gray-200 text-black'
+                    ? 'ml-auto bg-primary text-white'
+                    : 'mr-auto border border-stone-200 bg-white text-stone-800'
                 }`}
               >
                 {msg.text}
               </div>
             ))}
+            {sending && <p className="muted">Replying…</p>}
           </div>
 
-          <div className="p-3 border-t bg-white flex gap-2">
+          <div className="flex gap-2 border-t border-stone-200 bg-white p-3">
             <input
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
-              placeholder="Type a message..."
-              className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-green-500"
+              placeholder="Type your question"
+              className="input"
             />
-            <button
-              onClick={sendMessage}
-              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 text-sm rounded-xl transition"
-            >
+            <button onClick={sendMessage} disabled={sending} className="btn-primary">
               Send
             </button>
           </div>
-        </motion.div>
+        </div>
       ) : (
-        <motion.button
-          initial={{ scale: 0.2 }}
-          animate={{ scale: 1 }}
-          whileHover={{ scale: 1.1 }}
-          onClick={toggleChat}
-          className="bg-green-600 text-white p-3 rounded-full shadow-lg hover:bg-green-700"
-        >
-          💬
-        </motion.button>
+        <button onClick={toggleChat} className="btn-primary rounded-full px-5 py-3 shadow-lg">
+          Ask a question
+        </button>
       )}
     </div>
   );

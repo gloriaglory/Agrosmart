@@ -5,10 +5,11 @@ from .views import (
     LoginView, 
     UserProfileView, 
     UserUpdateView,
-    GoogleLogin,
-    FacebookLogin,
-    UpdateIdNumberView
+    UpdateIdNumberView,
+    VerifyNidaView,
+    UserSearchView,
 )
+from .social import GoogleLogin, FacebookLogin, social_config
 
 urlpatterns = [
     # User registration and authentication
@@ -20,10 +21,13 @@ urlpatterns = [
     path('profile/', UserProfileView.as_view(), name='profile'),
     path('profile/update/', UserUpdateView.as_view(), name='profile_update'),
     path("user/idnumber/", UpdateIdNumberView.as_view(), name="update-id-number"),
+    path("nida/verify/", VerifyNidaView.as_view(), name="nida-verify"),
+    path("users/search/", UserSearchView.as_view(), name="user-search"),
     
-    # Social authentication
-    path('google/', GoogleLogin.as_view(), name='google_login'),
-    path('facebook/', FacebookLogin.as_view(), name='facebook_login'),
+    # Social authentication (website posts the provider's access token here)
+    path('social/config/', social_config, name='social_config'),
+    path('google/', GoogleLogin.as_view(), name='google_token_login'),
+    path('facebook/', FacebookLogin.as_view(), name='facebook_token_login'),
     
     # Include django-allauth URLs
     path('', include('allauth.urls')),

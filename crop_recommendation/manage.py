@@ -15,6 +15,11 @@ def main():
             "available on your PYTHONPATH environment variable? Did you "
             "forget to activate a virtual environment?"
         ) from exc
+    # `python manage.py runserver` uses PORT from .env instead of Django's default 8000
+    from decouple import config
+    from django.core.management.commands import runserver
+    runserver.Command.default_port = config('PORT', default='8765')
+
     execute_from_command_line(sys.argv)
 
 
