@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useUser } from "../UserContext";
-import logoMark from "../assets/images/logo-mark.png";
 
 const links = [
   { to: "/", label: "Home" },
@@ -14,10 +13,10 @@ const links = [
 const linkClass = ({ isActive }: { isActive: boolean }) =>
   `relative px-3 py-2 text-[15px] font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 rounded-md
    after:absolute after:inset-x-3 after:-bottom-0.5 after:h-0.5 after:origin-left after:rounded-full after:bg-primary after:transition-transform after:duration-300 ${
-    isActive
-      ? "text-primary after:scale-x-100"
-      : "text-stone-700 hover:text-primary after:scale-x-0 hover:after:scale-x-100"
-  }`;
+     isActive
+       ? "text-primary after:scale-x-100"
+       : "text-stone-700 hover:text-primary after:scale-x-0 hover:after:scale-x-100"
+   }`;
 
 const Navbar = () => {
   const location = useLocation();
@@ -70,7 +69,9 @@ const Navbar = () => {
   return (
     <header
       className={`sticky top-0 z-40 bg-white/95 backdrop-blur transition-shadow duration-300 ${
-        scrolled ? "shadow-[0_8px_30px_rgba(28,25,23,0.08)]" : "border-b border-stone-200"
+        scrolled
+          ? "shadow-[0_8px_30px_rgba(28,25,23,0.08)]"
+          : "border-b border-stone-200"
       }`}
     >
       <nav
@@ -80,10 +81,9 @@ const Navbar = () => {
       >
         <Link
           to="/"
-          className="flex items-center gap-2.5 font-display text-2xl font-bold tracking-tight"
+          className="font-display text-2xl font-bold tracking-tight"
           aria-label="AgroSmart home"
         >
-          <img src={logoMark} alt="" className="h-9 w-auto" />
           <span>
             <span className="text-stone-900">Agro</span>
             <span className="text-primary">Smart</span>
@@ -92,7 +92,12 @@ const Navbar = () => {
 
         <div className="hidden items-center gap-1 md:flex">
           {links.map((l) => (
-            <NavLink key={l.to} to={l.to} end={l.to === "/"} className={linkClass}>
+            <NavLink
+              key={l.to}
+              to={l.to}
+              end={l.to === "/"}
+              className={linkClass}
+            >
               {l.label}
             </NavLink>
           ))}
@@ -120,14 +125,26 @@ const Navbar = () => {
               </button>
 
               {dropdownOpen && (
-                <div className="card absolute right-0 mt-3 w-72 p-4 shadow-xl" style={{ animation: "pop-in 0.2s ease-out" }}>
+                <div
+                  className="card absolute right-0 mt-3 w-72 p-4 shadow-xl"
+                  style={{ animation: "pop-in 0.2s ease-out" }}
+                >
                   <div className="border-b border-stone-200 pb-3">
-                    <p className="font-semibold text-stone-900">{user.username}</p>
-                    <p className="truncate text-sm text-stone-500">{user.email}</p>
+                    <p className="font-semibold text-stone-900">
+                      {user.username}
+                    </p>
+                    <p className="truncate text-sm text-stone-500">
+                      {user.email}
+                    </p>
                   </div>
                   <dl className="space-y-2 py-3 text-sm">
                     {[
-                      ["Name", [user.first_name, user.last_name].filter(Boolean).join(" ")],
+                      [
+                        "Name",
+                        [user.first_name, user.last_name]
+                          .filter(Boolean)
+                          .join(" "),
+                      ],
                       ["Phone", user.phone_number],
                       ["Account", user.is_seller ? "Seller" : "Buyer"],
                     ]
@@ -148,7 +165,10 @@ const Navbar = () => {
                     <Link to="/profile" className="btn-secondary flex-1">
                       Profile
                     </Link>
-                    <button onClick={handleLogout} className="btn-primary flex-1">
+                    <button
+                      onClick={handleLogout}
+                      className="btn-primary flex-1"
+                    >
                       Log out
                     </button>
                   </div>
@@ -171,7 +191,12 @@ const Navbar = () => {
         <div className="border-t border-stone-200 bg-white md:hidden">
           <div className="container-x flex flex-col py-3">
             {links.map((l) => (
-              <NavLink key={l.to} to={l.to} end={l.to === "/"} className={linkClass}>
+              <NavLink
+                key={l.to}
+                to={l.to}
+                end={l.to === "/"}
+                className={linkClass}
+              >
                 {l.label}
               </NavLink>
             ))}

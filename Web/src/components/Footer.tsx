@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import Reveal from "./Reveal";
 import { useUser } from "../UserContext";
-import logoMarkWhite from "../assets/images/logo-mark-white.png";
 
 const columns = [
   {
@@ -66,10 +65,9 @@ const Footer = () => {
             <div>
               <Link
                 to="/"
-                className="flex items-center gap-2.5 font-display text-2xl font-bold tracking-tight"
+                className="font-display text-2xl font-bold tracking-tight"
                 aria-label="AgroSmart home"
               >
-                <img src={logoMarkWhite} alt="" className="h-9 w-auto" />
                 <span>
                   Agro<span className="text-green-300">Smart</span>
                 </span>

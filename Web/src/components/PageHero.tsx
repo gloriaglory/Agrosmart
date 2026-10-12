@@ -7,7 +7,8 @@ type Props = {
   image?: string;
   // "soft": faded and blurred, suits wide field photos.
   // "texture": black-and-white with a green tint, suits close-ups with strong colours.
-  imageStyle?: "soft" | "texture";
+  // "clear": sharp and in colour, for large high-quality photos.
+  imageStyle?: "soft" | "texture" | "clear";
   // CSS object-position for the photo, e.g. "bottom" to show the lower part
   imagePosition?: string;
   children?: ReactNode;
@@ -33,7 +34,9 @@ const PageHero = ({
           className={`hero-zoom absolute inset-0 h-full w-full object-cover ${
             imageStyle === "texture"
               ? "opacity-[0.18] contrast-125 grayscale"
-              : "opacity-[0.22] blur-[2px]"
+              : imageStyle === "clear"
+                ? "opacity-[0.35]"
+                : "opacity-[0.22] blur-[2px]"
           }`}
         />
         {imageStyle === "texture" && (
@@ -47,7 +50,11 @@ const PageHero = ({
     <div className="page-hero-inner relative">
       <h1 className="animate-[pop-in_0.6s_ease-out]">{title}</h1>
       {subtitle && <p className="animate-[pop-in_0.8s_ease-out]">{subtitle}</p>}
-      {children && <div className="mt-6 flex flex-wrap justify-center gap-3">{children}</div>}
+      {children && (
+        <div className="mt-6 flex flex-wrap justify-center gap-3">
+          {children}
+        </div>
+      )}
     </div>
     <div className="page-hero-rule relative" />
   </section>

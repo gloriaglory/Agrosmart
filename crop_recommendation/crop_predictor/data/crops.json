@@ -1,0 +1,1609 @@
+{
+ "source": "FAO ECOCROP database, via github.com/OpenCLIM/ecocrop",
+ "crops": [
+  {
+   "key": "maize",
+   "name": "Maize",
+   "swahili": "Mahindi",
+   "scientific_name": "Zea mays",
+   "months": 4,
+   "perennial": false,
+   "temperature": [
+    10.0,
+    18.0,
+    33.0,
+    47.0
+   ],
+   "rainfall": [
+    400.0,
+    600.0,
+    1200.0,
+    1800.0
+   ],
+   "ph": [
+    4.5,
+    5.0,
+    7.0,
+    8.5
+   ],
+   "killing_temperature": null,
+   "max_altitude_m": 4000.0,
+   "dry_months": 0,
+   "depth_cm": {
+    "optimal": 50,
+    "absolute": 20
+   },
+   "texture": {
+    "optimal": [
+     "heavy",
+     "medium",
+     "light"
+    ],
+    "absolute": [
+     "heavy",
+     "medium",
+     "light"
+    ]
+   },
+   "note": null
+  },
+  {
+   "key": "rice",
+   "name": "Rice",
+   "swahili": "Mpunga",
+   "scientific_name": "Oryza sativa",
+   "months": 4,
+   "perennial": false,
+   "temperature": [
+    10.0,
+    20.0,
+    30.0,
+    36.0
+   ],
+   "rainfall": [
+    1000.0,
+    1500.0,
+    2000.0,
+    4000.0
+   ],
+   "ph": [
+    4.5,
+    5.5,
+    7.0,
+    9.0
+   ],
+   "killing_temperature": null,
+   "max_altitude_m": 2500.0,
+   "dry_months": 0,
+   "depth_cm": {
+    "optimal": 50,
+    "absolute": 20
+   },
+   "texture": {
+    "optimal": [
+     "heavy",
+     "medium",
+     "light"
+    ],
+    "absolute": [
+     "heavy",
+     "light",
+     "medium"
+    ]
+   },
+   "note": "Best in lowland fields that hold water, or with irrigation."
+  },
+  {
+   "key": "sorghum",
+   "name": "Sorghum",
+   "swahili": "Mtama",
+   "scientific_name": "Sorghum bicolor",
+   "months": 4,
+   "perennial": false,
+   "temperature": [
+    8.0,
+    22.0,
+    35.0,
+    40.0
+   ],
+   "rainfall": [
+    300.0,
+    450.0,
+    1000.0,
+    1500.0
+   ],
+   "ph": [
+    5.0,
+    5.5,
+    7.5,
+    8.0
+   ],
+   "killing_temperature": null,
+   "max_altitude_m": 2500.0,
+   "dry_months": 0,
+   "depth_cm": {
+    "optimal": 50,
+    "absolute": 50
+   },
+   "texture": {
+    "optimal": [
+     "heavy",
+     "medium"
+    ],
+    "absolute": [
+     "heavy",
+     "light",
+     "medium"
+    ]
+   },
+   "note": null
+  },
+  {
+   "key": "pearl_millet",
+   "name": "Pearl millet",
+   "swahili": "Uwele",
+   "scientific_name": "Pennisetum glaucum",
+   "months": 3,
+   "perennial": false,
+   "temperature": [
+    12.0,
+    25.0,
+    35.0,
+    40.0
+   ],
+   "rainfall": [
+    200.0,
+    400.0,
+    900.0,
+    1700.0
+   ],
+   "ph": [
+    4.5,
+    5.0,
+    6.5,
+    8.3
+   ],
+   "killing_temperature": 0.0,
+   "max_altitude_m": 1800.0,
+   "dry_months": 0,
+   "depth_cm": {
+    "optimal": 150,
+    "absolute": 50
+   },
+   "texture": {
+    "optimal": [
+     "medium",
+     "light"
+    ],
+    "absolute": [
+     "light",
+     "medium"
+    ]
+   },
+   "note": null
+  },
+  {
+   "key": "finger_millet",
+   "name": "Finger millet",
+   "swahili": "Ulezi",
+   "scientific_name": "Eleusine coracana ssp. coracana",
+   "months": 4,
+   "perennial": false,
+   "temperature": [
+    8.0,
+    18.0,
+    30.0,
+    35.0
+   ],
+   "rainfall": [
+    300.0,
+    500.0,
+    1100.0,
+    4300.0
+   ],
+   "ph": [
+    5.5,
+    6.0,
+    7.0,
+    8.2
+   ],
+   "killing_temperature": null,
+   "max_altitude_m": 2500.0,
+   "dry_months": 0,
+   "depth_cm": {
+    "optimal": 50,
+    "absolute": 20
+   },
+   "texture": {
+    "optimal": [
+     "medium"
+    ],
+    "absolute": [
+     "heavy",
+     "light",
+     "medium"
+    ]
+   },
+   "note": null
+  },
+  {
+   "key": "wheat",
+   "name": "Wheat",
+   "swahili": "Ngano",
+   "scientific_name": "Triticum aestivum",
+   "months": 4,
+   "perennial": false,
+   "temperature": [
+    5.0,
+    15.0,
+    23.0,
+    27.0
+   ],
+   "rainfall": [
+    300.0,
+    750.0,
+    900.0,
+    1600.0
+   ],
+   "ph": [
+    5.5,
+    6.0,
+    7.0,
+    8.5
+   ],
+   "killing_temperature": 0.0,
+   "max_altitude_m": 4500.0,
+   "dry_months": 0,
+   "depth_cm": {
+    "optimal": 50,
+    "absolute": 20
+   },
+   "texture": {
+    "optimal": [
+     "medium"
+    ],
+    "absolute": [
+     "heavy",
+     "medium"
+    ]
+   },
+   "note": null
+  },
+  {
+   "key": "cassava",
+   "name": "Cassava",
+   "swahili": "Muhogo",
+   "scientific_name": "Manihot esculenta",
+   "months": 12,
+   "perennial": true,
+   "temperature": [
+    10.0,
+    20.0,
+    29.0,
+    35.0
+   ],
+   "rainfall": [
+    500.0,
+    1000.0,
+    1500.0,
+    5000.0
+   ],
+   "ph": [
+    4.0,
+    5.5,
+    8.0,
+    9.0
+   ],
+   "killing_temperature": 0.0,
+   "max_altitude_m": 2000.0,
+   "dry_months": 0,
+   "depth_cm": {
+    "optimal": 50,
+    "absolute": 50
+   },
+   "texture": {
+    "optimal": [
+     "medium",
+     "light"
+    ],
+    "absolute": [
+     "heavy",
+     "light",
+     "medium"
+    ]
+   },
+   "note": null
+  },
+  {
+   "key": "sweet_potato",
+   "name": "Sweet potato",
+   "swahili": "Viazi vitamu",
+   "scientific_name": "Ipomoea batatas",
+   "months": 4,
+   "perennial": false,
+   "temperature": [
+    10.0,
+    18.0,
+    28.0,
+    38.0
+   ],
+   "rainfall": [
+    350.0,
+    750.0,
+    2000.0,
+    5000.0
+   ],
+   "ph": [
+    4.0,
+    5.0,
+    7.0,
+    8.7
+   ],
+   "killing_temperature": 5.0,
+   "max_altitude_m": 2800.0,
+   "dry_months": 0,
+   "depth_cm": {
+    "optimal": 50,
+    "absolute": 20
+   },
+   "texture": {
+    "optimal": [
+     "heavy",
+     "medium",
+     "light"
+    ],
+    "absolute": [
+     "heavy",
+     "medium",
+     "light"
+    ]
+   },
+   "note": null
+  },
+  {
+   "key": "irish_potato",
+   "name": "Irish potato",
+   "swahili": "Viazi mviringo",
+   "scientific_name": "Solanum tuberosum",
+   "months": 3,
+   "perennial": false,
+   "temperature": [
+    7.0,
+    15.0,
+    25.0,
+    30.0
+   ],
+   "rainfall": [
+    250.0,
+    500.0,
+    800.0,
+    2000.0
+   ],
+   "ph": [
+    4.2,
+    5.0,
+    6.2,
+    8.5
+   ],
+   "killing_temperature": 0.0,
+   "max_altitude_m": 2800.0,
+   "dry_months": 0,
+   "depth_cm": {
+    "optimal": 50,
+    "absolute": 20
+   },
+   "texture": {
+    "optimal": [
+     "medium"
+    ],
+    "absolute": [
+     "heavy",
+     "light",
+     "medium"
+    ]
+   },
+   "note": null
+  },
+  {
+   "key": "beans",
+   "name": "Beans",
+   "swahili": "Maharage",
+   "scientific_name": "Phaseolus vulgaris",
+   "months": 3,
+   "perennial": false,
+   "temperature": [
+    7.0,
+    16.0,
+    25.0,
+    32.0
+   ],
+   "rainfall": [
+    300.0,
+    500.0,
+    2000.0,
+    4300.0
+   ],
+   "ph": [
+    4.0,
+    5.5,
+    7.5,
+    9.0
+   ],
+   "killing_temperature": null,
+   "max_altitude_m": 3000.0,
+   "dry_months": 0,
+   "depth_cm": {
+    "optimal": 50,
+    "absolute": 20
+   },
+   "texture": {
+    "optimal": [
+     "medium"
+    ],
+    "absolute": [
+     "heavy",
+     "light",
+     "medium"
+    ]
+   },
+   "note": null
+  },
+  {
+   "key": "cowpea",
+   "name": "Cowpea",
+   "swahili": "Kunde",
+   "scientific_name": "Vigna unguiculata",
+   "months": 3,
+   "perennial": false,
+   "temperature": [
+    15.0,
+    25.0,
+    35.0,
+    40.0
+   ],
+   "rainfall": [
+    300.0,
+    500.0,
+    1500.0,
+    4100.0
+   ],
+   "ph": [
+    4.0,
+    5.5,
+    7.5,
+    8.8
+   ],
+   "killing_temperature": -1.0,
+   "max_altitude_m": 2000.0,
+   "dry_months": 0,
+   "depth_cm": {
+    "optimal": 50,
+    "absolute": 20
+   },
+   "texture": {
+    "optimal": [
+     "medium",
+     "light"
+    ],
+    "absolute": [
+     "heavy",
+     "light",
+     "medium"
+    ]
+   },
+   "note": null
+  },
+  {
+   "key": "pigeon_pea",
+   "name": "Pigeon pea",
+   "swahili": "Mbaazi",
+   "scientific_name": "Cajanus cajan",
+   "months": 6,
+   "perennial": false,
+   "temperature": [
+    10.0,
+    18.0,
+    38.0,
+    45.0
+   ],
+   "rainfall": [
+    400.0,
+    600.0,
+    1500.0,
+    4000.0
+   ],
+   "ph": [
+    4.5,
+    5.0,
+    7.0,
+    8.4
+   ],
+   "killing_temperature": null,
+   "max_altitude_m": 3000.0,
+   "dry_months": 0,
+   "depth_cm": {
+    "optimal": 150,
+    "absolute": 50
+   },
+   "texture": {
+    "optimal": [
+     "medium",
+     "light"
+    ],
+    "absolute": [
+     "heavy",
+     "light",
+     "medium"
+    ]
+   },
+   "note": null
+  },
+  {
+   "key": "green_gram",
+   "name": "Green gram",
+   "swahili": "Choroko",
+   "scientific_name": "Vigna radiata",
+   "months": 2,
+   "perennial": false,
+   "temperature": [
+    8.0,
+    21.0,
+    36.0,
+    40.0
+   ],
+   "rainfall": [
+    500.0,
+    650.0,
+    900.0,
+    1250.0
+   ],
+   "ph": [
+    4.3,
+    5.5,
+    6.2,
+    8.3
+   ],
+   "killing_temperature": null,
+   "max_altitude_m": 2000.0,
+   "dry_months": 0,
+   "depth_cm": {
+    "optimal": 50,
+    "absolute": 20
+   },
+   "texture": {
+    "optimal": [
+     "medium"
+    ],
+    "absolute": [
+     "heavy",
+     "light",
+     "medium"
+    ]
+   },
+   "note": null
+  },
+  {
+   "key": "chickpea",
+   "name": "Chickpea",
+   "swahili": "Dengu",
+   "scientific_name": "Cicer arietinum",
+   "months": 3,
+   "perennial": false,
+   "temperature": [
+    7.0,
+    15.0,
+    29.0,
+    35.0
+   ],
+   "rainfall": [
+    300.0,
+    600.0,
+    1000.0,
+    1800.0
+   ],
+   "ph": [
+    4.7,
+    6.0,
+    8.5,
+    9.5
+   ],
+   "killing_temperature": 0.0,
+   "max_altitude_m": 2300.0,
+   "dry_months": 0,
+   "depth_cm": {
+    "optimal": 50,
+    "absolute": 20
+   },
+   "texture": {
+    "optimal": [
+     "heavy",
+     "medium"
+    ],
+    "absolute": [
+     "heavy",
+     "light",
+     "medium"
+    ]
+   },
+   "note": "Often sown late in the rains to grow on stored soil moisture."
+  },
+  {
+   "key": "groundnut",
+   "name": "Groundnut",
+   "swahili": "Karanga",
+   "scientific_name": "Arachis hypogaea",
+   "months": 4,
+   "perennial": false,
+   "temperature": [
+    10.0,
+    22.0,
+    32.0,
+    45.0
+   ],
+   "rainfall": [
+    400.0,
+    600.0,
+    1500.0,
+    4000.0
+   ],
+   "ph": [
+    4.5,
+    5.5,
+    6.5,
+    8.5
+   ],
+   "killing_temperature": null,
+   "max_altitude_m": 1650.0,
+   "dry_months": 0,
+   "depth_cm": {
+    "optimal": 50,
+    "absolute": 50
+   },
+   "texture": {
+    "optimal": [
+     "medium"
+    ],
+    "absolute": [
+     "heavy",
+     "light",
+     "medium"
+    ]
+   },
+   "note": null
+  },
+  {
+   "key": "bambara_nut",
+   "name": "Bambara nut",
+   "swahili": "Njugu mawe",
+   "scientific_name": "Vigna subterranea",
+   "months": 4,
+   "perennial": false,
+   "temperature": [
+    16.0,
+    19.0,
+    30.0,
+    38.0
+   ],
+   "rainfall": [
+    300.0,
+    750.0,
+    1400.0,
+    3000.0
+   ],
+   "ph": [
+    4.3,
+    5.0,
+    6.5,
+    7.0
+   ],
+   "killing_temperature": null,
+   "max_altitude_m": 1400.0,
+   "dry_months": 0,
+   "depth_cm": {
+    "optimal": 50,
+    "absolute": 20
+   },
+   "texture": {
+    "optimal": [
+     "light"
+    ],
+    "absolute": [
+     "heavy",
+     "light",
+     "medium"
+    ]
+   },
+   "note": null
+  },
+  {
+   "key": "soybean",
+   "name": "Soybean",
+   "swahili": "Soya",
+   "scientific_name": "Glycine max",
+   "months": 4,
+   "perennial": false,
+   "temperature": [
+    10.0,
+    20.0,
+    33.0,
+    38.0
+   ],
+   "rainfall": [
+    450.0,
+    600.0,
+    1500.0,
+    1800.0
+   ],
+   "ph": [
+    4.5,
+    5.5,
+    6.5,
+    8.4
+   ],
+   "killing_temperature": null,
+   "max_altitude_m": 3000.0,
+   "dry_months": 0,
+   "depth_cm": {
+    "optimal": 50,
+    "absolute": 20
+   },
+   "texture": {
+    "optimal": [
+     "medium"
+    ],
+    "absolute": [
+     "heavy",
+     "light",
+     "medium"
+    ]
+   },
+   "note": null
+  },
+  {
+   "key": "peas",
+   "name": "Garden peas",
+   "swahili": "Njegere",
+   "scientific_name": "Pisum sativum",
+   "months": 3,
+   "perennial": false,
+   "temperature": [
+    4.0,
+    10.0,
+    24.0,
+    30.0
+   ],
+   "rainfall": [
+    350.0,
+    800.0,
+    1200.0,
+    2500.0
+   ],
+   "ph": [
+    4.5,
+    5.5,
+    7.0,
+    8.3
+   ],
+   "killing_temperature": 0.0,
+   "max_altitude_m": 2700.0,
+   "dry_months": 0,
+   "depth_cm": {
+    "optimal": 50,
+    "absolute": 20
+   },
+   "texture": {
+    "optimal": [
+     "heavy",
+     "medium",
+     "light"
+    ],
+    "absolute": [
+     "heavy",
+     "light",
+     "medium"
+    ]
+   },
+   "note": null
+  },
+  {
+   "key": "sunflower",
+   "name": "Sunflower",
+   "swahili": "Alizeti",
+   "scientific_name": "Helianthus annuus",
+   "months": 4,
+   "perennial": false,
+   "temperature": [
+    5.0,
+    17.0,
+    34.0,
+    45.0
+   ],
+   "rainfall": [
+    300.0,
+    600.0,
+    1000.0,
+    1600.0
+   ],
+   "ph": [
+    5.5,
+    6.0,
+    7.5,
+    8.0
+   ],
+   "killing_temperature": 0.0,
+   "max_altitude_m": 2600.0,
+   "dry_months": 0,
+   "depth_cm": {
+    "optimal": 50,
+    "absolute": 50
+   },
+   "texture": {
+    "optimal": [
+     "medium",
+     "light"
+    ],
+    "absolute": [
+     "heavy",
+     "light",
+     "medium"
+    ]
+   },
+   "note": null
+  },
+  {
+   "key": "sesame",
+   "name": "Sesame",
+   "swahili": "Ufuta",
+   "scientific_name": "Sesamum indicum",
+   "months": 4,
+   "perennial": false,
+   "temperature": [
+    10.0,
+    20.0,
+    30.0,
+    40.0
+   ],
+   "rainfall": [
+    300.0,
+    500.0,
+    1000.0,
+    1500.0
+   ],
+   "ph": [
+    4.5,
+    5.5,
+    7.5,
+    8.0
+   ],
+   "killing_temperature": null,
+   "max_altitude_m": 1500.0,
+   "dry_months": 0,
+   "depth_cm": {
+    "optimal": 150,
+    "absolute": 50
+   },
+   "texture": {
+    "optimal": [
+     "medium"
+    ],
+    "absolute": [
+     "heavy",
+     "light",
+     "medium"
+    ]
+   },
+   "note": null
+  },
+  {
+   "key": "cotton",
+   "name": "Cotton",
+   "swahili": "Pamba",
+   "scientific_name": "Gossypium hirsutum",
+   "months": 6,
+   "perennial": false,
+   "temperature": [
+    15.0,
+    22.0,
+    36.0,
+    42.0
+   ],
+   "rainfall": [
+    450.0,
+    750.0,
+    1200.0,
+    1500.0
+   ],
+   "ph": [
+    5.0,
+    6.0,
+    7.5,
+    9.5
+   ],
+   "killing_temperature": null,
+   "max_altitude_m": 1250.0,
+   "dry_months": 0,
+   "depth_cm": {
+    "optimal": 150,
+    "absolute": 50
+   },
+   "texture": {
+    "optimal": [
+     "heavy",
+     "medium"
+    ],
+    "absolute": [
+     "heavy",
+     "light",
+     "medium"
+    ]
+   },
+   "note": null
+  },
+  {
+   "key": "tobacco",
+   "name": "Tobacco",
+   "swahili": "Tumbaku",
+   "scientific_name": "Nicotiana tabacum",
+   "months": 4,
+   "perennial": false,
+   "temperature": [
+    7.0,
+    15.0,
+    30.0,
+    35.0
+   ],
+   "rainfall": [
+    350.0,
+    500.0,
+    750.0,
+    3000.0
+   ],
+   "ph": [
+    4.5,
+    5.0,
+    6.5,
+    7.5
+   ],
+   "killing_temperature": -1.0,
+   "max_altitude_m": 1800.0,
+   "dry_months": 0,
+   "depth_cm": {
+    "optimal": 150,
+    "absolute": 50
+   },
+   "texture": {
+    "optimal": [
+     "medium",
+     "light"
+    ],
+    "absolute": [
+     "heavy",
+     "light",
+     "medium"
+    ]
+   },
+   "note": null
+  },
+  {
+   "key": "cashew",
+   "name": "Cashew",
+   "swahili": "Korosho",
+   "scientific_name": "Anacardium occidentale",
+   "months": 12,
+   "perennial": true,
+   "temperature": [
+    5.0,
+    15.0,
+    35.0,
+    46.0
+   ],
+   "rainfall": [
+    400.0,
+    750.0,
+    1600.0,
+    4000.0
+   ],
+   "ph": [
+    3.8,
+    4.5,
+    6.5,
+    8.7
+   ],
+   "killing_temperature": null,
+   "max_altitude_m": 1200.0,
+   "dry_months": 4,
+   "depth_cm": {
+    "optimal": 150,
+    "absolute": 50
+   },
+   "texture": {
+    "optimal": [
+     "medium",
+     "light"
+    ],
+    "absolute": [
+     "heavy",
+     "light",
+     "medium"
+    ]
+   },
+   "note": null
+  },
+  {
+   "key": "coffee_arabica",
+   "name": "Arabica coffee",
+   "swahili": "Kahawa Arabika",
+   "scientific_name": "Coffea arabica",
+   "months": 12,
+   "perennial": true,
+   "temperature": [
+    10.0,
+    15.0,
+    24.0,
+    30.0
+   ],
+   "rainfall": [
+    750.0,
+    1200.0,
+    2300.0,
+    4200.0
+   ],
+   "ph": [
+    4.3,
+    5.5,
+    7.0,
+    8.4
+   ],
+   "killing_temperature": null,
+   "max_altitude_m": 2800.0,
+   "dry_months": 0,
+   "depth_cm": {
+    "optimal": 150,
+    "absolute": 50
+   },
+   "texture": {
+    "optimal": [
+     "medium"
+    ],
+    "absolute": [
+     "light",
+     "medium"
+    ]
+   },
+   "note": null
+  },
+  {
+   "key": "coffee_robusta",
+   "name": "Robusta coffee",
+   "swahili": "Kahawa Robusta",
+   "scientific_name": "Coffea canephora",
+   "months": 12,
+   "perennial": true,
+   "temperature": [
+    12.0,
+    20.0,
+    30.0,
+    36.0
+   ],
+   "rainfall": [
+    900.0,
+    1700.0,
+    3000.0,
+    4000.0
+   ],
+   "ph": [
+    4.0,
+    5.0,
+    6.3,
+    8.0
+   ],
+   "killing_temperature": 5.0,
+   "max_altitude_m": 1300.0,
+   "dry_months": 0,
+   "depth_cm": {
+    "optimal": 50,
+    "absolute": 20
+   },
+   "texture": {
+    "optimal": [
+     "heavy",
+     "medium"
+    ],
+    "absolute": [
+     "heavy",
+     "light",
+     "medium"
+    ]
+   },
+   "note": null
+  },
+  {
+   "key": "tea",
+   "name": "Tea",
+   "swahili": "Chai",
+   "scientific_name": "Camellia sinensis",
+   "months": 12,
+   "perennial": true,
+   "temperature": [
+    8.0,
+    13.0,
+    26.0,
+    35.0
+   ],
+   "rainfall": [
+    1000.0,
+    1400.0,
+    2000.0,
+    5000.0
+   ],
+   "ph": [
+    4.0,
+    4.5,
+    5.5,
+    6.0
+   ],
+   "killing_temperature": 0.0,
+   "max_altitude_m": 2200.0,
+   "dry_months": 0,
+   "depth_cm": {
+    "optimal": 150,
+    "absolute": 50
+   },
+   "texture": {
+    "optimal": [
+     "heavy",
+     "medium",
+     "light"
+    ],
+    "absolute": [
+     "heavy",
+     "light",
+     "medium"
+    ]
+   },
+   "note": null
+  },
+  {
+   "key": "sugarcane",
+   "name": "Sugarcane",
+   "swahili": "Miwa",
+   "scientific_name": "Saccharum officinarum",
+   "months": 12,
+   "perennial": true,
+   "temperature": [
+    15.0,
+    24.0,
+    37.0,
+    41.0
+   ],
+   "rainfall": [
+    1000.0,
+    1500.0,
+    2000.0,
+    5000.0
+   ],
+   "ph": [
+    4.5,
+    5.0,
+    8.0,
+    9.0
+   ],
+   "killing_temperature": 0.0,
+   "max_altitude_m": 1600.0,
+   "dry_months": 0,
+   "depth_cm": {
+    "optimal": 150,
+    "absolute": 50
+   },
+   "texture": {
+    "optimal": [
+     "heavy",
+     "medium",
+     "light"
+    ],
+    "absolute": [
+     "heavy",
+     "medium",
+     "light"
+    ]
+   },
+   "note": null
+  },
+  {
+   "key": "banana",
+   "name": "Banana",
+   "swahili": "Ndizi",
+   "scientific_name": "Musa acuminata",
+   "months": 12,
+   "perennial": true,
+   "temperature": [
+    10.0,
+    17.0,
+    30.0,
+    40.0
+   ],
+   "rainfall": [
+    650.0,
+    1200.0,
+    3600.0,
+    5000.0
+   ],
+   "ph": [
+    4.0,
+    5.5,
+    7.5,
+    8.4
+   ],
+   "killing_temperature": 1.0,
+   "max_altitude_m": 2400.0,
+   "dry_months": 0,
+   "depth_cm": {
+    "optimal": 150,
+    "absolute": 50
+   },
+   "texture": {
+    "optimal": [
+     "medium"
+    ],
+    "absolute": [
+     "heavy",
+     "light",
+     "medium"
+    ]
+   },
+   "note": null
+  },
+  {
+   "key": "tomato",
+   "name": "Tomato",
+   "swahili": "Nyanya",
+   "scientific_name": "Lycopersicon esculentum",
+   "months": 4,
+   "perennial": false,
+   "temperature": [
+    7.0,
+    20.0,
+    27.0,
+    35.0
+   ],
+   "rainfall": [
+    400.0,
+    600.0,
+    1300.0,
+    1800.0
+   ],
+   "ph": [
+    5.0,
+    5.5,
+    6.8,
+    7.5
+   ],
+   "killing_temperature": null,
+   "max_altitude_m": 2400.0,
+   "dry_months": 0,
+   "depth_cm": {
+    "optimal": 20,
+    "absolute": 20
+   },
+   "texture": {
+    "optimal": [
+     "medium"
+    ],
+    "absolute": [
+     "heavy",
+     "light",
+     "medium"
+    ]
+   },
+   "note": null
+  },
+  {
+   "key": "onion",
+   "name": "Onion",
+   "swahili": "Vitunguu",
+   "scientific_name": "Allium cepa",
+   "months": 4,
+   "perennial": false,
+   "temperature": [
+    4.0,
+    12.0,
+    25.0,
+    30.0
+   ],
+   "rainfall": [
+    300.0,
+    350.0,
+    600.0,
+    2800.0
+   ],
+   "ph": [
+    4.3,
+    6.0,
+    7.0,
+    8.3
+   ],
+   "killing_temperature": null,
+   "max_altitude_m": 2000.0,
+   "dry_months": 0,
+   "depth_cm": {
+    "optimal": 50,
+    "absolute": 20
+   },
+   "texture": {
+    "optimal": [
+     "medium"
+    ],
+    "absolute": [
+     "heavy",
+     "light",
+     "medium"
+    ]
+   },
+   "note": null
+  },
+  {
+   "key": "cabbage",
+   "name": "Cabbage",
+   "swahili": "Kabichi",
+   "scientific_name": "Brassica oleracea var. capitata",
+   "months": 3,
+   "perennial": false,
+   "temperature": [
+    7.0,
+    15.0,
+    24.0,
+    32.0
+   ],
+   "rainfall": [
+    300.0,
+    500.0,
+    1000.0,
+    2500.0
+   ],
+   "ph": [
+    5.0,
+    6.0,
+    7.5,
+    8.3
+   ],
+   "killing_temperature": -1.0,
+   "max_altitude_m": 2000.0,
+   "dry_months": 0,
+   "depth_cm": {
+    "optimal": 20,
+    "absolute": 20
+   },
+   "texture": {
+    "optimal": [
+     "medium"
+    ],
+    "absolute": [
+     "heavy",
+     "light",
+     "medium"
+    ]
+   },
+   "note": null
+  },
+  {
+   "key": "watermelon",
+   "name": "Watermelon",
+   "swahili": "Tikiti maji",
+   "scientific_name": "Citrullus lanatus",
+   "months": 3,
+   "perennial": false,
+   "temperature": [
+    15.0,
+    20.0,
+    35.0,
+    40.0
+   ],
+   "rainfall": [
+    400.0,
+    500.0,
+    700.0,
+    1800.0
+   ],
+   "ph": [
+    5.5,
+    6.0,
+    7.0,
+    7.5
+   ],
+   "killing_temperature": null,
+   "max_altitude_m": 1000.0,
+   "dry_months": 0,
+   "depth_cm": {
+    "optimal": 150,
+    "absolute": 50
+   },
+   "texture": {
+    "optimal": [
+     "medium"
+    ],
+    "absolute": [
+     "light",
+     "medium"
+    ]
+   },
+   "note": null
+  },
+  {
+   "key": "avocado",
+   "name": "Avocado",
+   "swahili": "Parachichi",
+   "scientific_name": "Persea americana",
+   "months": 12,
+   "perennial": true,
+   "temperature": [
+    10.0,
+    14.0,
+    40.0,
+    45.0
+   ],
+   "rainfall": [
+    300.0,
+    500.0,
+    2000.0,
+    2500.0
+   ],
+   "ph": [
+    4.5,
+    5.0,
+    5.8,
+    7.0
+   ],
+   "killing_temperature": -1.0,
+   "max_altitude_m": 2800.0,
+   "dry_months": 0,
+   "depth_cm": {
+    "optimal": 150,
+    "absolute": 150
+   },
+   "texture": {
+    "optimal": [
+     "medium"
+    ],
+    "absolute": [
+     "medium"
+    ]
+   },
+   "note": null
+  },
+  {
+   "key": "mango",
+   "name": "Mango",
+   "swahili": "Embe",
+   "scientific_name": "Mangifera indica",
+   "months": 12,
+   "perennial": true,
+   "temperature": [
+    8.0,
+    24.0,
+    30.0,
+    48.0
+   ],
+   "rainfall": [
+    300.0,
+    600.0,
+    1500.0,
+    2600.0
+   ],
+   "ph": [
+    4.3,
+    5.5,
+    7.5,
+    8.5
+   ],
+   "killing_temperature": 0.0,
+   "max_altitude_m": 1200.0,
+   "dry_months": 3,
+   "depth_cm": {
+    "optimal": 150,
+    "absolute": 50
+   },
+   "texture": {
+    "optimal": [
+     "medium",
+     "light"
+    ],
+    "absolute": [
+     "heavy",
+     "light",
+     "medium"
+    ]
+   },
+   "note": null
+  },
+  {
+   "key": "orange",
+   "name": "Orange",
+   "swahili": "Chungwa",
+   "scientific_name": "Citrus sinensis",
+   "months": 12,
+   "perennial": true,
+   "temperature": [
+    13.0,
+    20.0,
+    30.0,
+    38.0
+   ],
+   "rainfall": [
+    450.0,
+    1200.0,
+    2000.0,
+    2700.0
+   ],
+   "ph": [
+    4.0,
+    5.0,
+    6.0,
+    8.3
+   ],
+   "killing_temperature": 0.0,
+   "max_altitude_m": 2100.0,
+   "dry_months": 0,
+   "depth_cm": {
+    "optimal": 150,
+    "absolute": 50
+   },
+   "texture": {
+    "optimal": [
+     "medium",
+     "light"
+    ],
+    "absolute": [
+     "heavy",
+     "light",
+     "medium"
+    ]
+   },
+   "note": null
+  },
+  {
+   "key": "pineapple",
+   "name": "Pineapple",
+   "swahili": "Nanasi",
+   "scientific_name": "Ananas comosus",
+   "months": 12,
+   "perennial": true,
+   "temperature": [
+    10.0,
+    21.0,
+    30.0,
+    36.0
+   ],
+   "rainfall": [
+    550.0,
+    800.0,
+    2500.0,
+    3500.0
+   ],
+   "ph": [
+    3.5,
+    4.5,
+    8.0,
+    9.0
+   ],
+   "killing_temperature": null,
+   "max_altitude_m": 1800.0,
+   "dry_months": 0,
+   "depth_cm": {
+    "optimal": 50,
+    "absolute": 20
+   },
+   "texture": {
+    "optimal": [
+     "medium",
+     "light"
+    ],
+    "absolute": [
+     "heavy",
+     "light",
+     "medium"
+    ]
+   },
+   "note": null
+  }
+ ]
+}

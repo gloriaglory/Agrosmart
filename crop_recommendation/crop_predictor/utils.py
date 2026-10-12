@@ -1,8 +1,11 @@
 import time
+from concurrent.futures import ThreadPoolExecutor
+
 import httpx
-import json
-from datetime import date, timedelta
 from django.conf import settings
+from django.core.cache import cache
+
+from .climate import get_climate
 
 # API keys (loaded from .env via settings)
 GOOGLE_API_KEY = settings.GOOGLE_API_KEY
@@ -29,148 +32,103 @@ def get_lat_lon(address):
         print(f"HTTP error {response.status_code} from Google Maps API")
         return None, None
 
-# Function to fetch a single soil property
+# iSDA soil layers used for recommendations: (property, depth)
+SOIL_LAYERS = {
+    "ph": "0-20",
+    "nitrogen_total": "0-20",
+    "phosphorous_extractable": "0-20",
+    "potassium_extractable": "0-20",
+    "carbon_organic": "0-20",
+    "cation_exchange_capacity": "0-20",
+    "bulk_density": "0-20",
+    "clay_content": "0-20",
+    "sand_content": "0-20",
+    "texture_class": "0-20",
+    "bedrock_depth": "0-200",
+    "slope_angle": "0",
+    "land_cover_2019": "0",
+}
+
+# How each layer is labelled in the API response
+SOIL_LABELS = {
+    "nitrogen_total": "Nitrogen Total (0-20cm, g/kg)",
+    "phosphorous_extractable": "Phosphorus Extractable (0-20cm, mg/kg)",
+    "potassium_extractable": "Potassium Extractable (0-20cm, mg/kg)",
+    "ph": "Soil pH (0-20cm)",
+    "carbon_organic": "Organic Carbon (0-20cm, g/kg)",
+    "cation_exchange_capacity": "Cation Exchange Capacity (0-20cm, cmol/kg)",
+    "bulk_density": "Bulk Density (0-20cm, g/cm3)",
+    "clay_content": "Clay (0-20cm, %)",
+    "sand_content": "Sand (0-20cm, %)",
+    "texture_class": "Texture (0-20cm)",
+    "bedrock_depth": "Depth to Bedrock (cm)",
+    "slope_angle": "Slope (degrees)",
+    "land_cover_2019": "Land Cover (2019)",
+}
+
+
 def get_soil_property(lat, lon, property, depth="0-20", retries=3, delay=3):
-    url = (
-        f"https://api.isda-africa.com/v1/soilproperty"
-        f"?key={ISDA_API_KEY}&lat={lat}&lon={lon}&property={property}&depth={depth}"
-    )
-    
+    """One iSDA soil value at a point, or None if it is unavailable."""
+    url = "https://api.isda-africa.com/v1/soilproperty"
+    params = {"key": ISDA_API_KEY, "lat": lat, "lon": lon, "property": property, "depth": depth}
     for attempt in range(retries):
         try:
-            with httpx.Client() as client:
-                response = client.get(url, timeout=30.0)  # Added timeout
-            if response.status_code == 200:
-                try:
-                    return response.json()["property"][property][0]["value"]["value"]
-                except (json.JSONDecodeError, KeyError) as e:
-                    print(f"Failed to decode or find {property}: {e}")
-                    return None
-            else:
-                print(f"Failed to fetch {property} data, status code: {response.status_code}")
-                return None
-        except httpx.ReadTimeout:
-            print(f"Timeout when fetching {property}. Retrying {retries - attempt - 1} more times...")
+            response = httpx.get(url, params=params, timeout=30.0)
+        except httpx.TimeoutException:
             if attempt < retries - 1:
                 time.sleep(delay)
-            else:
-                print(f"Failed to fetch {property} after retries.")
-                return None
+                continue
+            print(f"Failed to fetch {property} after retries.")
+            return None
         except Exception as e:
             print(f"Unexpected error when fetching {property}: {e}")
             return None
-
-# Function to fetch multiple soil properties
-def get_soil_properties(lat, lon):
-    properties = [
-        ["nitrogen_total", "0-20"],
-        ["potassium_extractable", "0-20"],
-        ["phosphorous_extractable", "0-20"],
-        ["ph", "0-20"],
-        ["bulk_density", "0-20"],
-        ["land_cover_2019", "0"],
-        ["cation_exchange_capacity", "0-20"]
-    ]
-
-    results = []
-    for prop, depth in properties:
-        result = get_soil_property(lat, lon, prop, depth)
-        results.append(result)
-
-    return {
-        "Nitrogen Total (0-20cm)": results[0],
-        "Potassium Extractable (0-20cm)": results[1],
-        "Phosphorus Extractable (0-20cm)": results[2],
-        "Soil pH (0-20cm)": results[3],
-        "Bulk Density (0-20cm)": results[4],
-        "Land Cover (2019)": results[5],
-        "Cation Exchange Capacity (0-20cm)": results[6]
-    }
-
-# Rainfall history from Open-Meteo (free, no API key needed)
-OPEN_METEO_ARCHIVE_URL = "https://archive-api.open-meteo.com/v1/archive"
+        if response.status_code != 200:
+            print(f"Failed to fetch {property} data, status code: {response.status_code}")
+            return None
+        try:
+            return response.json()["property"][property][0]["value"]["value"]
+        except (ValueError, KeyError, IndexError) as e:
+            print(f"Failed to decode or find {property}: {e}")
+            return None
+    return None
 
 
-def get_monthly_rainfall(lat, lon):
+def get_soil(lat, lon):
     """
-    Average monthly rainfall (mm) at this location over the last 12 months.
-
-    Current-weather APIs only report rain that is falling right now, which is
-    almost always 0. Crops depend on the rainfall over the seasons, so we use
-    a year of daily totals instead. The archive lags a few days behind, so the
-    window ends a week ago.
+    All soil layers at a point as {property: value}, fetched in parallel.
+    Soil maps do not change, so results are cached for 30 days.
     """
-    end = date.today() - timedelta(days=7)
-    start = end - timedelta(days=365)
-    try:
-        response = httpx.get(
-            OPEN_METEO_ARCHIVE_URL,
-            params={
-                "latitude": lat,
-                "longitude": lon,
-                "start_date": start.isoformat(),
-                "end_date": end.isoformat(),
-                "daily": "precipitation_sum",
-                "timezone": "auto",
-            },
-            timeout=20.0,
-        )
-        response.raise_for_status()
-        daily = [v for v in response.json()["daily"]["precipitation_sum"] if v is not None]
-    except Exception as e:
-        print(f"Rainfall history request failed: {e}")
-        return None
-    if not daily:
-        return None
-    return round(sum(daily) / len(daily) * 365 / 12, 1)
+    lat, lon = round(float(lat), 4), round(float(lon), 4)  # ~10 m, finer than iSDA's 30 m grid
+    key = f"soil:{lat}:{lon}"
+    cached = cache.get(key)
+    if cached:
+        return cached
+    with ThreadPoolExecutor(max_workers=6) as pool:
+        values = dict(zip(SOIL_LAYERS, pool.map(
+            lambda item: get_soil_property(lat, lon, *item), SOIL_LAYERS.items())))
+    if any(v is not None for v in values.values()):
+        cache.set(key, values, 60 * 60 * 24 * 30)
+    return values
 
 
-# Function to fetch weather data
-def get_weather_data(lat, lon):
-    """
-    Returns (temperature °C, humidity %, average monthly rainfall mm).
-    Temperature and humidity are current readings from OpenWeatherMap;
-    rainfall is the 12-month average from get_monthly_rainfall.
-    """
-    url = f'https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={OPENWEATHER_API_KEY}&units=metric'
-    with httpx.Client() as client:
-        response = client.get(url)
-
-    if response.status_code != 200:
-        print(f"HTTP error {response.status_code} from OpenWeatherMap API")
-        return None, None, None
-    data = response.json()
-    if data.get('cod') != 200:
-        print(f"Error from OpenWeatherMap API: {data.get('message', 'Unknown error')}")
-        return None, None, None
-
-    temperature = data['main']['temp']
-    humidity = data['main']['humidity']
-    rainfall = get_monthly_rainfall(lat, lon)
-    return temperature, humidity, rainfall
+def label_soil(soil):
+    """Soil values with readable labels, for showing to people."""
+    return {SOIL_LABELS[k]: soil.get(k) for k in SOIL_LABELS}
 
 
 # Main function
 def main(address):
     lat, lon = get_lat_lon(address)
-    if lat is not None and lon is not None:
-        soil_properties = get_soil_properties(lat, lon)
-        weather_data = get_weather_data(lat, lon)
-
-        # Return the results nicely as a dict
-        return {
-            "latitude": lat,
-            "longitude": lon,
-            "soil_properties": soil_properties,
-            "weather_data": {
-                "temperature": weather_data[0],
-                "humidity": weather_data[1],
-                "avg_monthly_rainfall_mm": weather_data[2]
-            }
-        }
-    else:
+    if lat is None or lon is None:
         print("Failed to get latitude and longitude for the given address.")
         return None
+    return {
+        "latitude": lat,
+        "longitude": lon,
+        "soil_properties": label_soil(get_soil(lat, lon)),
+        "climate": get_climate(lat, lon),
+    }
 
 
 def get_district_and_region(address):

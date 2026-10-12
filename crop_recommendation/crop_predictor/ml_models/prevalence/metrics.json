@@ -1,0 +1,154 @@
+{
+  "spatial_cv": {
+    "national average": {
+      "top3_overlap": 0.437,
+      "share_covered": 0.6
+    },
+    "nearest cells (map lookup)": {
+      "top3_overlap": 0.712,
+      "share_covered": 0.854
+    },
+    "LightGBM model": {
+      "top3_overlap": 0.68,
+      "share_covered": 0.846
+    },
+    "model + nearest cells (used)": {
+      "top3_overlap": 0.716,
+      "share_covered": 0.87
+    },
+    "ECOCROP only": {
+      "top3_overlap": 0.291,
+      "share_covered": 0.398
+    },
+    "ECOCROP x blend, alpha=0.0": {
+      "top3_overlap": 0.674,
+      "share_covered": 0.837
+    },
+    "ECOCROP x blend, alpha=0.25": {
+      "top3_overlap": 0.657,
+      "share_covered": 0.826
+    },
+    "ECOCROP x blend, alpha=0.5": {
+      "top3_overlap": 0.637,
+      "share_covered": 0.808
+    },
+    "ECOCROP x blend, alpha=0.75": {
+      "top3_overlap": 0.605,
+      "share_covered": 0.774
+    }
+  },
+  "per_label": {
+    "maize": {
+      "mean_share": 0.245,
+      "mean_abs_error": 0.097
+    },
+    "rice": {
+      "mean_share": 0.0826,
+      "mean_abs_error": 0.0521
+    },
+    "sorghum": {
+      "mean_share": 0.0621,
+      "mean_abs_error": 0.0368
+    },
+    "pearl_millet": {
+      "mean_share": 0.0203,
+      "mean_abs_error": 0.0134
+    },
+    "finger_millet": {
+      "mean_share": 0.0089,
+      "mean_abs_error": 0.0058
+    },
+    "wheat": {
+      "mean_share": 0.0086,
+      "mean_abs_error": 0.007
+    },
+    "cassava": {
+      "mean_share": 0.0682,
+      "mean_abs_error": 0.0359
+    },
+    "sweet_potato": {
+      "mean_share": 0.0486,
+      "mean_abs_error": 0.0236
+    },
+    "irish_potato": {
+      "mean_share": 0.013,
+      "mean_abs_error": 0.0091
+    },
+    "beans": {
+      "mean_share": 0.0718,
+      "mean_abs_error": 0.0414
+    },
+    "cowpea": {
+      "mean_share": 0.0169,
+      "mean_abs_error": 0.0105
+    },
+    "pigeon_pea": {
+      "mean_share": 0.0153,
+      "mean_abs_error": 0.0109
+    },
+    "chickpea": {
+      "mean_share": 0.0038,
+      "mean_abs_error": 0.0032
+    },
+    "groundnut": {
+      "mean_share": 0.0374,
+      "mean_abs_error": 0.0257
+    },
+    "soybean": {
+      "mean_share": 0.0004,
+      "mean_abs_error": 0.0003
+    },
+    "sunflower": {
+      "mean_share": 0.0415,
+      "mean_abs_error": 0.0248
+    },
+    "sesame": {
+      "mean_share": 0.0275,
+      "mean_abs_error": 0.0238
+    },
+    "cotton": {
+      "mean_share": 0.025,
+      "mean_abs_error": 0.0142
+    },
+    "tobacco": {
+      "mean_share": 0.0082,
+      "mean_abs_error": 0.0063
+    },
+    "coffee_arabica": {
+      "mean_share": 0.0075,
+      "mean_abs_error": 0.0063
+    },
+    "coffee_robusta": {
+      "mean_share": 0.0047,
+      "mean_abs_error": 0.0047
+    },
+    "tea": {
+      "mean_share": 0.0009,
+      "mean_abs_error": 0.0009
+    },
+    "sugarcane": {
+      "mean_share": 0.0023,
+      "mean_abs_error": 0.0023
+    },
+    "banana": {
+      "mean_share": 0.0486,
+      "mean_abs_error": 0.0335
+    },
+    "other_pulses": {
+      "mean_share": 0.0205,
+      "mean_abs_error": 0.0193
+    },
+    "vegetables": {
+      "mean_share": 0.0223,
+      "mean_abs_error": 0.0194
+    },
+    "tropical_fruit": {
+      "mean_share": 0.0067,
+      "mean_abs_error": 0.0061
+    },
+    "cashew": {
+      "mean_share": 0.0277,
+      "mean_abs_error": 0.0168
+    }
+  }
+}

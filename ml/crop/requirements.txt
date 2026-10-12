@@ -1,0 +1,5 @@
+# Training only (the app needs just lightgbm and numpy, already in crop_recommendation/requirements.txt)
+rasterio==1.4.3
+pandas
+scikit-learn
+lightgbm

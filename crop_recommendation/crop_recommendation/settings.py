@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'authentication',
     'bot',
     'education',
+    'prices',
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
@@ -78,6 +79,9 @@ IMAGE_MODERATION_MODEL = config('IMAGE_MODERATION_MODEL', default='qwen/qwen3.8-
 GOOGLE_API_KEY = config('GOOGLE_API_KEY', default='')
 OPENWEATHER_API_KEY = config('OPENWEATHER_API_KEY', default='')
 ISDA_API_KEY = config('ISDA_API_KEY', default='')
+# Tests fake the soil and weather services too
+if 'test' in sys.argv[1:2]:
+    OPENWEATHER_API_KEY = ISDA_API_KEY = ''
 
 # Port the backend runs on locally, and its public address
 PORT = config('PORT', default='8765')

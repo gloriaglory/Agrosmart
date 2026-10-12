@@ -4,10 +4,12 @@ import numpy as np
 import pandas as pd
 import joblib
 
-# Define model, scaler, and explanation paths
+# The trained Kaggle-style model (N, P, K, temperature, humidity, pH, rainfall).
+# Not used for live recommendations (see suitability.py): its training data is not
+# Tanzanian and its units do not match iSDA soil data. Kept for comparison.
 BASE_MODEL_PATH = os.path.join(os.path.dirname(__file__), 'ml_models', 'crop')
-MODEL_PATH = os.path.join(BASE_MODEL_PATH, "crop_recomendation.joblib")
-SCALER_PATH = os.path.join(BASE_MODEL_PATH, "scaler.joblib")
+MODEL_PATH = os.path.join(BASE_MODEL_PATH, "crop_recommendation_model.joblib")
+META_PATH = os.path.join(BASE_MODEL_PATH, "crop_model_meta.json")
 EXPLANATION_PATH = os.path.join(os.path.dirname(__file__), "crop_explanations.json")
 
 # Load crop explanations
@@ -18,19 +20,14 @@ except Exception as e:
     print(f"Error loading crop explanations: {e}")
     CROP_CONDITIONS = {}
 
-# Load the trained model
+# Load the trained model and the feature order it expects
 try:
     crop_model = joblib.load(MODEL_PATH)
+    with open(META_PATH, "r", encoding="utf-8") as file:
+        FEATURES = json.load(file)["features"]
 except Exception as e:
     print(f"Error loading model: {e}")
-    crop_model = None
-
-# Load the scaler
-try:
-    scaler = joblib.load(SCALER_PATH)
-except Exception as e:
-    print(f"Error loading scaler: {e}")
-    scaler = None
+    crop_model, FEATURES = None, []
 
 # How many crops to recommend
 TOP_N = 3
@@ -39,39 +36,18 @@ TOP_N = 3
 def predict_crop_new(N, P, K, temperature, humidity, ph, rainfall):
     """
     Predicts the top crops based on soil and weather parameters.
-    `rainfall` is the average monthly rainfall in mm.
+    `rainfall` is in mm, as in the training data.
     Returns a dictionary of recommended crops with their scores.
     """
     try:
         if crop_model is None:
             raise Exception("Model not loaded properly.")
-        if scaler is None:
-            raise Exception("Scaler not loaded properly.")
-
-        # Prepare input data as a DataFrame with correct feature names
-        df = pd.DataFrame([{
-            "Nitrogen": N,
-            "Phosphorus": P,
-            "Potassium": K,
-            "Temperature": temperature,
-            "Humidity": humidity,
-            "pH_Value": ph,
-            # The model was trained with rainfall in metres (training mean ≈ 0.09,
-            # i.e. ~90 mm/month), so convert from mm.
-            "Rainfall": rainfall / 1000,
-        }])
-
-        print(f"Model Input: {df.values.tolist()}")
-
-        # Apply scaler (pass DataFrame to scaler to retain feature names)
-        scaled_df = scaler.transform(df)
-
-        # Pass scaled data as DataFrame (optional but cleaner)
-        scaled_df = pd.DataFrame(scaled_df, columns=df.columns)
+        values = [N, P, K, temperature, humidity, ph, rainfall]
+        df = pd.DataFrame([dict(zip(FEATURES, values))])  # raw values, as in training
 
         # Use model probabilities if available
         if hasattr(crop_model, "predict_proba"):
-            probabilities = crop_model.predict_proba(scaled_df)[0]
+            probabilities = crop_model.predict_proba(df)[0]
             class_labels = crop_model.classes_
 
             # Pair crops with their probabilities and sort by score
@@ -86,7 +62,7 @@ def predict_crop_new(N, P, K, temperature, humidity, ph, rainfall):
             }
         else:
             # Fallback: predict only the best crop
-            crop_prediction = crop_model.predict(scaled_df)
+            crop_prediction = crop_model.predict(df)
             output = {
                 "recommended_crops": [
                     {"crop": str(crop_prediction[0]), "score": 1.0}

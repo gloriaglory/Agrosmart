@@ -100,20 +100,69 @@ def predict_disease(image_file) -> dict:
         if os.path.exists(tmp_path):
             os.remove(tmp_path)
 
-    predictions = model.predict(processed_img)[0]
-    pred_idx = int(np.argmax(predictions))
+    predictions = model.predict(processed_img, verbose=0)[0]
+    return build_result(predictions)
 
-    if pred_idx >= len(CLASS_NAMES):
-        pred_idx = int(np.argmax(predictions[:len(CLASS_NAMES)]))
 
-    disease_name = CLASS_NAMES[pred_idx]
-    confidence = float(predictions[pred_idx])
-    disease_details = DISEASE_INFO.get(disease_name, {})
+# Below this confidence the result is shown as "not sure" instead of a diagnosis
+# (same idea as the Plant-Disease-Detection project's 0.4 threshold).
+CONFIDENCE_THRESHOLD = 0.4
+TOP_N = 3
+
+# Shown with every diagnosis: photo-based detection can be wrong, and a wrong
+# diagnosis can lead to the wrong pesticide being sprayed.
+CAUTION = (
+    "This result is a guide only. Photo-based detection can be wrong, so confirm "
+    "with an agricultural extension officer before buying or spraying any pesticide."
+)
+
+
+def _paragraph(value):
+    """The UI shows treatment and prevention as one paragraph; the data stores them as steps."""
+    if isinstance(value, list):
+        return " ".join(step.strip() for step in value if step.strip())
+    return value or ""
+
+
+def build_result(predictions) -> dict:
+    """Turn model output into the response the disease detection page expects."""
+    predictions = np.asarray(predictions[: len(CLASS_NAMES)], dtype=float)
+    order = np.argsort(predictions)[::-1]
+    top = [
+        {
+            "class": CLASS_NAMES[i],
+            "name": DISEASE_INFO.get(CLASS_NAMES[i], {}).get("name", CLASS_NAMES[i]),
+            "confidence": round(float(predictions[i]), 4),
+        }
+        for i in order[:TOP_N]
+    ]
+    best = top[0]
+    details = DISEASE_INFO.get(best["class"], {})
+
+    if best["confidence"] < CONFIDENCE_THRESHOLD:
+        return {
+            "disease": "Not sure",
+            "confidence": best["confidence"],
+            "uncertain": True,
+            "description": (
+                "The photo is not clear enough for a confident result. The closest matches were: "
+                + ", ".join(f"{t['name']} ({t['confidence'] * 100:.0f}%)" for t in top)
+                + ". Take a new photo of a single leaf, close up, in daylight, against a plain background."
+            ),
+            "treatment": "Do not treat yet. Retake the photo, or show the plant to an extension officer to confirm the problem.",
+            "preventive_measures": "Check your plants every week so problems are caught early.",
+            "top_predictions": top,
+        }
 
     return {
-        "disease": disease_name,
-        "confidence": round(confidence, 4),
-        "description": disease_details.get("description", "No description available."),
-        "treatment": disease_details.get("treatment", "No treatment specified."),
-        "preventive_measures": disease_details.get("preventive_measures", "No preventive measures specified.")
+        "disease": details.get("name", best["class"]),
+        "class": best["class"],
+        "crop": details.get("crop", ""),
+        "type": details.get("type", ""),
+        "confidence": best["confidence"],
+        "uncertain": False,
+        "description": f"{details.get('description') or 'No description available.'} {CAUTION}",
+        "treatment": _paragraph(details.get("treatment")) or "No treatment specified.",
+        "preventive_measures": _paragraph(details.get("prevention")) or "No preventive measures specified.",
+        "top_predictions": top,
     }

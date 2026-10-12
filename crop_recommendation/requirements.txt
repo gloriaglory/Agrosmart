@@ -21,7 +21,7 @@ httpcore==1.0.9
 httpx==0.28.1
 idna==3.10
 joblib==1.5.1
-keras==3.10.0
+keras==3.13.2
 libclang==18.1.1
 lightgbm==4.6.0
 Markdown==3.8.2

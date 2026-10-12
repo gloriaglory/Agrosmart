@@ -8,6 +8,7 @@ import heroVideo from "../assets/videos/44765-440000959.mp4";
 import Reveal from "../components/Reveal";
 import CountUp from "../components/CountUp";
 import { formatPrice } from "../format";
+import { PRICES_API, monthLabel, type CropSummary } from "../prices";
 import {
   MARKET_API,
   cropImage,
@@ -182,6 +183,64 @@ const CropMarquee = ({ items, loading }: { items: MarketplaceItem[]; loading: bo
           </Link>
         </div>
       )}
+    </section>
+  );
+};
+
+// Real market prices (WFP) for the main crops, linking to the Marketplace trends tab
+const MarketPricesStrip = () => {
+  const [crops, setCrops] = useState<CropSummary[]>([]);
+
+  useEffect(() => {
+    axios
+      .get<{ commodities: CropSummary[] }>(PRICES_API)
+      .then((res) => setCrops(res.data.commodities))
+      .catch(() => setCrops([]));
+  }, []);
+
+  if (!crops.length) return null;
+  const latest = crops[0].date;
+
+  return (
+    <section>
+      <Reveal className="section-head">
+        <p className="eyebrow">Market prices</p>
+        <h2 className="mt-3">Crop prices this month</h2>
+        <p>
+          Average wholesale prices across Tanzanian markets, {monthLabel(latest)}. Tap a crop to see its trend
+          and 3-month outlook.
+        </p>
+      </Reveal>
+      <Reveal className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+        {crops.slice(0, 8).map((c) => {
+          const change = c.change_pct;
+          return (
+            <Link
+              key={c.commodity}
+              to={`/market?tab=trends&crop=${encodeURIComponent(c.commodity)}`}
+              className="card card-hover p-5"
+            >
+              <p className="text-sm font-semibold text-stone-900">{c.commodity}</p>
+              <p className="mt-2 font-display text-2xl font-bold text-primary">
+                {c.price.toLocaleString()}
+                <span className="ml-1 text-xs font-medium text-stone-500">TZS/kg</span>
+              </p>
+              <p className="mt-1 text-xs font-medium text-stone-600">
+                {change === null
+                  ? monthLabel(c.date)
+                  : Math.abs(change) < 0.05
+                    ? "No change this month"
+                    : `${change > 0 ? "+" : ""}${change.toFixed(1)}% this month`}
+              </p>
+            </Link>
+          );
+        })}
+      </Reveal>
+      <div className="mt-8 text-center">
+        <Link to="/market?tab=trends" className="btn-secondary px-6 py-2.5">
+          See all price trends
+        </Link>
+      </div>
     </section>
   );
 };
@@ -427,6 +486,7 @@ function Home() {
       <div className="container-x space-y-24 pb-8 pt-20">
         <OurServices />
         <CropMarquee items={items} loading={loading} />
+        <MarketPricesStrip />
         <PriceTrendsGraph items={items} summaries={summaries} />
       </div>
     </>

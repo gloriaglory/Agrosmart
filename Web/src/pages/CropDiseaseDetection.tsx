@@ -78,7 +78,9 @@ export default function CropDiseaseDetection() {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to detect disease");
+        // Show the backend's reason (e.g. "Image is not a plant.") when it gives one
+        const body = await response.json().catch(() => null);
+        throw new Error(body?.error || "Failed to detect disease");
       }
 
       const dataFromBackend = await response.json();

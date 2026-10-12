@@ -21,6 +21,7 @@
 - [Configuration](#configuration)
 - [API overview](#api-overview)
 - [How key parts work](#how-key-parts-work)
+  - [Market prices and outlook](#market-prices-and-outlook)
 - [Testing](#testing)
 - [Running with Docker](#running-with-docker)
 - [Known limitations](#known-limitations)
@@ -29,11 +30,12 @@
 
 | Area | What it does |
 |---|---|
-| **Crop recommendation** | Pick a region or click a map. Soil data (iSDA), current weather (OpenWeatherMap) and 12 months of rainfall history (Open-Meteo) feed a LightGBM model that returns the top 3 crops for that spot. |
-| **Disease detection** | Upload a leaf photo; a TensorFlow/Keras model identifies likely diseases with treatment and prevention advice. |
+| **Crop recommendation** | Pick a region or click a map. Each of 36 Tanzanian crops' needs (FAO ECOCROP) is scored against the spot's soil (iSDA), altitude and long-term climate (Open-Meteo), then weighted by what farmers nearby grow (a LightGBM model trained on MapSPAM). Gives the top 3 crops with planting month, reasons, market price and typical income, a 5-day planting forecast (OpenWeatherMap) and soil fertility advice. |
+| **Disease detection** | Upload a leaf photo; a TensorFlow/Keras model recognises 74 conditions across 19 crops (including maize, tomato, potato, rice, cotton, sugarcane, citrus and wheat) and gives treatment and prevention advice. |
 | **Marketplace** | Sellers list produce with a region and town. Buyers search and filter by region and contact sellers directly. |
 | **Verified sellers** | Selling requires a valid 20-digit NIDA number, full name and phone. Numbers are checked, unique and locked once saved. Ready for NIDA API integration. |
-| **Market insights** | The home page shows live prices, listings per crop and a map of what is for sale in each region. |
+| **Market prices** | Real monthly prices from 63 markets (WFP), with a 3-month price outlook range, the best month to sell and prices by region, in the Marketplace's "Price trends" tab. |
+| **Market insights** | The home page shows current crop prices, listings per crop and a map of what is for sale in each region. |
 | **Education** | Articles and YouTube videos with Instagram-style comments: likes, replies and `@username` tagging. |
 | **Content moderation** | Posts and comments pass a blocked-words filter (English and Kiswahili) and AI safety checks for text and images. |
 | **Farming assistant** | A chatbot that answers farming questions in Kiswahili or English. |
@@ -44,7 +46,7 @@
 **Backend** (`crop_recommendation/`)
 - Python 3.11, Django 5.2, Django REST Framework, token authentication
 - django-allauth and dj-rest-auth for social login
-- Machine learning: LightGBM and scikit-learn (crop model), TensorFlow 2.19 and Keras (disease model)
+- Machine learning: LightGBM and scikit-learn (crop model), TensorFlow 2.19 and Keras 3.13 (disease model)
 - External services: iSDA soil API, OpenWeatherMap, Open-Meteo, Google Geocoding, Groq (LLM chat and safety models), YouTube oEmbed
 - SQLite by default, PostgreSQL optional
 
@@ -98,7 +100,7 @@ git lfs install
 ```bash
 git clone https://github.com/gloriaglory/Agrosmart.git
 cd Agrosmart
-git lfs pull        # downloads the .keras disease models (~320 MB)
+git lfs pull        # downloads the .keras disease model (~170 MB)
 ```
 
 ### 2. Backend
@@ -112,6 +114,7 @@ pip install -r requirements.txt
 cp .env.example .env              # then fill in the values (see Configuration)
 python manage.py migrate
 python manage.py seed_demo        # optional, sample accounts, listings and posts
+python manage.py refresh_prices   # download real market prices (about 65,000 rows, ~10 s)
 python manage.py createsuperuser  # optional, for the admin at /admin
 python manage.py runserver        # http://localhost:8765
 ```
@@ -151,7 +154,7 @@ npm run dev                       # http://localhost:5173
 | `DEBUG` | | `True` for development. Defaults to `False`. |
 | `PORT` | | Port for `runserver`. Defaults to `8765`. |
 | `GOOGLE_API_KEY` | For recommendations | Google Geocoding (address to coordinates) |
-| `OPENWEATHER_API_KEY` | For recommendations | Current temperature and humidity |
+| `OPENWEATHER_API_KEY` | For recommendations | 5-day forecast for planting advice |
 | `ISDA_API_KEY` | For recommendations | Soil properties for Africa |
 | `GROQ_API_KEY` | For chatbot and moderation | From [console.groq.com](https://console.groq.com) |
 | `GOOGLE_OAUTH_CLIENT_ID` / `_SECRET` | For Google login | Google Cloud Console, OAuth client (Web application) |
@@ -187,11 +190,13 @@ All endpoints return JSON. Send `Authorization: Token <token>` for endpoints tha
 | GET, PATCH, DELETE | `/market/items/<id>/` | View, edit or delete a listing (owner only) |
 | GET | `/market/items/mine/` | The current seller's listings |
 | GET | `/market/items/regions/` | Crops for sale per region, for the map |
-| POST | `/api/recommend/` | Top 3 crops for `{ latitude, longitude }` |
+| POST | `/api/recommend/` | Top 3 crops for `{ latitude, longitude }`, with climate summary and soil notes |
 | POST | `/detector/detect` | Disease detection (multipart `image`) |
 | GET, POST | `/api/education/contents/` | List or create posts |
 | GET, POST | `/api/education/comments/?content=<id>` | List or add comments |
 | POST | `/api/education/comments/<id>/like/` | Like or unlike a comment |
+| GET | `/api/prices/` | Crops with current market prices |
+| GET | `/api/prices/detail/?commodity=&region=` | Price history, 3-month outlook range, seasonality, prices by region |
 | POST | `/api/bot/ask/` | Ask the farming assistant `{ question }` |
 
 ## How key parts work
@@ -207,10 +212,31 @@ All endpoints return JSON. Send `Authorization: Token <token>` for endpoints tha
 2. **AI checks via Groq:** text is classified against an AgroSmart policy that allows normal farming language, such as killing pests or slaughtering livestock. Thumbnails are checked by a vision model.
 3. If the AI check cannot run (no key, or rate-limited), posts wait as **Pending review**. Admins approve them in **Django admin → Contents**. Comments are only blocked when clearly unsafe.
 
-### Crop recommendation model
-- Inputs: nitrogen, phosphorus, potassium, temperature, humidity, pH and rainfall.
-- Rainfall is the average monthly total over the last 12 months, converted to metres to match the training data.
-- Output: the top 3 of 15 crops (Kiswahili names), with match scores and explanations.
+### Market prices and outlook
+- **Data:** the [WFP food prices dataset for Tanzania](https://data.humdata.org/dataset/wfp-food-prices-for-united-republic-of-tanzania) (CC BY-IGO), collected mainly by the Ministry of Industry and Trade. It has monthly prices from 63 markets in 25 regions since 2006.
+- **Refreshing:** `python manage.py refresh_prices` downloads the latest file and updates prices in place. Run it monthly, for example with cron: `0 6 5 * * cd /path/to/crop_recommendation && venv/bin/python manage.py refresh_prices`. Use `--file prices.csv` to load a downloaded file instead.
+- **Units:** all prices are converted to TZS per kg. Wholesale prices are used where they are current, retail otherwise. Crops that WFP stopped tracking more than 12 months ago are hidden.
+- **Outlook:** single-number price predictions were tested and did not beat "next month = this month", so the app shows an honest **range**. For each of the next 3 months, it uses the middle 80% of price moves from the same time of year over the last 10 years. Each crop shows its measured hit rate: on the past 12 months, real prices fell inside the range 79–93% of the time for the main crops.
+- **Seasonality:** the typical price in each month relative to the yearly average over 15 years, giving the best month to sell and the cheapest month.
+- **API:** `GET /api/prices/` (crops and current prices) and `GET /api/prices/detail/?commodity=Maize&region=Dodoma`.
+
+### Crop recommendation
+Suitability scoring with the FAO ECOCROP method (`crop_predictor/suitability.py`):
+
+- **Crop needs:** ideal and absolute ranges for temperature, yearly rainfall and soil pH, plus preferred soil texture and depth and the highest altitude, for 36 Tanzanian crops. These come from FAO ECOCROP, with a few documented local corrections (highland banana, sorghum, arabica, tea, cashew's dry season). `python crop_predictor/data/build_crops.py` rebuilds `crop_predictor/data/crops.json`.
+- **Location data:**
+  - iSDA soil layers: pH, N, P, K, organic carbon, texture, depth to bedrock, slope and land cover.
+  - Open-Meteo history: 10 years of rainfall and 3 years of temperature, adjusted for altitude.
+  - Results are cached for 30 days.
+- **Scoring:**
+  - Each factor scores 0–1 and the weakest one sets the crop's score.
+  - Rainfall is scored year by year, so unreliable rain counts against a crop.
+  - Seasonal crops get the planting month whose season fits best, starting in a rainy month.
+- **Local farming:** a LightGBM model trained on MapSPAM predicts each crop's share of local farmland. It is averaged with the nearest MapSPAM cells and multiplies suitability by `0.5 + 0.5 × share / largest share`, so proven local crops rise but suitable new ones still appear. Training, data and spatial cross-validation results are in [`ml/crop/README.md`](ml/crop/README.md).
+- **Market** (`market.py`): the current market price and usual best month to sell from the prices app, and the typical local yield from MapSPAM, giving a rough income per hectare. It is shown, not used for ranking.
+- **Planting forecast** (`forecast.py`): the OpenWeatherMap 5-day forecast is checked against the common start-of-rains rule (about 20 mm within 3 days) and the crops' planting months.
+- **Output:** the top 3 crops with match score, planting month, main limiting factor and a plain-English explanation, plus soil advice (low N, P, K or organic matter, acidity, steep slopes) and warnings for non-farmland.
+- The Kaggle-style classifier in `crop_predictor/ml_models/crop/` (`services.py`) still loads for comparison but is not used. Its training data is not Tanzanian and its units do not match iSDA. For example, iSDA potassium values make it predict apple or grapes almost everywhere.
 
 ## Testing
 
@@ -220,7 +246,7 @@ source venv/bin/activate
 python manage.py test
 ```
 
-The suite covers authentication and NIDA rules, marketplace permissions, education comments and moderation, the chatbot and recommendations. Tests never call external services: Groq, YouTube and the weather APIs are simulated, and uploads go to a temporary folder.
+The suite covers authentication and NIDA rules, marketplace permissions, education comments and moderation, the chatbot and recommendations. Tests never call external services: Groq, YouTube, iSDA and the weather APIs are simulated, and uploads go to a temporary folder.
 
 Frontend checks:
 

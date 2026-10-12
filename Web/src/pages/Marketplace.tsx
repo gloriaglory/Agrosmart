@@ -1,5 +1,6 @@
 import PageHero from "../components/PageHero";
-import marketHeroImg from "../assets/images/greengrams.png";
+// Soko la Kilombero, Arusha. Photo: Wikimedia Commons, CC0 (public domain)
+import marketHeroImg from "../assets/images/market-hero.jpg";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -7,6 +8,7 @@ import { tanzaniaRegions } from "../components/regions";
 import { MARKET_API, cropImage, type MarketplaceItem } from "../market";
 import { useUser } from "../UserContext";
 import { formatPrice } from "../format";
+import PriceTrends from "../components/PriceTrends";
 
 class MarketplaceErrorBoundary extends React.Component<
   { children: React.ReactNode },
@@ -49,6 +51,14 @@ export default function MarketplaceViewer() {
   );
   const [searchParams, setSearchParams] = useSearchParams();
   const region = searchParams.get("region") ?? "";
+  const tab = searchParams.get("tab") === "trends" ? "trends" : "listings";
+
+  const setParam = (key: string, value: string | null) => {
+    const next = new URLSearchParams(searchParams);
+    if (value) next.set(key, value);
+    else next.delete(key);
+    setSearchParams(next, { replace: true });
+  };
   const [search, setSearch] = useState(searchParams.get("search") ?? "");
 
   const navigate = useNavigate();
@@ -94,8 +104,8 @@ export default function MarketplaceViewer() {
       <div>
         <PageHero
           image={marketHeroImg}
-          imageStyle="texture"
-          imagePosition="center 85%"
+          imageStyle="clear"
+          imagePosition="center 70%"
           title="Marketplace"
           subtitle="Fresh produce listed directly by farmers verified with their NIDA number."
         >
@@ -104,89 +114,127 @@ export default function MarketplaceViewer() {
           </button>
         </PageHero>
         <div className="page">
-          <div className="mb-8 flex flex-col gap-3 sm:flex-row">
-            <input
-              type="search"
-              placeholder="Search crops, e.g. maize"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="input sm:max-w-sm"
-              aria-label="Search listings"
+          {/* Tabs */}
+          <div
+            className="mb-8 flex gap-1 border-b border-stone-200"
+            role="tablist"
+          >
+            {[
+              { key: "listings", label: "Listings" },
+              { key: "trends", label: "Price trends" },
+            ].map((t) => (
+              <button
+                key={t.key}
+                role="tab"
+                aria-selected={tab === t.key}
+                onClick={() =>
+                  setParam("tab", t.key === "trends" ? "trends" : null)
+                }
+                className={`-mb-px border-b-2 px-4 py-2.5 text-sm font-semibold transition-colors ${
+                  tab === t.key
+                    ? "border-primary text-primary"
+                    : "border-transparent text-stone-500 hover:text-stone-800"
+                }`}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
+
+          {tab === "trends" ? (
+            <PriceTrends
+              initialCrop={searchParams.get("crop")}
+              onCropChange={(crop) => setParam("crop", crop)}
             />
-            <select
-              value={region}
-              onChange={(e) => setRegion(e.target.value)}
-              className="input sm:w-56"
-              aria-label="Filter by region"
-            >
-              <option value="">All regions</option>
-              {regionNames.map((r) => (
-                <option key={r} value={r}>
-                  {r}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {loading && items.length === 0 && (
-            <p className="muted">Loading items…</p>
-          )}
-          {error && <p className="alert-error">{error}</p>}
-          {!loading && !error && items.length === 0 && (
-            <div className="card p-10 text-center">
-              <p className="font-medium text-stone-900">
-                {region || search
-                  ? "No listings match your filters"
-                  : "No items listed yet"}
-              </p>
-              <p className="muted mt-1">
-                {region || search
-                  ? "Try another region or search term."
-                  : "Check back soon, or list your own produce."}
-              </p>
-            </div>
-          )}
-
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {items.map((item) => {
-              const img = cropImage(item);
-              return (
-                <button
-                  key={item.id}
-                  className="card card-hover flex flex-col overflow-hidden text-left"
-                  onClick={() => setSelectedItem(item)}
+          ) : (
+            <>
+              <div className="mb-8 flex flex-col gap-3 sm:flex-row">
+                <input
+                  type="search"
+                  placeholder="Search crops, e.g. maize"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="input sm:max-w-sm"
+                  aria-label="Search listings"
+                />
+                <select
+                  value={region}
+                  onChange={(e) => setRegion(e.target.value)}
+                  className="input sm:w-56"
+                  aria-label="Filter by region"
                 >
-                  {img ? (
-                    <img
-                      src={img}
-                      alt={item.name}
-                      className="h-44 w-full object-cover"
-                    />
-                  ) : (
-                    <div className="flex h-44 w-full items-center justify-center bg-stone-100 text-sm text-stone-400">
-                      No image
-                    </div>
-                  )}
-                  <div className="flex flex-1 flex-col p-4">
-                    <div className="flex items-start justify-between gap-3">
-                      <h2 className="font-semibold text-stone-900">
-                        {item.name}
-                      </h2>
-                      <span className="shrink-0 font-semibold text-primary">
-                        {formatPrice(item.price)}
-                      </span>
-                    </div>
-                    <p className="mt-1 flex-1 text-sm text-stone-600 line-clamp-2">
-                      {item.description}
-                    </p>
-                    <p className="mt-3 text-xs text-stone-500">
-                      {[item.location, item.region].filter(Boolean).join(", ")}
-                    </p>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
+                  <option value="">All regions</option>
+                  {regionNames.map((r) => (
+                    <option key={r} value={r}>
+                      {r}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {loading && items.length === 0 && (
+                <p className="muted">Loading items…</p>
+              )}
+              {error && <p className="alert-error">{error}</p>}
+              {!loading && !error && items.length === 0 && (
+                <div className="card p-10 text-center">
+                  <p className="font-medium text-stone-900">
+                    {region || search
+                      ? "No listings match your filters"
+                      : "No items listed yet"}
+                  </p>
+                  <p className="muted mt-1">
+                    {region || search
+                      ? "Try another region or search term."
+                      : "Check back soon, or list your own produce."}
+                  </p>
+                </div>
+              )}
+
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {items.map((item) => {
+                  const img = cropImage(item);
+                  return (
+                    <button
+                      key={item.id}
+                      className="card card-hover flex flex-col overflow-hidden text-left"
+                      onClick={() => setSelectedItem(item)}
+                    >
+                      {img ? (
+                        <img
+                          src={img}
+                          alt={item.name}
+                          className="h-44 w-full object-cover"
+                        />
+                      ) : (
+                        <div className="flex h-44 w-full items-center justify-center bg-stone-100 text-sm text-stone-400">
+                          No image
+                        </div>
+                      )}
+                      <div className="flex flex-1 flex-col p-4">
+                        <div className="flex items-start justify-between gap-3">
+                          <h2 className="font-semibold text-stone-900">
+                            {item.name}
+                          </h2>
+                          <span className="shrink-0 font-semibold text-primary">
+                            {formatPrice(item.price)}
+                          </span>
+                        </div>
+                        <p className="mt-1 flex-1 text-sm text-stone-600 line-clamp-2">
+                          {item.description}
+                        </p>
+                        <p className="mt-3 text-xs text-stone-500">
+                          {[item.location, item.region]
+                            .filter(Boolean)
+                            .join(", ")}
+                        </p>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </>
+          )}
 
           {selectedItem && (
             <div

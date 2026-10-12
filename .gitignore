@@ -19,3 +19,37 @@ dist/
 
 # OS
 .DS_Store
+
+# ML training data (large, downloaded by ml/disease/download_data.sh)
+ml/disease/data/
+ml/disease/runs/
+ml/crop/data/
+ml/crop/runs/
+
+# Editor settings
+.idea/
+frontend/
+
+# Uploaded files (listing photos, post thumbnails); created at runtime
+crop_recommendation/media/
+
+# Unused large files and pictures, kept locally only
+test.json
+crop_recommendation/disease_detection/ml_models/plant_disease_model.keras
+crop_recommendation/disease_detection/ml_models/leaf*.jpg
+crop_recommendation/disease_detection/ml_models/maize.jpg
+crop_recommendation/crop_predictor/data/crop_prices_trend.csv
+crop_recommendation/crop_predictor/data/data.json
+crop_recommendation/crop_predictor/data/extracted_crops*.csv
+Web/src/nuts.png
+Web/src/assets/images/gard.jpeg
+Web/src/assets/images/hom1.jpeg
+Web/src/assets/images/irrigation_methods.jpeg
+Web/src/assets/images/logo-mark*.png
+Web/src/assets/images/logo.png
+Web/src/assets/images/m.png
+Web/src/assets/images/samp.png
+Web/src/assets/images/samp[1235].jpeg
+Web/src/assets/images/soil_fertility.jpeg
+Web/src/assets/images/w.jpg
+Web/src/assets/images/tomato*.jpeg

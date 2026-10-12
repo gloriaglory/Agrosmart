@@ -1,498 +1,1222 @@
 {
-  "diseases": {
-    "Powdery Mildew": {
-      "description": "Powdery mildew is a common fungal disease that primarily affects the leaves of many plants. It appears as white or grayish powdery spots on the surface of leaves, stems, and sometimes flowers. This fungus thrives in warm, dry climates but requires high humidity to germinate. Infected leaves may become distorted, yellow, and drop prematurely, reducing the plant's photosynthetic ability and overall vigor.",
-      "treatment": [
-        "Apply sulfur-based fungicides or other fungicides labeled for powdery mildew management",
-        "Use neem oil and potassium bicarbonate sprays",
-        "Follow recommended application rates and intervals",
-        "Remove and destroy heavily infected plant parts"
-      ],
-      "prevention": [
-        "Ensure good air circulation through proper spacing and pruning",
-        "Avoid overhead watering to reduce leaf wetness",
-        "Choose resistant plant varieties when available",
-        "Maintain plant health with adequate fertilization and watering"
-      ]
-    },
-    "Leaf Rust": {
-      "description": "Leaf rust is a fungal disease characterized by the appearance of small, rust-colored pustules or spots on the upper and lower surfaces of leaves. The disease primarily weakens plants by reducing photosynthesis and causing premature leaf drop. It often spreads rapidly in warm, moist conditions and can lead to significant yield losses if not managed timely.",
-      "treatment": [
-        "Apply fungicides containing chlorothalonil, propiconazole, or myclobutanil",
-        "Begin treatment when symptoms appear or conditions favor disease",
-        "Regularly monitor fields for early detection"
-      ],
-      "prevention": [
-        "Practice crop rotation",
-        "Remove and destroy crop residues that may harbor spores",
-        "Use resistant or tolerant varieties",
-        "Maintain proper fertilization and irrigation"
-      ]
-    },
-    "Apple Scab": {
-      "description": "A fungal disease that causes dark, scaly lesions on leaves and fruit.",
-      "treatment": [
-        "Remove and destroy infected leaves and fruit",
-        "Apply fungicides in early spring",
-        "Maintain good air circulation by proper pruning",
-        "Plant scab-resistant apple varieties"
-      ],
-      "prevention": [
-        "Space trees for good air circulation",
-        "Clean up fallen leaves and fruit in autumn",
-        "Use drip irrigation instead of overhead watering",
-        "Monitor weather conditions for infection periods"
-      ]
-    },
-    "Tomato Early Blight": {
-      "description": "A fungal disease causing dark spots with concentric rings on leaves.",
-      "treatment": [
-        "Remove infected leaves immediately",
-        "Apply appropriate fungicide",
-        "Ensure proper plant spacing",
-        "Avoid overhead watering"
-      ],
-      "prevention": [
-        "Rotate crops every 2-3 years",
-        "Mulch around plants",
-        "Water at the base of plants",
-        "Keep garden free of debris"
-      ]
-    },
-    "Potato Late Blight": {
-      "description": "A devastating fungal disease causing dark water-soaked spots on leaves and tubers.",
-      "treatment": [
-        "Remove and destroy infected plants",
-        "Apply copper-based fungicides",
-        "Harvest potatoes early if disease is present",
-        "Improve drainage in the field"
-      ],
-      "prevention": [
-        "Plant certified disease-free seed potatoes",
-        "Space plants for good air circulation",
-        "Avoid overhead irrigation",
-        "Monitor weather conditions"
-      ]
-    },
-    "Grape Black Rot": {
-      "description": "A fungal disease causing dark lesions on leaves and rotting fruit.",
-      "treatment": [
-        "Remove infected fruit and leaves",
-        "Apply fungicides at appropriate intervals",
-        "Prune for better air circulation",
-        "Control nearby wild grapes"
-      ],
-      "prevention": [
-        "Clean up all fallen fruit and leaves",
-        "Prune and train vines properly",
-        "Control weeds around vines",
-        "Choose resistant varieties when possible"
-      ]
-    },
-    "Corn Common Rust": {
-      "description": "A fungal disease causing rusty spots on leaves.",
-      "treatment": [
-        "Apply appropriate fungicides",
-        "Remove heavily infected plants",
-        "Maintain proper soil fertility",
-        "Ensure good drainage"
-      ],
-      "prevention": [
-        "Plant resistant varieties",
-        "Avoid overhead irrigation",
-        "Maintain proper plant spacing",
-        "Monitor weather conditions"
-      ]
-    }
+  "Apple___Apple_scab": {
+    "name": "Apple scab",
+    "crop": "Apple",
+    "type": "Fungal (Venturia inaequalis)",
+    "description": "Apple scab causes olive-green to dark brown velvety spots on leaves and dark, cracked, corky spots on fruit. Badly infected leaves turn yellow and drop early. It spreads in cool, wet weather when spores splash from old fallen leaves.",
+    "treatment": [
+      "Remove and destroy badly infected leaves and fruit.",
+      "Spray a protective fungicide such as captan, mancozeb or sulphur from bud break, repeating after rain as the label directs.",
+      "Use only pesticides registered by the Tanzania Plant Health and Pesticides Authority (TPHPA) and follow the label for dose, protective gear and waiting time before harvest."
+    ],
+    "prevention": [
+      "Rake up and burn or bury fallen leaves after harvest so the fungus cannot survive.",
+      "Prune the tree to open the canopy so leaves dry quickly.",
+      "Plant scab-resistant varieties where available.",
+      "Avoid overhead watering."
+    ]
   },
-  "healthy_plants": {
-    "Apple": {
-      "description": "This plant appears to be healthy.",
-      "maintenance": [
-        "Continue regular maintenance",
-        "Follow regular watering schedule",
-        "Apply proper fertilization",
-        "Monitor for early signs of disease",
-        "Maintain good air circulation"
-      ]
-    },
-    "Blueberry": {
-      "description": "This plant appears to be healthy.",
-      "maintenance": [
-        "Continue regular maintenance",
-        "Follow regular watering schedule",
-        "Apply proper fertilization",
-        "Monitor for early signs of disease",
-        "Maintain good air circulation"
-      ]
-    },
-    "Corn": {
-      "description": "This plant appears to be healthy.",
-      "maintenance": [
-        "Continue regular maintenance",
-        "Follow regular watering schedule",
-        "Apply proper fertilization",
-        "Monitor for early signs of disease",
-        "Maintain good air circulation"
-      ]
-    },
-    "Grape": {
-      "description": "This plant appears to be healthy.",
-      "maintenance": [
-        "Continue regular maintenance",
-        "Follow regular watering schedule",
-        "Apply proper fertilization",
-        "Monitor for early signs of disease",
-        "Maintain good air circulation"
-      ]
-    },
-    "Peach": {
-      "description": "This plant appears to be healthy.",
-      "maintenance": [
-        "Continue regular maintenance",
-        "Follow regular watering schedule",
-        "Apply proper fertilization",
-        "Monitor for early signs of disease",
-        "Maintain good air circulation"
-      ]
-    },
-    "Pepper": {
-      "description": "This plant appears to be healthy.",
-      "maintenance": [
-        "Continue regular maintenance",
-        "Follow regular watering schedule",
-        "Apply proper fertilization",
-        "Monitor for early signs of disease",
-        "Maintain good air circulation"
-      ]
-    },
-    "Potato": {
-      "description": "This plant appears to be healthy.",
-      "maintenance": [
-        "Continue regular maintenance",
-        "Follow regular watering schedule",
-        "Apply proper fertilization",
-        "Monitor for early signs of disease",
-        "Maintain good air circulation"
-      ]
-    },
-    "Tomato": {
-      "description": "This plant appears to be healthy.",
-      "maintenance": [
-        "Continue regular maintenance",
-        "Follow regular watering schedule",
-        "Apply proper fertilization",
-        "Monitor for early signs of disease",
-        "Maintain good air circulation"
-      ]
-    }
+  "Apple___Black_rot": {
+    "name": "Apple black rot",
+    "crop": "Apple",
+    "type": "Fungal (Botryosphaeria obtusa)",
+    "description": "Black rot causes purple spots on leaves that grow into brown 'frog-eye' spots with a purple edge, sunken cankers on branches, and a firm brown-to-black rot on fruit that later shrivels into a hard mummy.",
+    "treatment": [
+      "Cut out cankered branches 15 cm below the visible damage and burn them.",
+      "Remove mummified fruit from the tree and the ground.",
+      "Apply captan or another registered fungicide during the growing season, especially in wet weather.",
+      "Use only pesticides registered by the Tanzania Plant Health and Pesticides Authority (TPHPA) and follow the label for dose, protective gear and waiting time before harvest."
+    ],
+    "prevention": [
+      "Prune out dead wood every year, since the fungus survives there.",
+      "Keep trees well fed and watered so they are less stressed.",
+      "Clean pruning tools between trees.",
+      "Avoid wounding bark and fruit."
+    ]
   },
-  "other_diseases": {
-    "Apple Black Rot": {
-      "description": "A fungal disease affecting apples.",
-      "treatment": [
-        "Remove infected plant parts",
-        "Apply appropriate fungicides",
-        "Ensure proper growing conditions",
-        "Monitor plant health regularly"
-      ],
-      "prevention": [
-        "Practice crop rotation",
-        "Maintain good air circulation",
-        "Use disease-resistant varieties",
-        "Keep garden clean and free of debris"
-      ]
-    },
-    "Cedar Apple Rust": {
-      "description": "A fungal disease affecting apples.",
-      "treatment": [
-        "Remove infected plant parts",
-        "Apply appropriate fungicides",
-        "Ensure proper growing conditions",
-        "Monitor plant health regularly"
-      ],
-      "prevention": [
-        "Practice crop rotation",
-        "Maintain good air circulation",
-        "Use disease-resistant varieties",
-        "Keep garden clean and free of debris"
-      ]
-    },
-    "Cherry Powdery Mildew": {
-      "description": "A fungal disease affecting cherries.",
-      "treatment": [
-        "Remove infected plant parts",
-        "Apply appropriate fungicides",
-        "Ensure proper growing conditions",
-        "Monitor plant health regularly"
-      ],
-      "prevention": [
-        "Practice crop rotation",
-        "Maintain good air circulation",
-        "Use disease-resistant varieties",
-        "Keep garden clean and free of debris"
-      ]
-    },
-    "Corn Cercospora Leaf Spot": {
-      "description": "A fungal disease affecting corn.",
-      "treatment": [
-        "Remove infected plant parts",
-        "Apply appropriate fungicides",
-        "Ensure proper growing conditions",
-        "Monitor plant health regularly"
-      ],
-      "prevention": [
-        "Practice crop rotation",
-        "Maintain good air circulation",
-        "Use disease-resistant varieties",
-        "Keep garden clean and free of debris"
-      ]
-    },
-    "Corn Northern Leaf Blight": {
-      "description": "A fungal disease affecting corn.",
-      "treatment": [
-        "Remove infected plant parts",
-        "Apply appropriate fungicides",
-        "Ensure proper growing conditions",
-        "Monitor plant health regularly"
-      ],
-      "prevention": [
-        "Practice crop rotation",
-        "Maintain good air circulation",
-        "Use disease-resistant varieties",
-        "Keep garden clean and free of debris"
-      ]
-    },
-    "Grape Esca (Black Measles)": {
-      "description": "A fungal disease affecting grapes.",
-      "treatment": [
-        "Remove infected plant parts",
-        "Apply appropriate fungicides",
-        "Ensure proper growing conditions",
-        "Monitor plant health regularly"
-      ],
-      "prevention": [
-        "Practice crop rotation",
-        "Maintain good air circulation",
-        "Use disease-resistant varieties",
-        "Keep garden clean and free of debris"
-      ]
-    },
-    "Grape Leaf Blight": {
-      "description": "A fungal disease affecting grapes.",
-      "treatment": [
-        "Remove infected plant parts",
-        "Apply appropriate fungicides",
-        "Ensure proper growing conditions",
-        "Monitor plant health regularly"
-      ],
-      "prevention": [
-        "Practice crop rotation",
-        "Maintain good air circulation",
-        "Use disease-resistant varieties",
-        "Keep garden clean and free of debris"
-      ]
-    },
-    "Tomato Late Blight": {
-      "description": "A fungal disease affecting tomatoes.",
-      "treatment": [
-        "Remove infected plant parts",
-        "Apply appropriate fungicides",
-        "Ensure proper growing conditions",
-        "Monitor plant health regularly"
-      ],
-      "prevention": [
-        "Practice crop rotation",
-        "Maintain good air circulation",
-        "Use disease-resistant varieties",
-        "Keep garden clean and free of debris"
-      ]
-    },
-    "Tomato Leaf Mold": {
-      "description": "A fungal disease affecting tomatoes.",
-      "treatment": [
-        "Remove infected plant parts",
-        "Apply appropriate fungicides",
-        "Ensure proper growing conditions",
-        "Monitor plant health regularly"
-      ],
-      "prevention": [
-        "Practice crop rotation",
-        "Maintain good air circulation",
-        "Use disease-resistant varieties",
-        "Keep garden clean and free of debris"
-      ]
-    },
-    "Tomato Septoria Leaf Spot": {
-      "description": "A fungal disease affecting tomatoes.",
-      "treatment": [
-        "Remove infected plant parts",
-        "Apply appropriate fungicides",
-        "Ensure proper growing conditions",
-        "Monitor plant health regularly"
-      ],
-      "prevention": [
-        "Practice crop rotation",
-        "Maintain good air circulation",
-        "Use disease-resistant varieties",
-        "Keep garden clean and free of debris"
-      ]
-    },
-    "Tomato Target Spot": {
-      "description": "A fungal disease affecting tomatoes.",
-      "treatment": [
-        "Remove infected plant parts",
-        "Apply appropriate fungicides",
-        "Ensure proper growing conditions",
-        "Monitor plant health regularly"
-      ],
-      "prevention": [
-        "Practice crop rotation",
-        "Maintain good air circulation",
-        "Use disease-resistant varieties",
-        "Keep garden clean and free of debris"
-      ]
-    }
+  "Apple___Cedar_apple_rust": {
+    "name": "Cedar apple rust",
+    "crop": "Apple",
+    "type": "Fungal (Gymnosporangium juniperi-virginianae)",
+    "description": "Cedar apple rust causes bright yellow-orange spots on the upper side of apple leaves, later with small tube-like structures underneath. The fungus needs both apple and juniper (cedar) trees to complete its life cycle.",
+    "treatment": [
+      "Spray a registered fungicide such as myclobutanil or mancozeb from pink bud stage until about a month after petal fall.",
+      "Remove heavily infected leaves.",
+      "Use only pesticides registered by the Tanzania Plant Health and Pesticides Authority (TPHPA) and follow the label for dose, protective gear and waiting time before harvest."
+    ],
+    "prevention": [
+      "Remove nearby juniper or cedar trees, or galls on them, where possible.",
+      "Plant rust-resistant apple varieties.",
+      "Keep the canopy open for good air flow."
+    ]
   },
-  "viral_diseases": {
-    "Tomato Yellow Leaf Curl Virus": {
-      "description": "A viral disease affecting tomatoes.",
-      "treatment": [
-        "Remove infected plants immediately",
-        "Control whitefly populations",
-        "Use virus-free planting material",
-        "Monitor regularly for symptoms"
-      ],
-      "prevention": [
-        "Use resistant varieties when available",
-        "Implement strict sanitation measures",
-        "Control weed hosts near fields",
-        "Use reflective mulches to deter whiteflies"
-      ]
-    },
-    "Tomato Mosaic Virus": {
-      "description": "A viral disease affecting tomatoes.",
-      "treatment": [
-        "Remove and destroy infected plants",
-        "Disinfect tools after use",
-        "Avoid handling plants when wet",
-        "Control weed hosts"
-      ],
-      "prevention": [
-        "Use virus-free seeds and transplants",
-        "Wash hands before handling plants",
-        "Control aphid vectors",
-        "Avoid smoking near tomato plants"
-      ]
-    },
-    "Maize Lethal Necrosis (MLN)": {
-      "description": "A viral disease affecting corn.",
-      "treatment": [
-        "Remove and destroy infected plants",
-        "Control insect vectors",
-        "Avoid planting near infected fields",
-        "Practice strict field sanitation"
-      ],
-      "prevention": [
-        "Use certified disease-free seeds",
-        "Plant resistant varieties when available",
-        "Control insect vectors early",
-        "Practice crop rotation with non-cereal crops"
-      ]
-    },
-    "Maize Streak Virus (MSV)": {
-      "description": "A viral disease affecting corn.",
-      "treatment": [
-        "Remove infected plants early",
-        "Control leafhopper vectors",
-        "Avoid late planting",
-        "Maintain plant health"
-      ],
-      "prevention": [
-        "Plant resistant varieties",
-        "Control weeds that harbor the virus",
-        "Time planting to avoid peak vector populations",
-        "Use barrier crops"
-      ]
-    },
-    "Citrus Greening (Huanglongbing)": {
-      "description": "A bacterial disease affecting citrus.",
-      "treatment": [
-        "Remove infected trees",
-        "Control psyllid vectors",
-        "Provide optimal nutrition",
-        "Use antibiotics under professional guidance"
-      ],
-      "prevention": [
-        "Plant disease-free nursery stock",
-        "Monitor for psyllids regularly",
-        "Remove alternative host plants",
-        "Implement area-wide management programs"
-      ]
-    }
+  "Apple___healthy": {
+    "name": "Healthy apple",
+    "crop": "Apple",
+    "type": "Healthy",
+    "description": "No disease was detected. The apple leaf looks healthy.",
+    "treatment": [
+      "No treatment is needed.",
+      "Keep checking your plants every week so problems are caught early."
+    ],
+    "prevention": [
+      "Prune every year to keep the tree open and remove dead wood.",
+      "Clear fallen leaves and fruit from under the tree.",
+      "Feed with compost or balanced fertiliser and water during dry spells."
+    ]
   },
-  "bacterial_diseases": {
-    "Peach Bacterial Spot": {
-      "description": "A bacterial disease affecting peaches.",
-      "treatment": [
-        "Apply copper-based bactericides",
-        "Prune infected branches",
-        "Improve air circulation",
-        "Avoid overhead irrigation"
-      ],
-      "prevention": [
-        "Plant resistant varieties when available",
-        "Purchase disease-free nursery stock",
-        "Avoid working with wet plants",
-        "Disinfect pruning tools regularly"
-      ]
-    },
-    "Pepper Bacterial Spot": {
-      "description": "A bacterial disease affecting peppers.",
-      "treatment": [
-        "Apply copper-based bactericides",
-        "Remove severely infected plants",
-        "Avoid working with wet plants",
-        "Improve spacing for air flow"
-      ],
-      "prevention": [
-        "Use disease-free seeds and transplants",
-        "Rotate with non-host crops",
-        "Avoid overhead irrigation",
-        "Sanitize tools and equipment"
-      ]
-    },
-    "Tomato Bacterial Spot": {
-      "description": "A bacterial disease affecting tomatoes.",
-      "treatment": [
-        "Apply copper-based bactericides",
-        "Remove infected plant material",
-        "Avoid overhead watering",
-        "Improve plant spacing"
-      ],
-      "prevention": [
-        "Use disease-free seeds",
-        "Rotate crops for 2-3 years",
-        "Avoid working with wet plants",
-        "Disinfect tools between uses"
-      ]
-    }
+  "Blueberry___healthy": {
+    "name": "Healthy blueberry",
+    "crop": "Blueberry",
+    "type": "Healthy",
+    "description": "No disease was detected. The blueberry leaf looks healthy.",
+    "treatment": [
+      "No treatment is needed.",
+      "Keep checking your plants every week so problems are caught early."
+    ],
+    "prevention": [
+      "Grow in acidic, well-drained soil and mulch to keep roots moist.",
+      "Prune old canes to keep bushes open.",
+      "Water at the base rather than over the leaves."
+    ]
   },
-  "pests": {
-    "Spider Mites": {
-      "description": "Tiny arachnids that feed on plant sap, causing stippling and webbing.",
-      "treatment": [
-        "Apply miticides or insecticidal soaps",
-        "Use horticultural oils",
-        "Introduce predatory mites",
-        "Increase humidity if possible"
-      ],
-      "prevention": [
-        "Monitor plants regularly",
-        "Avoid over-fertilizing with nitrogen",
-        "Maintain proper irrigation",
-        "Remove dust from leaves"
-      ]
-    }
+  "Cherry_(including_sour)___Powdery_mildew": {
+    "name": "Cherry powdery mildew",
+    "crop": "Cherry",
+    "type": "Fungal (Podosphaera clandestina)",
+    "description": "Powdery mildew forms white, powdery patches on young leaves and shoots. Leaves may curl, pucker and drop early, weakening the tree and the next season's crop.",
+    "treatment": [
+      "Prune out and destroy badly affected shoots.",
+      "Spray sulphur, potassium bicarbonate or another registered fungicide when the first patches appear.",
+      "Use only pesticides registered by the Tanzania Plant Health and Pesticides Authority (TPHPA) and follow the label for dose, protective gear and waiting time before harvest."
+    ],
+    "prevention": [
+      "Prune for good air flow and sunlight in the canopy.",
+      "Avoid too much nitrogen fertiliser, which produces soft growth that mildew attacks.",
+      "Water the soil, not the leaves."
+    ]
+  },
+  "Cherry_(including_sour)___healthy": {
+    "name": "Healthy cherry",
+    "crop": "Cherry",
+    "type": "Healthy",
+    "description": "No disease was detected. The cherry leaf looks healthy.",
+    "treatment": [
+      "No treatment is needed.",
+      "Keep checking your plants every week so problems are caught early."
+    ],
+    "prevention": [
+      "Prune after harvest to keep the canopy open.",
+      "Remove fallen leaves and fruit.",
+      "Water deeply during dry periods and mulch the root zone."
+    ]
+  },
+  "Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot": {
+    "name": "Maize gray leaf spot",
+    "crop": "Maize",
+    "type": "Fungal (Cercospora zeae-maydis)",
+    "description": "Gray leaf spot causes long, narrow, rectangular grey-to-tan spots running between the leaf veins. Spots join together and kill large parts of the leaf, reducing yield. It is worst in warm, humid weather and fields where maize follows maize.",
+    "treatment": [
+      "If the disease appears before tasselling and spreads fast, spray a registered fungicide such as a strobilurin or triazole.",
+      "Remove and destroy badly infected lower leaves in small plots.",
+      "Use only pesticides registered by the Tanzania Plant Health and Pesticides Authority (TPHPA) and follow the label for dose, protective gear and waiting time before harvest."
+    ],
+    "prevention": [
+      "Rotate maize with beans, soybeans or other non-cereal crops for at least one season.",
+      "Plough under or remove maize stalks after harvest.",
+      "Plant tolerant varieties recommended for your area.",
+      "Avoid very dense planting so leaves dry faster."
+    ]
+  },
+  "Corn_(maize)___Common_rust_": {
+    "name": "Maize common rust",
+    "crop": "Maize",
+    "type": "Fungal (Puccinia sorghi)",
+    "description": "Common rust causes small, raised, cinnamon-brown powdery spots (pustules) on both sides of maize leaves. Heavy infection makes leaves yellow and dry early, which reduces grain filling. It spreads by wind in cool, humid weather.",
+    "treatment": [
+      "In seed or high-value crops, spray a registered fungicide such as mancozeb or a triazole when pustules first appear on the upper leaves.",
+      "For most field maize with light infection, no spray is needed.",
+      "Use only pesticides registered by the Tanzania Plant Health and Pesticides Authority (TPHPA) and follow the label for dose, protective gear and waiting time before harvest."
+    ],
+    "prevention": [
+      "Plant rust-resistant or tolerant varieties.",
+      "Plant early in the season so the crop matures before rust builds up.",
+      "Remove volunteer maize plants and crop residues.",
+      "Use balanced fertiliser so plants stay vigorous."
+    ]
+  },
+  "Corn_(maize)___Northern_Leaf_Blight": {
+    "name": "Maize northern leaf blight",
+    "crop": "Maize",
+    "type": "Fungal (Exserohilum turcicum)",
+    "description": "Northern leaf blight causes long, cigar-shaped grey-green to tan lesions, 2–15 cm long, on maize leaves. They start on lower leaves and move up. Severe infection before or at tasselling can cut yields heavily. It favours moderate temperatures and heavy dew.",
+    "treatment": [
+      "Spray a registered fungicide (strobilurin, triazole or mancozeb) if lesions reach the leaves below the ear before tasselling.",
+      "Remove badly infected leaves in small plots.",
+      "Use only pesticides registered by the Tanzania Plant Health and Pesticides Authority (TPHPA) and follow the label for dose, protective gear and waiting time before harvest."
+    ],
+    "prevention": [
+      "Plant resistant varieties; ask your extension officer or seed supplier.",
+      "Rotate with legumes or other non-cereal crops.",
+      "Bury or remove crop residues after harvest.",
+      "Avoid planting too densely."
+    ]
+  },
+  "Corn_(maize)___healthy": {
+    "name": "Healthy maize",
+    "crop": "Maize",
+    "type": "Healthy",
+    "description": "No disease was detected. The maize leaf looks healthy.",
+    "treatment": [
+      "No treatment is needed.",
+      "Keep checking your plants every week so problems are caught early."
+    ],
+    "prevention": [
+      "Rotate maize with legumes such as beans to keep soil healthy and break disease cycles.",
+      "Use certified seed of varieties suited to your area.",
+      "Weed regularly and apply fertiliser at planting and top-dressing.",
+      "Scout fields weekly for pests such as fall armyworm."
+    ]
+  },
+  "Grape___Black_rot": {
+    "name": "Grape black rot",
+    "crop": "Grape",
+    "type": "Fungal (Guignardia bidwellii)",
+    "description": "Black rot causes reddish-brown spots with dark borders on leaves and turns berries brown, then black, shrivelled and hard. Warm, wet weather favours it.",
+    "treatment": [
+      "Remove infected leaves and shrivelled berries (mummies) and destroy them.",
+      "Spray a registered fungicide such as mancozeb or myclobutanil from early shoot growth until berries begin to colour.",
+      "Use only pesticides registered by the Tanzania Plant Health and Pesticides Authority (TPHPA) and follow the label for dose, protective gear and waiting time before harvest."
+    ],
+    "prevention": [
+      "Remove all mummies from vines and the ground before the new season.",
+      "Prune and train vines for good air flow and sun.",
+      "Control weeds under the vines."
+    ]
+  },
+  "Grape___Esca_(Black_Measles)": {
+    "name": "Grape esca (black measles)",
+    "crop": "Grape",
+    "type": "Fungal wood disease (several fungi)",
+    "description": "Esca is a wood disease of older vines. Leaves show yellow or red stripes between the veins that dry to a 'tiger-stripe' pattern, and berries may have small dark spots. Vines can suddenly wilt and die in hot weather.",
+    "treatment": [
+      "There is no effective spray once the wood is infected.",
+      "Cut out dead and infected wood well below the damage and burn it.",
+      "Severely affected vines may need to be replaced."
+    ],
+    "prevention": [
+      "Prune in dry weather and protect large pruning cuts with a wound sealant.",
+      "Disinfect pruning tools between vines.",
+      "Avoid large pruning wounds and water stress."
+    ]
+  },
+  "Grape___Leaf_blight_(Isariopsis_Leaf_Spot)": {
+    "name": "Grape leaf blight (Isariopsis leaf spot)",
+    "crop": "Grape",
+    "type": "Fungal (Pseudocercospora vitis)",
+    "description": "This leaf spot causes dark red-brown, irregular spots on older leaves, which may dry and fall early. Heavy defoliation weakens vines and reduces fruit quality.",
+    "treatment": [
+      "Remove and destroy infected leaves.",
+      "Spray a registered copper or mancozeb fungicide if the disease spreads.",
+      "Use only pesticides registered by the Tanzania Plant Health and Pesticides Authority (TPHPA) and follow the label for dose, protective gear and waiting time before harvest."
+    ],
+    "prevention": [
+      "Prune for good air flow and avoid overcrowded canopies.",
+      "Collect and destroy fallen leaves after the season.",
+      "Avoid wetting leaves when watering."
+    ]
+  },
+  "Grape___healthy": {
+    "name": "Healthy grape",
+    "crop": "Grape",
+    "type": "Healthy",
+    "description": "No disease was detected. The grape leaf looks healthy.",
+    "treatment": [
+      "No treatment is needed.",
+      "Keep checking your plants every week so problems are caught early."
+    ],
+    "prevention": [
+      "Prune every year to keep vines open and remove dead wood.",
+      "Clear fallen leaves and old berries.",
+      "Water at the roots and mulch to keep soil moist."
+    ]
+  },
+  "HEALTHY": {
+    "name": "Healthy maize",
+    "crop": "Maize",
+    "type": "Healthy",
+    "description": "No disease was detected. The maize leaf looks healthy.",
+    "treatment": [
+      "No treatment is needed.",
+      "Keep checking your plants every week so problems are caught early."
+    ],
+    "prevention": [
+      "Rotate maize with legumes such as beans to keep soil healthy and break disease cycles.",
+      "Use certified seed of varieties suited to your area.",
+      "Control weeds and insects, since some insects spread maize viruses.",
+      "Scout fields weekly so problems are caught early."
+    ]
+  },
+  "MLN": {
+    "name": "Maize lethal necrosis (MLN)",
+    "crop": "Maize",
+    "type": "Viral (maize chlorotic mottle virus with a potyvirus such as SCMV)",
+    "description": "Maize lethal necrosis is a severe disease caused by two viruses together. Leaves show yellow mottling and streaks, then dry from the edges inward. Plants may be stunted, cobs are small or empty, and whole plants can die. The viruses are spread by insects such as thrips and aphids and by infected seed. MLN has caused heavy losses in East Africa, including Tanzania.",
+    "treatment": [
+      "There is no cure for infected plants.",
+      "Uproot and destroy (burn or bury) infected plants as soon as you see them so insects do not spread the virus.",
+      "Control thrips and aphids with a registered insecticide to slow spread to healthy plants.",
+      "Report outbreaks to your extension officer.",
+      "Use only pesticides registered by the Tanzania Plant Health and Pesticides Authority (TPHPA) and follow the label for dose, protective gear and waiting time before harvest."
+    ],
+    "prevention": [
+      "Use certified, MLN-free seed and MLN-tolerant varieties.",
+      "Do not plant maize continuously; rotate with beans, sweet potato or other non-cereal crops and leave a maize-free period.",
+      "Remove volunteer maize and grassy weeds that host the viruses and insects.",
+      "Plant at the same time as your neighbours so insects cannot move from older to younger crops."
+    ]
+  },
+  "MSV": {
+    "name": "Maize streak virus (MSV)",
+    "crop": "Maize",
+    "type": "Viral (maize streak virus)",
+    "description": "Maize streak causes narrow, broken, pale yellow-white streaks along the leaf veins. Plants infected young become stunted and may produce little or no grain. The virus is spread by leafhoppers (Cicadulina) and is common in Tanzania, especially in late-planted maize.",
+    "treatment": [
+      "There is no cure for infected plants.",
+      "Uproot and destroy badly infected young plants to reduce the source of the virus.",
+      "Control leafhoppers with a registered insecticide, including seed treatments, where the disease is common.",
+      "Use only pesticides registered by the Tanzania Plant Health and Pesticides Authority (TPHPA) and follow the label for dose, protective gear and waiting time before harvest."
+    ],
+    "prevention": [
+      "Plant MSV-resistant or tolerant varieties.",
+      "Plant early at the start of the rains, since late plantings are hit hardest.",
+      "Avoid planting next to older maize or grassy fields that host leafhoppers.",
+      "Keep fields and borders free of grassy weeds."
+    ]
+  },
+  "Orange___Haunglongbing_(Citrus_greening)": {
+    "name": "Citrus greening (Huanglongbing)",
+    "crop": "Orange",
+    "type": "Bacterial (Candidatus Liberibacter), spread by psyllid insects",
+    "description": "Citrus greening is one of the most serious citrus diseases. Leaves show blotchy, uneven yellow mottling, fruit stay small, lopsided and partly green with bitter juice, and trees decline over a few years. It is spread by small insects called citrus psyllids and by infected planting material.",
+    "treatment": [
+      "There is no cure. Remove and destroy infected trees so they do not spread the disease.",
+      "Control citrus psyllids with a registered insecticide.",
+      "Report suspected cases to your extension officer.",
+      "Use only pesticides registered by the Tanzania Plant Health and Pesticides Authority (TPHPA) and follow the label for dose, protective gear and waiting time before harvest."
+    ],
+    "prevention": [
+      "Buy seedlings only from certified, disease-free nurseries.",
+      "Inspect trees regularly for psyllids and yellowing.",
+      "Keep trees well fed to slow decline.",
+      "Do not move citrus plants or budwood from affected areas."
+    ]
+  },
+  "Peach___Bacterial_spot": {
+    "name": "Peach bacterial spot",
+    "crop": "Peach",
+    "type": "Bacterial (Xanthomonas arboricola pv. pruni)",
+    "description": "Bacterial spot causes small, water-soaked spots on leaves that turn purple-brown and fall out, leaving 'shot holes'. Fruit get sunken, cracked spots. It spreads in warm, wet, windy weather.",
+    "treatment": [
+      "Spray a registered copper-based bactericide, starting at leaf fall and early spring, as the label directs.",
+      "Remove badly infected twigs.",
+      "Use only pesticides registered by the Tanzania Plant Health and Pesticides Authority (TPHPA) and follow the label for dose, protective gear and waiting time before harvest."
+    ],
+    "prevention": [
+      "Plant resistant varieties.",
+      "Avoid too much nitrogen fertiliser.",
+      "Plant windbreaks and space trees for good air flow."
+    ]
+  },
+  "Peach___healthy": {
+    "name": "Healthy peach",
+    "crop": "Peach",
+    "type": "Healthy",
+    "description": "No disease was detected. The peach leaf looks healthy.",
+    "treatment": [
+      "No treatment is needed.",
+      "Keep checking your plants every week so problems are caught early."
+    ],
+    "prevention": [
+      "Prune every year to an open shape.",
+      "Remove fallen leaves and fruit.",
+      "Water deeply in dry spells and avoid overhead watering."
+    ]
+  },
+  "Pepper,_bell___Bacterial_spot": {
+    "name": "Pepper bacterial spot",
+    "crop": "Pepper",
+    "type": "Bacterial (Xanthomonas species)",
+    "description": "Bacterial spot causes small, dark, water-soaked spots on pepper leaves that turn brown with a yellow halo. Leaves fall, exposing fruit to sunscald, and fruit get raised, scabby spots. It spreads by rain splash, infected seed and handling wet plants.",
+    "treatment": [
+      "Remove and destroy infected leaves and plants.",
+      "Spray a registered copper-based product, alone or with mancozeb, every 7–10 days in wet weather.",
+      "Avoid working among plants when they are wet.",
+      "Use only pesticides registered by the Tanzania Plant Health and Pesticides Authority (TPHPA) and follow the label for dose, protective gear and waiting time before harvest."
+    ],
+    "prevention": [
+      "Use certified, disease-free seed and healthy transplants.",
+      "Rotate with non-pepper, non-tomato crops for 2–3 years.",
+      "Water at the base, not over the leaves.",
+      "Remove crop debris after harvest."
+    ]
+  },
+  "Pepper,_bell___healthy": {
+    "name": "Healthy pepper",
+    "crop": "Pepper",
+    "type": "Healthy",
+    "description": "No disease was detected. The pepper leaf looks healthy.",
+    "treatment": [
+      "No treatment is needed.",
+      "Keep checking your plants every week so problems are caught early."
+    ],
+    "prevention": [
+      "Rotate peppers with non-related crops each season.",
+      "Water at the base and mulch to keep soil moisture even.",
+      "Stake plants and keep fields weed-free."
+    ]
+  },
+  "Potato___Early_blight": {
+    "name": "Potato early blight",
+    "crop": "Potato",
+    "type": "Fungal (Alternaria solani)",
+    "description": "Early blight causes dark brown spots with rings like a target, usually starting on older, lower leaves. Leaves around the spots turn yellow and die. Tubers can get dark, sunken spots. It is worst on stressed plants in warm weather with alternating wet and dry periods.",
+    "treatment": [
+      "Remove badly infected lower leaves.",
+      "Spray a registered fungicide such as mancozeb, chlorothalonil or a strobilurin when spots first appear, repeating as the label directs.",
+      "Use only pesticides registered by the Tanzania Plant Health and Pesticides Authority (TPHPA) and follow the label for dose, protective gear and waiting time before harvest."
+    ],
+    "prevention": [
+      "Rotate potatoes with non-solanaceous crops (not tomato, pepper or eggplant) for 2–3 years.",
+      "Use certified seed potatoes.",
+      "Feed plants well, especially with nitrogen and potassium, to reduce stress.",
+      "Remove and destroy crop debris after harvest."
+    ]
+  },
+  "Potato___Late_blight": {
+    "name": "Potato late blight",
+    "crop": "Potato",
+    "type": "Water mould (Phytophthora infestans)",
+    "description": "Late blight is a fast-spreading, destructive disease. Leaves get large, dark, water-soaked patches, often with white mould underneath in humid weather. Stems blacken and whole fields can collapse within days. Tubers develop reddish-brown rot. Cool, wet, cloudy weather favours it.",
+    "treatment": [
+      "Act immediately: spray a registered fungicide such as mancozeb, metalaxyl-mancozeb or cymoxanil-based products, repeating every 7 days in wet weather.",
+      "Remove and destroy infected plants; do not compost them.",
+      "Cut and remove haulms two weeks before harvest if the disease is present, to protect tubers.",
+      "Use only pesticides registered by the Tanzania Plant Health and Pesticides Authority (TPHPA) and follow the label for dose, protective gear and waiting time before harvest."
+    ],
+    "prevention": [
+      "Plant certified, disease-free seed potatoes and resistant varieties.",
+      "Hill up soil around plants to protect tubers.",
+      "Give plants enough space for air flow.",
+      "Destroy volunteer potatoes and cull piles, and rotate crops."
+    ]
+  },
+  "Potato___healthy": {
+    "name": "Healthy potato",
+    "crop": "Potato",
+    "type": "Healthy",
+    "description": "No disease was detected. The potato leaf looks healthy.",
+    "treatment": [
+      "No treatment is needed.",
+      "Keep checking your plants every week so problems are caught early."
+    ],
+    "prevention": [
+      "Use certified seed potatoes and rotate fields every season.",
+      "Hill up soil around stems to protect tubers.",
+      "Check leaves weekly, especially in cool, wet weather when blight spreads."
+    ]
+  },
+  "Raspberry___healthy": {
+    "name": "Healthy raspberry",
+    "crop": "Raspberry",
+    "type": "Healthy",
+    "description": "No disease was detected. The raspberry leaf looks healthy.",
+    "treatment": [
+      "No treatment is needed.",
+      "Keep checking your plants every week so problems are caught early."
+    ],
+    "prevention": [
+      "Remove old canes after fruiting.",
+      "Keep rows narrow for air flow.",
+      "Water at the base and mulch."
+    ]
+  },
+  "Soybean___healthy": {
+    "name": "Healthy soybean",
+    "crop": "Soybean",
+    "type": "Healthy",
+    "description": "No disease was detected. The soybean leaf looks healthy.",
+    "treatment": [
+      "No treatment is needed.",
+      "Keep checking your plants every week so problems are caught early."
+    ],
+    "prevention": [
+      "Rotate soybeans with maize or other cereals.",
+      "Use certified seed and inoculant for better nodulation.",
+      "Control weeds early in the season."
+    ]
+  },
+  "Squash___Powdery_mildew": {
+    "name": "Squash powdery mildew",
+    "crop": "Squash",
+    "type": "Fungal (Podosphaera xanthii and others)",
+    "description": "Powdery mildew forms white, powdery spots on the upper and lower sides of squash and pumpkin leaves. Spots spread to cover whole leaves, which yellow and die, reducing yield and fruit quality.",
+    "treatment": [
+      "Remove badly infected leaves.",
+      "Spray sulphur, potassium bicarbonate, neem oil or another registered fungicide when the first spots appear.",
+      "Use only pesticides registered by the Tanzania Plant Health and Pesticides Authority (TPHPA) and follow the label for dose, protective gear and waiting time before harvest."
+    ],
+    "prevention": [
+      "Plant resistant varieties.",
+      "Space plants well and grow in full sun.",
+      "Avoid too much nitrogen fertiliser.",
+      "Remove crop debris after harvest."
+    ]
+  },
+  "Strawberry___Leaf_scorch": {
+    "name": "Strawberry leaf scorch",
+    "crop": "Strawberry",
+    "type": "Fungal (Diplocarpon earlianum)",
+    "description": "Leaf scorch causes many small, irregular purple spots on strawberry leaves. Spots join, and leaves look burnt and dry out, weakening plants and reducing the next crop.",
+    "treatment": [
+      "Remove and destroy infected leaves.",
+      "Spray a registered fungicide such as captan if the disease is spreading.",
+      "Use only pesticides registered by the Tanzania Plant Health and Pesticides Authority (TPHPA) and follow the label for dose, protective gear and waiting time before harvest."
+    ],
+    "prevention": [
+      "Plant healthy, certified runners and resistant varieties.",
+      "Renovate beds after harvest and remove old leaves.",
+      "Space plants for good air flow and water at the base."
+    ]
+  },
+  "Strawberry___healthy": {
+    "name": "Healthy strawberry",
+    "crop": "Strawberry",
+    "type": "Healthy",
+    "description": "No disease was detected. The strawberry leaf looks healthy.",
+    "treatment": [
+      "No treatment is needed.",
+      "Keep checking your plants every week so problems are caught early."
+    ],
+    "prevention": [
+      "Use clean planting material and replant beds every few years.",
+      "Mulch to keep fruit off the soil.",
+      "Water at the base in the morning."
+    ]
+  },
+  "Tomato___Bacterial_spot": {
+    "name": "Tomato bacterial spot",
+    "crop": "Tomato",
+    "type": "Bacterial (Xanthomonas species)",
+    "description": "Bacterial spot causes small, dark, greasy-looking spots on leaves, sometimes with a yellow halo, and raised scabby spots on green fruit. Leaves may yellow and drop. It spreads by rain splash, infected seed and tools, especially in warm, wet weather.",
+    "treatment": [
+      "Remove and destroy infected leaves and badly affected plants.",
+      "Spray a registered copper-based product, alone or with mancozeb, every 7–10 days in wet weather.",
+      "Do not work in the crop when plants are wet.",
+      "Use only pesticides registered by the Tanzania Plant Health and Pesticides Authority (TPHPA) and follow the label for dose, protective gear and waiting time before harvest."
+    ],
+    "prevention": [
+      "Use certified, disease-free seed and healthy seedlings.",
+      "Rotate with non-tomato, non-pepper crops for 2–3 years.",
+      "Stake plants and water at the base.",
+      "Remove crop debris after harvest."
+    ]
+  },
+  "Tomato___Early_blight": {
+    "name": "Tomato early blight",
+    "crop": "Tomato",
+    "type": "Fungal (Alternaria solani)",
+    "description": "Early blight causes brown spots with dark rings like a target on older leaves, with yellowing around them. Spots can appear on stems and on fruit near the stem end. It weakens plants and exposes fruit to sunscald.",
+    "treatment": [
+      "Remove infected lower leaves.",
+      "Spray a registered fungicide such as mancozeb, chlorothalonil or copper when spots appear, repeating as the label directs.",
+      "Use only pesticides registered by the Tanzania Plant Health and Pesticides Authority (TPHPA) and follow the label for dose, protective gear and waiting time before harvest."
+    ],
+    "prevention": [
+      "Rotate tomatoes with non-solanaceous crops for 2–3 years.",
+      "Stake and prune plants so leaves stay off the ground.",
+      "Mulch to stop soil splashing onto leaves.",
+      "Water at the base and feed plants well."
+    ]
+  },
+  "Tomato___Late_blight": {
+    "name": "Tomato late blight",
+    "crop": "Tomato",
+    "type": "Water mould (Phytophthora infestans)",
+    "description": "Late blight causes large, dark, water-soaked patches on leaves and stems, often with white mould underneath, and firm brown rot on fruit. In cool, wet weather it can destroy a whole crop within a week.",
+    "treatment": [
+      "Act immediately: spray a registered fungicide such as mancozeb, metalaxyl-mancozeb or cymoxanil-based products every 7 days during wet weather.",
+      "Remove and destroy infected plants; do not compost them.",
+      "Use only pesticides registered by the Tanzania Plant Health and Pesticides Authority (TPHPA) and follow the label for dose, protective gear and waiting time before harvest."
+    ],
+    "prevention": [
+      "Plant resistant varieties and healthy seedlings.",
+      "Do not plant tomatoes next to potatoes.",
+      "Stake plants, space them well and water at the base.",
+      "Destroy crop debris and volunteer plants after harvest."
+    ]
+  },
+  "Tomato___Leaf_Mold": {
+    "name": "Tomato leaf mould",
+    "crop": "Tomato",
+    "type": "Fungal (Passalora fulva)",
+    "description": "Leaf mould causes pale yellow spots on the upper side of leaves with olive-green to brown velvety mould underneath. Leaves wither and drop. It is common in greenhouses and humid, poorly ventilated conditions.",
+    "treatment": [
+      "Remove and destroy infected leaves.",
+      "Improve ventilation and reduce humidity.",
+      "Spray a registered fungicide such as chlorothalonil or a copper product if it spreads.",
+      "Use only pesticides registered by the Tanzania Plant Health and Pesticides Authority (TPHPA) and follow the label for dose, protective gear and waiting time before harvest."
+    ],
+    "prevention": [
+      "Keep humidity low: ventilate greenhouses and avoid overhead watering.",
+      "Space and prune plants for air flow.",
+      "Grow resistant varieties.",
+      "Clean greenhouse structures between crops."
+    ]
+  },
+  "Tomato___Septoria_leaf_spot": {
+    "name": "Tomato Septoria leaf spot",
+    "crop": "Tomato",
+    "type": "Fungal (Septoria lycopersici)",
+    "description": "Septoria leaf spot causes many small, round spots with dark edges and grey-white centres, often with tiny black dots, on lower leaves first. Leaves yellow and fall, starting from the bottom of the plant.",
+    "treatment": [
+      "Remove infected lower leaves.",
+      "Spray a registered fungicide such as chlorothalonil, mancozeb or copper, repeating as the label directs.",
+      "Use only pesticides registered by the Tanzania Plant Health and Pesticides Authority (TPHPA) and follow the label for dose, protective gear and waiting time before harvest."
+    ],
+    "prevention": [
+      "Rotate crops for at least 2 years.",
+      "Mulch and stake plants so soil does not splash onto leaves.",
+      "Water at the base and remove weeds such as nightshade that host the fungus.",
+      "Destroy crop debris after harvest."
+    ]
+  },
+  "Tomato___Spider_mites Two-spotted_spider_mite": {
+    "name": "Tomato spider mites (two-spotted spider mite)",
+    "crop": "Tomato",
+    "type": "Pest (Tetranychus urticae)",
+    "description": "Spider mites are tiny pests that suck sap from the underside of leaves. Leaves get fine yellow speckles, then turn bronze and dry, often with fine webbing. They multiply fast in hot, dry, dusty conditions.",
+    "treatment": [
+      "Spray the underside of leaves with a strong jet of water to knock mites off.",
+      "Use neem oil, insecticidal soap or a registered miticide (acaricide), repeating after 5–7 days.",
+      "Remove heavily infested leaves.",
+      "Use only pesticides registered by the Tanzania Plant Health and Pesticides Authority (TPHPA) and follow the label for dose, protective gear and waiting time before harvest."
+    ],
+    "prevention": [
+      "Keep plants well watered; stressed plants in dry heat are attacked most.",
+      "Reduce dust on paths around the crop.",
+      "Avoid broad-spectrum insecticides that kill the mites' natural enemies.",
+      "Check the underside of leaves regularly in hot weather."
+    ]
+  },
+  "Tomato___Target_Spot": {
+    "name": "Tomato target spot",
+    "crop": "Tomato",
+    "type": "Fungal (Corynespora cassiicola)",
+    "description": "Target spot causes brown spots with light centres and rings on leaves, stems and fruit. Spots grow and join, causing leaves to fall. It favours warm, humid weather.",
+    "treatment": [
+      "Remove infected leaves.",
+      "Spray a registered fungicide such as chlorothalonil, mancozeb or a strobilurin, repeating as the label directs.",
+      "Use only pesticides registered by the Tanzania Plant Health and Pesticides Authority (TPHPA) and follow the label for dose, protective gear and waiting time before harvest."
+    ],
+    "prevention": [
+      "Prune and stake plants for good air flow.",
+      "Avoid overhead watering.",
+      "Rotate crops and remove crop debris."
+    ]
+  },
+  "Tomato___Tomato_Yellow_Leaf_Curl_Virus": {
+    "name": "Tomato yellow leaf curl virus",
+    "crop": "Tomato",
+    "type": "Viral (spread by whiteflies)",
+    "description": "This virus makes young leaves small, curled upwards and yellow at the edges. Plants become stunted and bushy, and flowers drop, so few fruit form. It is spread by whiteflies and is a major problem in warm areas.",
+    "treatment": [
+      "There is no cure. Uproot and destroy infected plants, especially young ones, by burning or burying.",
+      "Control whiteflies with a registered insecticide or neem, and yellow sticky traps.",
+      "Use only pesticides registered by the Tanzania Plant Health and Pesticides Authority (TPHPA) and follow the label for dose, protective gear and waiting time before harvest."
+    ],
+    "prevention": [
+      "Plant resistant or tolerant varieties.",
+      "Raise seedlings under insect-proof net.",
+      "Remove weeds that host whiteflies, and do not plant new tomatoes next to old infected crops.",
+      "Leave a tomato-free period between seasons."
+    ]
+  },
+  "Tomato___Tomato_mosaic_virus": {
+    "name": "Tomato mosaic virus",
+    "crop": "Tomato",
+    "type": "Viral (spread by contact and seed)",
+    "description": "Tomato mosaic virus causes a light and dark green mottled (mosaic) pattern on leaves, which may be curled or fern-like. Fruit can ripen unevenly. It spreads very easily on hands, tools and clothes, and survives in plant debris and seed.",
+    "treatment": [
+      "There is no cure. Remove and destroy infected plants.",
+      "Wash hands with soap and clean tools after touching infected plants.",
+      "Do not smoke or handle tobacco near tomato plants, since tobacco can carry related viruses."
+    ],
+    "prevention": [
+      "Use certified, virus-free seed and resistant varieties.",
+      "Disinfect tools and wash hands often when working with plants.",
+      "Rotate crops and remove plant debris.",
+      "Control weeds around the field."
+    ]
+  },
+  "Tomato___healthy": {
+    "name": "Healthy tomato",
+    "crop": "Tomato",
+    "type": "Healthy",
+    "description": "No disease was detected. The tomato leaf looks healthy.",
+    "treatment": [
+      "No treatment is needed.",
+      "Keep checking your plants every week so problems are caught early."
+    ],
+    "prevention": [
+      "Stake and prune plants for good air flow.",
+      "Water at the base and mulch to stop soil splashing on leaves.",
+      "Rotate tomatoes with non-related crops and check leaves weekly."
+    ]
+  },
+  "Citrus___Black_spot": {
+    "name": "Citrus black spot",
+    "crop": "Citrus",
+    "type": "Fungal (Phyllosticta citricarpa)",
+    "description": "Citrus black spot mainly marks the fruit: hard, sunken, dark brown to black spots with grey centres, or many small dark freckles, appearing as fruit matures. Badly spotted fruit drops early and cannot be sold fresh. The fungus survives in fallen leaves and spreads in warm, rainy weather.",
+    "treatment": [
+      "Spray a registered protective fungicide such as copper or mancozeb from petal fall through early fruit growth, repeating as the label directs during the rains.",
+      "Rake up and burn or bury fallen leaves under the trees.",
+      "Pick fruit promptly when mature, as spots keep developing on fruit left on the tree.",
+      "Use only pesticides registered by the Tanzania Plant Health and Pesticides Authority (TPHPA) and follow the label for dose, protective gear and waiting time before harvest."
+    ],
+    "prevention": [
+      "Plant certified, disease-free seedlings from a registered nursery.",
+      "Keep the ground under trees clean of leaf litter, or cover it with mulch.",
+      "Prune to open the canopy so leaves and fruit dry quickly.",
+      "Do not bring fruit or plant material from infected orchards."
+    ]
+  },
+  "Citrus___Healthy": {
+    "name": "Healthy citrus",
+    "crop": "Citrus",
+    "type": "Healthy",
+    "description": "No disease was detected. The citrus leaf looks healthy.",
+    "treatment": [
+      "No treatment is needed.",
+      "Keep checking your plants every week so problems are caught early."
+    ],
+    "prevention": [
+      "Plant certified seedlings and keep tools clean.",
+      "Prune for good air flow and remove dead wood.",
+      "Apply manure and balanced fertiliser, and water during dry spells.",
+      "Watch new leaf flushes for leafminers, aphids and psyllids."
+    ]
+  },
+  "Citrus___canker": {
+    "name": "Citrus canker",
+    "crop": "Citrus",
+    "type": "Bacterial (Xanthomonas citri subsp. citri)",
+    "description": "Citrus canker causes raised, rough, corky brown spots surrounded by a yellow ring on leaves, twigs and fruit. Badly affected trees drop leaves and fruit. The bacteria spread in wind-driven rain and enter through wounds, including those made by citrus leafminers.",
+    "treatment": [
+      "There is no cure for infected tissue.",
+      "In dry weather, prune out and burn infected twigs and leaves, and disinfect tools between trees.",
+      "Spray a registered copper fungicide to protect new leaf flushes and young fruit.",
+      "Control citrus leafminer, since its wounds let the bacteria in.",
+      "Use only pesticides registered by the Tanzania Plant Health and Pesticides Authority (TPHPA) and follow the label for dose, protective gear and waiting time before harvest."
+    ],
+    "prevention": [
+      "Plant certified, disease-free seedlings.",
+      "Plant windbreaks to reduce wind-driven rain.",
+      "Avoid working among trees while they are wet.",
+      "Do not move plants or budwood from infected areas."
+    ]
+  },
+  "Cotton___bacterial_blight": {
+    "name": "Cotton bacterial blight",
+    "crop": "Cotton",
+    "type": "Bacterial (Xanthomonas citri pv. malvacearum)",
+    "description": "Bacterial blight starts as small, angular, water-soaked spots on leaves, held in by the veins, that turn brown and dry. It can spread along veins, form black lesions on stems (black arm) and rot bolls. It spreads in rain splash and on seed, and is worst in warm, wet weather.",
+    "treatment": [
+      "There is no spray that cures it; remove and destroy badly infected plants early.",
+      "A registered copper fungicide applied early can slow spread in wet weather.",
+      "After harvest, uproot and destroy cotton stalks and crop residue.",
+      "Use only pesticides registered by the Tanzania Plant Health and Pesticides Authority (TPHPA) and follow the label for dose, protective gear and waiting time before harvest."
+    ],
+    "prevention": [
+      "Plant treated, delinted seed of resistant varieties recommended for your zone.",
+      "Rotate cotton with cereals or legumes, and do not plant cotton after cotton.",
+      "Avoid working in the field while plants are wet.",
+      "Bury or burn residues before the next season."
+    ]
+  },
+  "Cotton___curl_virus": {
+    "name": "Cotton leaf curl disease",
+    "crop": "Cotton",
+    "type": "Viral (begomovirus spread by whiteflies)",
+    "description": "Leaf curl makes cotton leaves curl upward or downward, with thickened, darkened veins and small leaf-like growths on the underside. Plants infected early are stunted and set few bolls. The virus is spread by whiteflies (Bemisia tabaci) and also infects okra and wild hibiscus.",
+    "treatment": [
+      "There is no cure for infected plants.",
+      "Uproot and destroy plants infected early in the season to remove virus sources.",
+      "Control whiteflies with a registered insecticide when numbers are high, rotating products to avoid resistance.",
+      "Use only pesticides registered by the Tanzania Plant Health and Pesticides Authority (TPHPA) and follow the label for dose, protective gear and waiting time before harvest."
+    ],
+    "prevention": [
+      "Grow tolerant varieties where available.",
+      "Remove weed and volunteer hosts such as wild hibiscus and old okra plants.",
+      "Plant at the recommended time and avoid overlapping cotton crops.",
+      "Avoid too much nitrogen fertiliser, which favours whiteflies."
+    ]
+  },
+  "Cotton___fussarium_wilt": {
+    "name": "Cotton Fusarium wilt",
+    "crop": "Cotton",
+    "type": "Fungal (Fusarium oxysporum f. sp. vasinfectum)",
+    "description": "Fusarium wilt is a soil-borne disease. Lower leaves yellow and wilt first, then plants wilt and die, often in patches. Cutting the stem shows brown streaks inside. It is worse in sandy, acidic soils and where root-knot nematodes damage the roots.",
+    "treatment": [
+      "There is no cure once a plant wilts; uproot and burn wilted plants.",
+      "Do not move soil or plant debris from affected patches to clean fields.",
+      "Apply potassium as recommended by a soil test, which helps plants tolerate the disease."
+    ],
+    "prevention": [
+      "Plant wilt-resistant varieties recommended for your zone.",
+      "Rotate with cereals for several seasons where wilt has occurred.",
+      "Control root-knot nematodes, which make wilt worse.",
+      "Clean tools and equipment after working in infected fields."
+    ]
+  },
+  "Cotton___healthy": {
+    "name": "Healthy cotton",
+    "crop": "Cotton",
+    "type": "Healthy",
+    "description": "No disease was detected. The cotton leaf looks healthy.",
+    "treatment": [
+      "No treatment is needed.",
+      "Keep checking your plants every week so problems are caught early."
+    ],
+    "prevention": [
+      "Plant treated seed of varieties recommended for your zone.",
+      "Rotate cotton with cereals or legumes.",
+      "Scout weekly for bollworms, jassids, aphids and whiteflies.",
+      "Uproot and destroy stalks after harvest."
+    ]
+  },
+  "Rice___Bacterial_Leaf_Blight": {
+    "name": "Rice bacterial leaf blight",
+    "crop": "Rice",
+    "type": "Bacterial (Xanthomonas oryzae pv. oryzae)",
+    "description": "Bacterial leaf blight causes wavy, yellow to straw-coloured stripes starting at the leaf tips or edges and spreading down the leaf until it dries. Young plants can wilt and die (kresek). It spreads in irrigation and flood water and is worst with heavy nitrogen and warm, wet weather.",
+    "treatment": [
+      "There is no effective spray cure.",
+      "Drain the field for a few days where possible, and stop extra nitrogen top-dressing.",
+      "Remove and destroy badly infected plants and, after harvest, stubble and ratoon growth."
+    ],
+    "prevention": [
+      "Plant resistant varieties and clean, certified seed.",
+      "Split nitrogen into several small doses and add potassium.",
+      "Avoid damaging seedlings when transplanting.",
+      "Keep bunds and channels free of weeds that host the bacteria."
+    ]
+  },
+  "Rice___Brown_Spot": {
+    "name": "Rice brown spot",
+    "crop": "Rice",
+    "type": "Fungal (Bipolaris oryzae)",
+    "description": "Brown spot causes small oval to round brown spots with grey or whitish centres on leaves, and dark spots on grains. It is a sign of stressed rice and is most common in poor, nutrient-deficient soils and during drought.",
+    "treatment": [
+      "Correct plant nutrition: apply nitrogen and potassium as recommended.",
+      "If the disease is severe, spray a registered fungicide such as propiconazole or mancozeb.",
+      "Use only pesticides registered by the Tanzania Plant Health and Pesticides Authority (TPHPA) and follow the label for dose, protective gear and waiting time before harvest."
+    ],
+    "prevention": [
+      "Use clean, certified seed treated with a registered seed dressing.",
+      "Improve soil fertility with balanced fertiliser and organic matter.",
+      "Keep water supply steady to avoid drought stress.",
+      "Plant tolerant varieties."
+    ]
+  },
+  "Rice___Healthy": {
+    "name": "Healthy rice",
+    "crop": "Rice",
+    "type": "Healthy",
+    "description": "No disease was detected. The rice leaf looks healthy.",
+    "treatment": [
+      "No treatment is needed.",
+      "Keep checking your plants every week so problems are caught early."
+    ],
+    "prevention": [
+      "Use certified seed of varieties suited to your area.",
+      "Split nitrogen fertiliser into several doses.",
+      "Keep water levels steady and fields weed-free.",
+      "Scout weekly for blast, stem borers and rice yellow mottle virus."
+    ]
+  },
+  "Rice___Leaf_Blast": {
+    "name": "Rice blast",
+    "crop": "Rice",
+    "type": "Fungal (Magnaporthe oryzae)",
+    "description": "Blast is one of the most damaging rice diseases. Leaves get spindle- or diamond-shaped spots with grey centres and brown edges, which can kill whole leaves. When it attacks the neck below the panicle, the panicle turns white and empty. It is favoured by heavy nitrogen, dew and cool nights.",
+    "treatment": [
+      "Spray a registered fungicide such as tricyclazole or azoxystrobin at the first signs, and again at booting if the risk stays high.",
+      "Stop extra nitrogen top-dressing on affected fields.",
+      "Use only pesticides registered by the Tanzania Plant Health and Pesticides Authority (TPHPA) and follow the label for dose, protective gear and waiting time before harvest."
+    ],
+    "prevention": [
+      "Plant blast-resistant varieties and certified seed.",
+      "Split nitrogen into small doses and avoid excess.",
+      "Avoid very dense planting, and keep paddies flooded where possible.",
+      "Burn or bury infected straw and stubble after harvest."
+    ]
+  },
+  "Rice___Leaf_scald": {
+    "name": "Rice leaf scald",
+    "crop": "Rice",
+    "type": "Fungal (Microdochium oryzae)",
+    "description": "Leaf scald produces large lesions starting at leaf tips or edges, with alternating light and dark brown bands that give a zoned look. The leaf ends dry out and look scalded. It is favoured by heavy nitrogen and wet weather.",
+    "treatment": [
+      "If severe, spray a registered fungicide such as propiconazole or mancozeb.",
+      "Reduce nitrogen top-dressing on affected fields.",
+      "Use only pesticides registered by the Tanzania Plant Health and Pesticides Authority (TPHPA) and follow the label for dose, protective gear and waiting time before harvest."
+    ],
+    "prevention": [
+      "Use clean, certified seed.",
+      "Apply balanced fertiliser and avoid excess nitrogen.",
+      "Space plants as recommended.",
+      "Remove or bury crop residues after harvest."
+    ]
+  },
+  "Rice___Sheath_Blight": {
+    "name": "Rice sheath blight",
+    "crop": "Rice",
+    "type": "Fungal (Rhizoctonia solani)",
+    "description": "Sheath blight starts as oval, greenish-grey spots with brown edges on leaf sheaths near the water line, which spread upward and merge. Plants weaken, lodge and fill grain poorly. It spreads quickly in dense, heavily fertilised crops in hot, humid weather.",
+    "treatment": [
+      "Spray a registered fungicide such as hexaconazole, azoxystrobin or validamycin, aimed at the lower plant.",
+      "Drain the field briefly where possible to slow spread.",
+      "Use only pesticides registered by the Tanzania Plant Health and Pesticides Authority (TPHPA) and follow the label for dose, protective gear and waiting time before harvest."
+    ],
+    "prevention": [
+      "Use wider spacing so the canopy dries.",
+      "Avoid excess nitrogen.",
+      "Remove weeds on bunds and plant debris that carry the fungus.",
+      "Rotate with a non-rice crop where possible."
+    ]
+  },
+  "Sugarcane___Healthy": {
+    "name": "Healthy sugarcane",
+    "crop": "Sugarcane",
+    "type": "Healthy",
+    "description": "No disease was detected. The sugarcane leaf looks healthy.",
+    "treatment": [
+      "No treatment is needed.",
+      "Keep checking your plants every week so problems are caught early."
+    ],
+    "prevention": [
+      "Plant healthy setts from a clean nursery.",
+      "Apply fertiliser as recommended and keep fields weed-free.",
+      "Ensure good drainage.",
+      "Scout regularly for smut, mosaic, borers and white scale."
+    ]
+  },
+  "Sugarcane___Mosaic_Virus": {
+    "name": "Sugarcane mosaic",
+    "crop": "Sugarcane",
+    "type": "Viral (sugarcane mosaic virus)",
+    "description": "Mosaic causes a pattern of light and dark green or yellowish streaks and patches on young leaves. Affected stools are stunted and yield less. The virus is spread by aphids and through infected setts, and also infects maize and sorghum.",
+    "treatment": [
+      "There is no cure for infected plants.",
+      "Uproot and destroy infected stools, and never use them as planting material."
+    ],
+    "prevention": [
+      "Plant resistant varieties.",
+      "Use healthy setts from a clean nursery.",
+      "Control grass weeds that host the virus and its aphids.",
+      "Avoid planting next to heavily infected maize or sorghum."
+    ]
+  },
+  "Sugarcane___RedRot": {
+    "name": "Sugarcane red rot",
+    "crop": "Sugarcane",
+    "type": "Fungal (Colletotrichum falcatum)",
+    "description": "Red rot reddens the inside of the stalk, with white patches across the red tissue, and gives a sour smell. Leaves yellow and dry from the top down, and stalks shrivel. It also causes red spots along the leaf midrib. It spreads through infected setts, water and soil.",
+    "treatment": [
+      "Uproot and burn affected clumps.",
+      "Do not keep infected fields as ratoon crops.",
+      "Treat setts with a registered fungicide or hot water before planting.",
+      "Use only pesticides registered by the Tanzania Plant Health and Pesticides Authority (TPHPA) and follow the label for dose, protective gear and waiting time before harvest."
+    ],
+    "prevention": [
+      "Plant resistant varieties and healthy setts.",
+      "Ensure good drainage and avoid waterlogging.",
+      "Rotate with other crops before replanting cane.",
+      "Clean tools and avoid moving water from infected fields."
+    ]
+  },
+  "Sugarcane___Rust": {
+    "name": "Sugarcane rust",
+    "crop": "Sugarcane",
+    "type": "Fungal (Puccinia melanocephala / P. kuehnii)",
+    "description": "Rust causes small, long, orange to brown pustules on both sides of the leaves, which rub off as rusty powder. Heavy infection dries leaves early and reduces growth, mostly in young cane in warm, humid weather.",
+    "treatment": [
+      "Rust is mainly managed with resistant varieties; replace susceptible varieties at replanting.",
+      "In nurseries or high-value plots, a registered fungicide such as a triazole can be used.",
+      "Use only pesticides registered by the Tanzania Plant Health and Pesticides Authority (TPHPA) and follow the label for dose, protective gear and waiting time before harvest."
+    ],
+    "prevention": [
+      "Plant resistant varieties.",
+      "Apply balanced fertiliser, especially potassium.",
+      "Avoid excess nitrogen.",
+      "Remove badly infected old leaves where practical."
+    ]
+  },
+  "Sugarcane___Yellow": {
+    "name": "Sugarcane yellow leaf",
+    "crop": "Sugarcane",
+    "type": "Viral (sugarcane yellow leaf virus)",
+    "description": "Yellow leaf makes the underside of the leaf midrib turn yellow, spreading across the leaf blade, usually in older cane. Yield and sugar drop. The virus spreads through infected setts and by aphids. Yellowing can also come from nutrient shortage or drought, so check those too.",
+    "treatment": [
+      "There is no cure for infected plants.",
+      "Check soil nutrients and water, since nitrogen shortage and drought also yellow leaves.",
+      "Control aphids with a registered insecticide where they are numerous.",
+      "Use only pesticides registered by the Tanzania Plant Health and Pesticides Authority (TPHPA) and follow the label for dose, protective gear and waiting time before harvest."
+    ],
+    "prevention": [
+      "Plant virus-free setts, such as from tissue-culture or clean nurseries.",
+      "Grow tolerant varieties.",
+      "Avoid taking setts from yellowing fields."
+    ]
+  },
+  "Wheat___Aphid": {
+    "name": "Wheat aphids",
+    "crop": "Wheat",
+    "type": "Insect pest (aphids)",
+    "description": "Aphids are small soft insects that cluster on leaves and heads and suck sap. Leaves may curl, roll or show white or yellow streaks, and sticky honeydew can appear. Heavy attacks reduce grain, and some aphids spread barley yellow dwarf virus.",
+    "treatment": [
+      "Spray a registered insecticide only when many plants carry colonies.",
+      "Protect ladybirds, lacewings and parasitic wasps that eat aphids, by avoiding unnecessary sprays.",
+      "Use only pesticides registered by the Tanzania Plant Health and Pesticides Authority (TPHPA) and follow the label for dose, protective gear and waiting time before harvest."
+    ],
+    "prevention": [
+      "Plant at the recommended time; late crops are hit harder.",
+      "Grow resistant varieties where available.",
+      "Remove volunteer wheat and grass weeds between seasons."
+    ]
+  },
+  "Wheat___Black_Rust": {
+    "name": "Wheat stem rust",
+    "crop": "Wheat",
+    "type": "Fungal (Puccinia graminis f. sp. tritici)",
+    "description": "Stem rust (black rust) forms long, dark reddish-brown pustules on stems, leaf sheaths and leaves, which turn black late in the season. Stems weaken and grain shrivels. Aggressive strains such as Ug99 are present in East Africa and can destroy susceptible crops.",
+    "treatment": [
+      "Spray a registered fungicide such as tebuconazole or propiconazole as soon as pustules appear.",
+      "Repeat if the crop is still green and the disease continues.",
+      "Use only pesticides registered by the Tanzania Plant Health and Pesticides Authority (TPHPA) and follow the label for dose, protective gear and waiting time before harvest."
+    ],
+    "prevention": [
+      "Plant stem-rust-resistant varieties recommended by agricultural research.",
+      "Destroy volunteer wheat that carries rust between seasons.",
+      "Plant at the recommended time."
+    ]
+  },
+  "Wheat___Blast": {
+    "name": "Wheat blast",
+    "crop": "Wheat",
+    "type": "Fungal (Magnaporthe oryzae, wheat type)",
+    "description": "Wheat blast bleaches the head above the point where the stem of the head is infected, leaving shrivelled or no grain. Leaves may show eye-shaped grey spots with dark edges. It is favoured by warm, wet weather at heading and spreads on infected seed.",
+    "treatment": [
+      "Spray a registered fungicide at heading in high-risk weather; control is only partial.",
+      "Report suspected outbreaks to your extension officer.",
+      "Use only pesticides registered by the Tanzania Plant Health and Pesticides Authority (TPHPA) and follow the label for dose, protective gear and waiting time before harvest."
+    ],
+    "prevention": [
+      "Use certified seed treated with a registered seed dressing.",
+      "Do not use seed from infected fields or areas.",
+      "Rotate with non-cereal crops.",
+      "Plant tolerant varieties where available."
+    ]
+  },
+  "Wheat___Brown_Rust": {
+    "name": "Wheat leaf rust",
+    "crop": "Wheat",
+    "type": "Fungal (Puccinia triticina)",
+    "description": "Leaf rust (brown rust) causes small, round, orange-brown pustules scattered over the leaves. They rub off as rusty powder. Heavy infection dries leaves early and reduces grain filling.",
+    "treatment": [
+      "Spray a registered fungicide such as tebuconazole or propiconazole when pustules appear on the upper leaves.",
+      "Use only pesticides registered by the Tanzania Plant Health and Pesticides Authority (TPHPA) and follow the label for dose, protective gear and waiting time before harvest."
+    ],
+    "prevention": [
+      "Plant resistant varieties.",
+      "Destroy volunteer wheat between seasons.",
+      "Avoid excess nitrogen."
+    ]
+  },
+  "Wheat___Common_Root_Rot": {
+    "name": "Wheat common root rot",
+    "crop": "Wheat",
+    "type": "Fungal (Bipolaris sorokiniana and Fusarium species)",
+    "description": "Common root rot causes dark brown lesions on roots, the stem base and the section just below the crown. Plants are stunted, tiller poorly and may produce white, empty heads. It is worse in dry, stressed crops and where wheat follows wheat.",
+    "treatment": [
+      "There is no cure during the season; support the crop with water and balanced nutrients.",
+      "Use only pesticides registered by the Tanzania Plant Health and Pesticides Authority (TPHPA) and follow the label for dose, protective gear and waiting time before harvest."
+    ],
+    "prevention": [
+      "Rotate wheat with legumes or other non-cereal crops.",
+      "Treat seed with a registered fungicide seed dressing.",
+      "Avoid planting too deep and maintain good soil fertility.",
+      "Manage residues of previous cereal crops."
+    ]
+  },
+  "Wheat___Fusarium_Head_Blight": {
+    "name": "Wheat Fusarium head blight (scab)",
+    "crop": "Wheat",
+    "type": "Fungal (Fusarium graminearum)",
+    "description": "Head blight bleaches some or all of the spikelets in the head, sometimes with pink or orange mould. Grain becomes shrivelled and light, and can contain toxins harmful to people and animals. It is favoured by warm, wet weather at flowering.",
+    "treatment": [
+      "Spray a registered fungicide such as tebuconazole at early flowering in wet weather.",
+      "Harvest promptly and dry grain well.",
+      "Do not eat or feed visibly mouldy, shrivelled grain.",
+      "Use only pesticides registered by the Tanzania Plant Health and Pesticides Authority (TPHPA) and follow the label for dose, protective gear and waiting time before harvest."
+    ],
+    "prevention": [
+      "Do not plant wheat directly after maize or wheat.",
+      "Bury or remove crop residues.",
+      "Plant less susceptible varieties."
+    ]
+  },
+  "Wheat___Healthy": {
+    "name": "Healthy wheat",
+    "crop": "Wheat",
+    "type": "Healthy",
+    "description": "No disease was detected. The wheat leaf looks healthy.",
+    "treatment": [
+      "No treatment is needed.",
+      "Keep checking your plants every week so problems are caught early."
+    ],
+    "prevention": [
+      "Use certified seed of varieties recommended for your area.",
+      "Plant at the recommended time.",
+      "Rotate wheat with legumes or other crops.",
+      "Scout weekly for rusts, aphids and other problems."
+    ]
+  },
+  "Wheat___Leaf_Blight": {
+    "name": "Wheat leaf blight (spot blotch)",
+    "crop": "Wheat",
+    "type": "Fungal (mainly Bipolaris sorokiniana)",
+    "description": "Leaf blight causes oval, dark brown spots on leaves that grow and merge into large dead areas, starting on lower leaves. It is common in warm, humid conditions and in crops under nutrient stress.",
+    "treatment": [
+      "Spray a registered fungicide such as propiconazole or mancozeb when spots reach the upper leaves.",
+      "Use only pesticides registered by the Tanzania Plant Health and Pesticides Authority (TPHPA) and follow the label for dose, protective gear and waiting time before harvest."
+    ],
+    "prevention": [
+      "Treat seed with a registered fungicide seed dressing.",
+      "Rotate with non-cereal crops.",
+      "Apply balanced fertiliser.",
+      "Plant tolerant varieties."
+    ]
+  },
+  "Wheat___Mildew": {
+    "name": "Wheat powdery mildew",
+    "crop": "Wheat",
+    "type": "Fungal (Blumeria graminis f. sp. tritici)",
+    "description": "Powdery mildew forms white to grey, powdery patches on leaves, stems and heads, starting on lower leaves. Leaves yellow and die early. It is favoured by cool, humid weather, dense crops and heavy nitrogen.",
+    "treatment": [
+      "Spray a registered fungicide such as a triazole or sulphur when mildew spreads to upper leaves.",
+      "Use only pesticides registered by the Tanzania Plant Health and Pesticides Authority (TPHPA) and follow the label for dose, protective gear and waiting time before harvest."
+    ],
+    "prevention": [
+      "Plant resistant varieties.",
+      "Avoid excess nitrogen and very dense planting.",
+      "Remove volunteer wheat between seasons."
+    ]
+  },
+  "Wheat___Mite": {
+    "name": "Wheat mites",
+    "crop": "Wheat",
+    "type": "Mite pest (wheat curl mite or brown wheat mite)",
+    "description": "Mites are tiny pests that are hard to see. Wheat curl mites make leaves roll and show yellow streaks, and spread wheat streak mosaic virus. Brown wheat mites give leaves a fine yellow speckling, mainly in dry weather.",
+    "treatment": [
+      "Brown wheat mite usually declines after rain or irrigation; spray a registered miticide only if damage is heavy.",
+      "Sprays work poorly against curl mites hidden in rolled leaves, so focus on prevention.",
+      "Use only pesticides registered by the Tanzania Plant Health and Pesticides Authority (TPHPA) and follow the label for dose, protective gear and waiting time before harvest."
+    ],
+    "prevention": [
+      "Destroy volunteer wheat and grass weeds at least two weeks before planting.",
+      "Avoid planting too early next to maturing cereal crops.",
+      "Rotate with non-cereal crops."
+    ]
+  },
+  "Wheat___Septoria": {
+    "name": "Wheat Septoria leaf blotch",
+    "crop": "Wheat",
+    "type": "Fungal (Zymoseptoria tritici)",
+    "description": "Septoria causes irregular brown blotches on leaves, often with tiny black dots inside them. It starts on lower leaves and is carried upward by rain splash. Losing the top leaves reduces grain filling.",
+    "treatment": [
+      "Spray a registered fungicide such as a triazole to protect the flag leaf when the disease moves upward in wet weather.",
+      "Use only pesticides registered by the Tanzania Plant Health and Pesticides Authority (TPHPA) and follow the label for dose, protective gear and waiting time before harvest."
+    ],
+    "prevention": [
+      "Plant resistant varieties.",
+      "Rotate with non-cereal crops and bury residues.",
+      "Avoid very early sowing."
+    ]
+  },
+  "Wheat___Smut": {
+    "name": "Wheat smut",
+    "crop": "Wheat",
+    "type": "Fungal (loose smut, Ustilago tritici, and related smuts)",
+    "description": "Smut replaces the grain with masses of black powdery spores. With loose smut the whole head turns black and the spores blow away, leaving a bare stalk. The fungus is carried inside seed, so infected seed produces smutted plants the next season.",
+    "treatment": [
+      "Nothing cures smutted plants; carefully bag and remove smutted heads before the spores spread.",
+      "Do not keep seed from infected fields.",
+      "Use only pesticides registered by the Tanzania Plant Health and Pesticides Authority (TPHPA) and follow the label for dose, protective gear and waiting time before harvest."
+    ],
+    "prevention": [
+      "Use certified seed.",
+      "Treat seed with a registered systemic seed dressing such as tebuconazole or carboxin.",
+      "Plant resistant varieties."
+    ]
+  },
+  "Wheat___Stem_fly": {
+    "name": "Wheat stem fly",
+    "crop": "Wheat",
+    "type": "Insect pest (stem or shoot fly)",
+    "description": "Stem fly maggots bore into the central shoot of young plants, causing the centre leaf to yellow and die (dead heart). Affected tillers produce no heads. Damage is worst in late-planted crops.",
+    "treatment": [
+      "Pull out and destroy dead-heart tillers early.",
+      "Where attacks are common, use a registered insecticide seed treatment at the next planting.",
+      "Use only pesticides registered by the Tanzania Plant Health and Pesticides Authority (TPHPA) and follow the label for dose, protective gear and waiting time before harvest."
+    ],
+    "prevention": [
+      "Plant at the recommended time, avoiding late sowing.",
+      "Use a slightly higher seed rate where stem fly is common.",
+      "Rotate with non-cereal crops and remove volunteer cereals."
+    ]
+  },
+  "Wheat___Tan_spot": {
+    "name": "Wheat tan spot",
+    "crop": "Wheat",
+    "type": "Fungal (Pyrenophora tritici-repentis)",
+    "description": "Tan spot forms oval, tan-brown spots with a yellow ring and often a dark centre. The spots merge and kill large areas of leaf. The fungus survives in wheat residue left on the surface.",
+    "treatment": [
+      "Spray a registered fungicide such as a triazole or strobilurin when spots reach the upper leaves.",
+      "Use only pesticides registered by the Tanzania Plant Health and Pesticides Authority (TPHPA) and follow the label for dose, protective gear and waiting time before harvest."
+    ],
+    "prevention": [
+      "Rotate with non-cereal crops.",
+      "Bury or remove wheat residue.",
+      "Plant resistant varieties."
+    ]
+  },
+  "Wheat___Yellow_Rust": {
+    "name": "Wheat stripe (yellow) rust",
+    "crop": "Wheat",
+    "type": "Fungal (Puccinia striiformis f. sp. tritici)",
+    "description": "Stripe rust forms bright yellow pustules arranged in stripes along the leaf veins. It spreads fast in cool, moist weather, common in Tanzania's wheat highlands, and can cut yields sharply.",
+    "treatment": [
+      "Spray a registered fungicide such as tebuconazole or propiconazole as soon as stripes appear.",
+      "Repeat if cool, wet weather continues.",
+      "Use only pesticides registered by the Tanzania Plant Health and Pesticides Authority (TPHPA) and follow the label for dose, protective gear and waiting time before harvest."
+    ],
+    "prevention": [
+      "Plant resistant varieties.",
+      "Destroy volunteer wheat between seasons.",
+      "Check crops often in cool, wet weather."
+    ]
   }
 }
