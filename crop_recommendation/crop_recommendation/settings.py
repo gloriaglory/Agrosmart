@@ -11,9 +11,10 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 import sys
-
-from decouple import config
 from pathlib import Path
+from urllib.parse import urlparse
+
+from decouple import Csv, config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -27,8 +28,7 @@ SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
-
-ALLOWED_HOSTS = []
+TESTING = 'test' in sys.argv[1:2]
 
 
 # Application definition
@@ -66,7 +66,7 @@ AUTH_USER_MODEL = 'authentication.User'
 GROQ_API_KEY = config('GROQ_API_KEY', default='')
 # Tests must never call Groq for real (slow, flaky, and uses up the free quota);
 # tests that need it fake the responses.
-if 'test' in sys.argv[1:2]:
+if TESTING:
     GROQ_API_KEY = ''
 # Groq models. Groq retires models from time to time; change these in .env if one stops working.
 # Chatbot ("Ask a question")
@@ -80,7 +80,7 @@ GOOGLE_API_KEY = config('GOOGLE_API_KEY', default='')
 OPENWEATHER_API_KEY = config('OPENWEATHER_API_KEY', default='')
 ISDA_API_KEY = config('ISDA_API_KEY', default='')
 # Tests fake the soil and weather services too
-if 'test' in sys.argv[1:2]:
+if TESTING:
     OPENWEATHER_API_KEY = ISDA_API_KEY = ''
 
 # Port the backend runs on locally, and its public address
@@ -141,6 +141,8 @@ REST_FRAMEWORK = {
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    # Serves the admin's CSS/JS in production (collected into STATIC_ROOT)
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -174,7 +176,19 @@ WSGI_APPLICATION = 'crop_recommendation.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-if config('USE_POSTGRES', default=False, cast=bool):
+DATABASE_URL = config('DATABASE_URL', default='')
+if DATABASE_URL:
+    # e.g. Supabase: Project Settings -> Database -> Connection string -> "Session pooler"
+    import dj_database_url
+    DATABASES = {'default': dj_database_url.parse(
+        DATABASE_URL, conn_max_age=60, conn_health_checks=True,
+        ssl_require=config('DB_SSL', default=True, cast=bool),
+    )}
+    # Supabase's transaction pooler (port 6543) cannot keep server-side cursors between queries
+    if DATABASES['default'].get('PORT') in (6543, '6543'):
+        DATABASES['default']['DISABLE_SERVER_SIDE_CURSORS'] = True
+        DATABASES['default']['CONN_MAX_AGE'] = 0
+elif config('USE_POSTGRES', default=False, cast=bool):
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
@@ -229,33 +243,78 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# Uploaded files (listing photos, post thumbnails) and static files.
+# Uploads go to Supabase Storage when it is configured, so they survive redeploys;
+# otherwise to MEDIA_ROOT on this machine.
+STORAGES = {
+    'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage'},
+    'staticfiles': {'BACKEND': 'whitenoise.storage.CompressedStaticFilesStorage'},
+}
+SUPABASE_STORAGE_BUCKET = config('SUPABASE_STORAGE_BUCKET', default='')
+if SUPABASE_STORAGE_BUCKET and not TESTING:
+    _project = config('SUPABASE_PROJECT_REF')  # the id in https://<id>.supabase.co
+    STORAGES['default'] = {
+        'BACKEND': 'storages.backends.s3.S3Storage',
+        'OPTIONS': {
+            # Supabase Storage -> Settings -> S3 connection
+            'endpoint_url': f'https://{_project}.supabase.co/storage/v1/s3',
+            'region_name': config('SUPABASE_S3_REGION'),
+            'access_key': config('SUPABASE_S3_ACCESS_KEY_ID'),
+            'secret_key': config('SUPABASE_S3_SECRET_ACCESS_KEY'),
+            'bucket_name': SUPABASE_STORAGE_BUCKET,
+            # Files are served from the bucket's public URL (the bucket must be public)
+            'custom_domain': f'{_project}.supabase.co/storage/v1/object/public/{SUPABASE_STORAGE_BUCKET}',
+            'querystring_auth': False,
+            'file_overwrite': False,
+            'default_acl': None,
+            'addressing_style': 'path',
+            'signature_version': 's3v4',
+        },
+    }
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CORS_ALLOW_ALL_ORIGINS = True
+# Where the website runs, comma-separated (e.g. https://agrosmart.vercel.app).
+# Only these sites may call the API from a browser.
+FRONTEND_URLS = config('FRONTEND_URLS', default='http://localhost:5173,http://127.0.0.1:5173', cast=Csv())
+# Optional pattern for Vercel preview deployments, e.g. ^https://agrosmart-.*\.vercel\.app$
+FRONTEND_URL_REGEX = config('FRONTEND_URL_REGEX', default='')
+# Hugging Face sets SPACE_HOST to the Space's own address (e.g. yourname-agrosmart.hf.space)
+SPACE_HOST = config('SPACE_HOST', default='')
+_backend_host = urlparse(BACKEND_URL).hostname
 
-# CSRF settings
-CSRF_TRUSTED_ORIGINS = [
-    f'http://localhost:{PORT}',
-    f'http://127.0.0.1:{PORT}',
-    'http://localhost:5173',
-    'http://127.0.0.1:5173',
-    'https://grizzly-magnetic-lionfish.ngrok-free.app',
-]
+ALLOWED_HOSTS = sorted({
+    'localhost', '127.0.0.1', _backend_host,
+    *([SPACE_HOST] if SPACE_HOST else []),
+    *config('ALLOWED_HOSTS', default='', cast=Csv()),
+} - {None, ''})
 
-ALLOWED_HOSTS = [
-    'localhost',
-    '127.0.0.1',
-    'grizzly-magnetic-lionfish.ngrok-free.app', 
-]
+CORS_ALLOW_ALL_ORIGINS = DEBUG  # any origin while developing locally
+CORS_ALLOWED_ORIGINS = list(FRONTEND_URLS)
+CORS_ALLOWED_ORIGIN_REGEXES = [FRONTEND_URL_REGEX] if FRONTEND_URL_REGEX else []
+
+CSRF_TRUSTED_ORIGINS = sorted({
+    *FRONTEND_URLS,
+    f'http://localhost:{PORT}', f'http://127.0.0.1:{PORT}',
+    *([f'https://{SPACE_HOST}'] if SPACE_HOST else []),
+    *([BACKEND_URL] if BACKEND_URL.startswith('https://') else []),
+})
+
+# Behind Hugging Face's (or any host's) HTTPS proxy
+if not DEBUG:
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SESSION_COOKIE_SECURE = config('SECURE_COOKIES', default=True, cast=bool)
+    CSRF_COOKIE_SECURE = SESSION_COOKIE_SECURE
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 # Tests save uploads to a throwaway folder instead of the real media folder
-if 'test' in sys.argv[1:2]:
+if TESTING:
     import tempfile
     MEDIA_ROOT = Path(tempfile.mkdtemp(prefix='agrosmart-test-media-'))
 

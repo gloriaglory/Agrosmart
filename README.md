@@ -22,7 +22,7 @@
   - [Market prices and outlook](#market-prices-and-outlook)
 - [Machine learning](#machine-learning)
 - [Testing](#testing)
-- [Docker](#docker)
+- [Deployment](#deployment)
 - [Data sources and credits](#data-sources-and-credits)
 - [Known limitations](#known-limitations)
 
@@ -166,7 +166,11 @@ npm run dev                       # http://localhost:5173
 | `GOOGLE_OAUTH_CLIENT_ID` / `_SECRET` | For Google login | Google Cloud Console, OAuth client (Web application) |
 | `FACEBOOK_APP_ID` / `_SECRET` | For Facebook login | Facebook for Developers app settings |
 | `REQUIRE_NIDA_VERIFICATION` | | `True` to let only NIDA-verified sellers post listings |
-| `USE_POSTGRES`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `DB_HOST`, `DB_PORT` | | Use PostgreSQL instead of SQLite |
+| `DATABASE_URL` | | PostgreSQL connection string (e.g. Supabase's session pooler). Takes priority over the `DB_*` values |
+| `USE_POSTGRES`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `DB_HOST`, `DB_PORT` | | Use a local PostgreSQL instead of SQLite |
+| `BACKEND_URL`, `FRONTEND_URLS`, `FRONTEND_URL_REGEX`, `ALLOWED_HOSTS` | Production | Public API address, and the website addresses allowed to call it (CORS/CSRF) |
+| `SUPABASE_PROJECT_REF`, `SUPABASE_STORAGE_BUCKET`, `SUPABASE_S3_REGION`, `SUPABASE_S3_ACCESS_KEY_ID`, `SUPABASE_S3_SECRET_ACCESS_KEY` | Production | Store uploaded photos in Supabase Storage instead of on the server |
+| `DJANGO_SUPERUSER_USERNAME`, `_EMAIL`, `_PASSWORD`, `WEB_WORKERS` | | Admin account created at container start; number of web server processes |
 | `CHAT_MODEL`, `MODERATION_MODEL`, `MODERATION_FALLBACK_MODEL`, `IMAGE_MODERATION_MODEL` | | Override the Groq models if one is retired |
 
 Features whose keys are missing switch off gracefully: social login buttons are hidden, and posts wait for admin review instead of AI checks.
@@ -287,9 +291,13 @@ cd Web
 npx tsc -b && npm run lint && npm run build
 ```
 
-## Docker
+## Deployment
 
-`crop_recommendation/Dockerfile` is an early template and is **not maintained**. It expects `gunicorn` and a `STATIC_ROOT` setting, neither of which the project has yet. Use the local setup above until it is updated.
+The live setup is **Vercel** (website), **Hugging Face Spaces** (backend API, Docker) and **Supabase** (PostgreSQL database and photo storage). Step-by-step instructions, the settings each service needs, and troubleshooting are in [DEPLOY.md](DEPLOY.md).
+
+- `crop_recommendation/Dockerfile` builds the backend image: gunicorn, CPU-only TensorFlow, static files served by WhiteNoise. It runs on any Docker host with at least 2 GB of memory.
+- `deploy/huggingface/` holds the Space's `Dockerfile` and `README.md`. The Space builds the code straight from GitHub.
+- On start-up the container runs migrations, creates the admin account if one is configured, and refreshes market prices when they are more than 30 days old.
 
 ## Data sources and credits
 
