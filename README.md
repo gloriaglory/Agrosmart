@@ -1,7 +1,3 @@
-<p align="center">
-  <img src="Web/src/assets/images/logo-mark.png" alt="AgroSmart logo" height="96" />
-</p>
-
 <h1 align="center">AgroSmart</h1>
 
 <p align="center">
@@ -21,9 +17,13 @@
 - [Configuration](#configuration)
 - [API overview](#api-overview)
 - [How key parts work](#how-key-parts-work)
+  - [Crop recommendation](#crop-recommendation)
+  - [Disease detection](#disease-detection)
   - [Market prices and outlook](#market-prices-and-outlook)
+- [Machine learning](#machine-learning)
 - [Testing](#testing)
-- [Running with Docker](#running-with-docker)
+- [Docker](#docker)
+- [Data sources and credits](#data-sources-and-credits)
 - [Known limitations](#known-limitations)
 
 ## Features
@@ -31,8 +31,8 @@
 | Area | What it does |
 |---|---|
 | **Crop recommendation** | Pick a region or click a map. Each of 36 Tanzanian crops' needs (FAO ECOCROP) is scored against the spot's soil (iSDA), altitude and long-term climate (Open-Meteo), then weighted by what farmers nearby grow (a LightGBM model trained on MapSPAM). Gives the top 3 crops with planting month, reasons, market price and typical income, a 5-day planting forecast (OpenWeatherMap) and soil fertility advice. |
-| **Disease detection** | Upload a leaf photo; a TensorFlow/Keras model recognises 74 conditions across 19 crops (including maize, tomato, potato, rice, cotton, sugarcane, citrus and wheat) and gives treatment and prevention advice. |
-| **Marketplace** | Sellers list produce with a region and town. Buyers search and filter by region and contact sellers directly. |
+| **Disease detection** | Upload a leaf photo; a TensorFlow/Keras model recognises 74 conditions across 19 crops (including maize, tomato, potato, rice, cotton, sugarcane, citrus and wheat) and gives a description, treatment and prevention for each. Unsure results say "Not sure" and list the 3 most likely conditions, and every result reminds farmers to confirm with an extension officer before spraying. |
+| **Marketplace** | Sellers list produce with a region and town and manage it under "My products". Buyers search and filter by region and contact sellers directly. |
 | **Verified sellers** | Selling requires a valid 20-digit NIDA number, full name and phone. Numbers are checked, unique and locked once saved. Ready for NIDA API integration. |
 | **Market prices** | Real monthly prices from 63 markets (WFP), with a 3-month price outlook range, the best month to sell and prices by region, in the Marketplace's "Price trends" tab. |
 | **Market insights** | The home page shows current crop prices, listings per crop and a map of what is for sale in each region. |
@@ -46,8 +46,9 @@
 **Backend** (`crop_recommendation/`)
 - Python 3.11, Django 5.2, Django REST Framework, token authentication
 - django-allauth and dj-rest-auth for social login
-- Machine learning: LightGBM and scikit-learn (crop model), TensorFlow 2.19 and Keras 3.13 (disease model)
-- External services: iSDA soil API, OpenWeatherMap, Open-Meteo, Google Geocoding, Groq (LLM chat and safety models), YouTube oEmbed
+- Machine learning: LightGBM and scikit-learn (local farming model), TensorFlow 2.19 and Keras 3.13 (disease model), pandas and NumPy (price analysis)
+- External services: iSDA soil API, Open-Meteo climate history, OpenWeatherMap forecast, OpenStreetMap Nominatim, Google Geocoding, Groq (LLM chat and safety models), YouTube oEmbed
+- Bundled data: FAO ECOCROP crop requirements, MapSPAM crop maps, WorldClim climate normals, WFP market prices (see [Data sources and credits](#data-sources-and-credits))
 - SQLite by default, PostgreSQL optional
 
 **Frontend** (`Web/`)
@@ -63,13 +64,18 @@ Agrosmart/
 │   ├── crop_recommendation/      Project settings and URLs
 │   ├── authentication/           Users, NIDA checks, social login, user search
 │   ├── market_place/             Listings, regions, seller permissions
-│   ├── crop_predictor/           Crop recommendation model and data sources
-│   ├── disease_detection/        Leaf disease model (Keras, stored with Git LFS)
+│   ├── crop_predictor/           Crop recommendation: suitability, climate, soil, local farming model,
+│   │                             market info and planting forecast
+│   ├── disease_detection/        Leaf disease model (Keras, Git LFS) and disease details
+│   ├── prices/                   WFP market prices, outlook ranges and seasonality
 │   ├── education/                Posts, comments, mentions, moderation
 │   ├── bot/                      Farming assistant (Groq)
 │   ├── requirements.txt
 │   ├── .env.example              Copy to .env and fill in
 │   └── manage.py
+├── ml/                           Training code (data is downloaded, not stored in git)
+│   ├── crop/                     Local farming model (MapSPAM + WorldClim, LightGBM)
+│   └── disease/                  Field-photo disease model (work in progress)
 └── Web/                          React frontend
     ├── src/
     │   ├── pages/                One file per page
@@ -86,7 +92,7 @@ Agrosmart/
 
 - **Python 3.11.** TensorFlow 2.19 does not support Python 3.13 or 3.14 yet.
 - **Node.js 20+** and npm
-- **Git LFS**, to download the disease detection models
+- **Git LFS**, to download the models and the landing video
 - **macOS only:** `libomp`, needed by LightGBM
 
 ```bash
@@ -190,8 +196,8 @@ All endpoints return JSON. Send `Authorization: Token <token>` for endpoints tha
 | GET, PATCH, DELETE | `/market/items/<id>/` | View, edit or delete a listing (owner only) |
 | GET | `/market/items/mine/` | The current seller's listings |
 | GET | `/market/items/regions/` | Crops for sale per region, for the map |
-| POST | `/api/recommend/` | Top 3 crops for `{ latitude, longitude }`, with climate summary and soil notes |
-| POST | `/detector/detect` | Disease detection (multipart `image`) |
+| POST | `/api/recommend/` | Top 3 crops for `{ latitude, longitude }`: scores, planting month, explanation, market info, 5-day planting forecast, climate summary and soil notes |
+| POST | `/detector/detect` | Disease detection (multipart `image`): name, confidence, top 3, description, treatment, prevention |
 | GET, POST | `/api/education/contents/` | List or create posts |
 | GET, POST | `/api/education/comments/?content=<id>` | List or add comments |
 | POST | `/api/education/comments/<id>/like/` | Like or unlike a comment |
@@ -212,14 +218,6 @@ All endpoints return JSON. Send `Authorization: Token <token>` for endpoints tha
 2. **AI checks via Groq:** text is classified against an AgroSmart policy that allows normal farming language, such as killing pests or slaughtering livestock. Thumbnails are checked by a vision model.
 3. If the AI check cannot run (no key, or rate-limited), posts wait as **Pending review**. Admins approve them in **Django admin → Contents**. Comments are only blocked when clearly unsafe.
 
-### Market prices and outlook
-- **Data:** the [WFP food prices dataset for Tanzania](https://data.humdata.org/dataset/wfp-food-prices-for-united-republic-of-tanzania) (CC BY-IGO), collected mainly by the Ministry of Industry and Trade. It has monthly prices from 63 markets in 25 regions since 2006.
-- **Refreshing:** `python manage.py refresh_prices` downloads the latest file and updates prices in place. Run it monthly, for example with cron: `0 6 5 * * cd /path/to/crop_recommendation && venv/bin/python manage.py refresh_prices`. Use `--file prices.csv` to load a downloaded file instead.
-- **Units:** all prices are converted to TZS per kg. Wholesale prices are used where they are current, retail otherwise. Crops that WFP stopped tracking more than 12 months ago are hidden.
-- **Outlook:** single-number price predictions were tested and did not beat "next month = this month", so the app shows an honest **range**. For each of the next 3 months, it uses the middle 80% of price moves from the same time of year over the last 10 years. Each crop shows its measured hit rate: on the past 12 months, real prices fell inside the range 79–93% of the time for the main crops.
-- **Seasonality:** the typical price in each month relative to the yearly average over 15 years, giving the best month to sell and the cheapest month.
-- **API:** `GET /api/prices/` (crops and current prices) and `GET /api/prices/detail/?commodity=Maize&region=Dodoma`.
-
 ### Crop recommendation
 Suitability scoring with the FAO ECOCROP method (`crop_predictor/suitability.py`):
 
@@ -238,6 +236,40 @@ Suitability scoring with the FAO ECOCROP method (`crop_predictor/suitability.py`
 - **Output:** the top 3 crops with match score, planting month, main limiting factor and a plain-English explanation, plus soil advice (low N, P, K or organic matter, acidity, steep slopes) and warnings for non-farmland.
 - The Kaggle-style classifier in `crop_predictor/ml_models/crop/` (`services.py`) still loads for comparison but is not used. Its training data is not Tanzanian and its units do not match iSDA. For example, iSDA potassium values make it predict apple or grapes almost everywhere.
 
+### Disease detection
+- **Model:** `disease_detection/ml_models/plant_disease_model1.keras`, a Keras CNN fine-tuned in Colab on the Kaggle "Plant Diseases 100k" dataset (about 95,000 labelled photos). It covers 74 classes: the PlantVillage crops, Tanzania's maize lethal necrosis (MLN) and maize streak virus (MSV), and rice, cotton, sugarcane, citrus and wheat diseases. `class_indices.json` gives the output order.
+- **Preparing photos:** RGB, resized to 224×224, pixels divided by 255. Any retrained model must keep this, or accuracy drops silently.
+- **Results:** below 40% confidence the app says "Not sure" and shows the 3 most likely conditions instead of guessing. Every result includes a caution to confirm with an extension officer before buying or spraying pesticide.
+- **Disease details:** `disease_info.json` has a plain-language description, treatment steps and prevention steps for every class. Treatments name TPHPA-registered pesticide types. Tests fail if a class is missing any of these.
+- **Accuracy on farm photos:** most training photos are single leaves on plain backgrounds (PlantVillage style). Real field photos are harder, so expect lower accuracy there. A field-photo model is being built in `ml/disease/` (see [Machine learning](#machine-learning)).
+- `ml_models/farmer_friend/` keeps a third-party TFLite model (MIT licence) for reference only. It scored about 1% on real photos and is not used.
+
+### Market prices and outlook
+- **Data:** the [WFP food prices dataset for Tanzania](https://data.humdata.org/dataset/wfp-food-prices-for-united-republic-of-tanzania) (CC BY-IGO), collected mainly by the Ministry of Industry and Trade. It has monthly prices from 63 markets in 25 regions since 2006.
+- **Refreshing:** `python manage.py refresh_prices` downloads the latest file and updates prices in place. Run it monthly, for example with cron: `0 6 5 * * cd /path/to/crop_recommendation && venv/bin/python manage.py refresh_prices`. Use `--file prices.csv` to load a downloaded file instead.
+- **Units:** all prices are converted to TZS per kg. Wholesale prices are used where they are current, retail otherwise. Crops that WFP stopped tracking more than 12 months ago are hidden.
+- **Outlook:** single-number price predictions were tested and did not beat "next month = this month", so the app shows an honest **range**. For each of the next 3 months, it uses the middle 80% of price moves from the same time of year over the last 10 years. Each crop shows its measured hit rate: on the past 12 months, real prices fell inside the range 79–93% of the time for the main crops.
+- **Seasonality:** the typical price in each month relative to the yearly average over 15 years, giving the best month to sell and the cheapest month.
+- **API:** `GET /api/prices/` (crops and current prices) and `GET /api/prices/detail/?commodity=Maize&region=Dodoma`.
+
+## Machine learning
+
+Training code lives in `ml/`. Downloaded data and training runs are git-ignored.
+
+| Folder | Model | Status |
+|---|---|---|
+| [`ml/crop/`](ml/crop/README.md) | "What is grown here": one LightGBM model per crop, trained on MapSPAM 2010 harvested areas and WorldClim climate, blended with the nearest MapSPAM cells | In use |
+| `ml/disease/` | Field-photo disease model: EfficientNetV2 features trained on PlantDoc, Makerere cassava and beans, Tanzanian maize (MLN/MSV) and PlantVillage photos | In progress; replaces the current model only if it scores clearly better on real field photos |
+
+**Results for the crop model**, tested on 1°×1° areas held out from training:
+
+| Method | Top-3 overlap with crops actually grown |
+|---|---|
+| National average | 0.44 |
+| ECOCROP suitability only | 0.29 |
+| LightGBM + nearest cells | 0.72 |
+| Suitability × local farming (what the app ranks by) | 0.64 |
+
 ## Testing
 
 ```bash
@@ -246,7 +278,7 @@ source venv/bin/activate
 python manage.py test
 ```
 
-The suite covers authentication and NIDA rules, marketplace permissions, education comments and moderation, the chatbot and recommendations. Tests never call external services: Groq, YouTube, iSDA and the weather APIs are simulated, and uploads go to a temporary folder.
+The suite (114 tests) covers authentication and NIDA rules, marketplace permissions, education comments and moderation, the chatbot, market prices, disease detection (including real photos and complete details for every class) and crop recommendations (suitability, local farming model, market info and planting advice). Tests never call external services: Groq, YouTube, iSDA and the weather APIs are simulated, and uploads go to a temporary folder.
 
 Frontend checks:
 
@@ -255,17 +287,31 @@ cd Web
 npx tsc -b && npm run lint && npm run build
 ```
 
-## Running with Docker
+## Docker
 
-```bash
-cd crop_recommendation
-docker compose up --build    # http://localhost:8765
-docker compose exec server python manage.py createsuperuser
-```
+`crop_recommendation/Dockerfile` is an early template and is **not maintained**. It expects `gunicorn` and a `STATIC_ROOT` setting, neither of which the project has yet. Use the local setup above until it is updated.
+
+## Data sources and credits
+
+| Data | Used for | Licence |
+|---|---|---|
+| [iSDAsoil](https://www.isda-africa.com/isdasoil/) | Soil properties at 30 m | CC BY 4.0 |
+| [Open-Meteo](https://open-meteo.com/) historical weather (ERA5) | Long-term rainfall and temperature | CC BY 4.0 |
+| [OpenWeatherMap](https://openweathermap.org/) | 5-day forecast | API terms |
+| [FAO ECOCROP](https://gaez.fao.org/pages/ecocrop), via [OpenCLIM](https://github.com/OpenCLIM/ecocrop) | Crop growing requirements | FAO |
+| [MapSPAM 2010](https://doi.org/10.7910/DVN/PRFF8V) (IFPRI) | Where crops are grown, typical yields | CC BY 4.0 |
+| [WorldClim 2.1](https://www.worldclim.org/) | Climate inputs for the local farming model | CC BY 4.0 |
+| [WFP food prices, Tanzania](https://data.humdata.org/dataset/wfp-food-prices-for-united-republic-of-tanzania) | Market prices | CC BY-IGO |
+| [OpenStreetMap](https://www.openstreetmap.org/copyright) | Maps and region names | ODbL |
+| Marketplace header photo: Soko la Kilombero, Arusha ([Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Busy_Vegetable_Section_at_Kilombero_Market.jpg)) | Page header | CC0 |
 
 ## Known limitations
 
 - **NIDA verification** is not yet connected to the NIDA service. Verification is manual through the admin.
 - **Groq free tier:** the moderation model allows only a few requests per minute. A fallback model is used automatically, and posts go to review if both are busy.
 - **Social login** needs Google and Facebook app credentials. Facebook login on a live site requires HTTPS and Facebook app review.
-- **Hero video** (`Web/src/assets/videos/`) is about 44 MB. Compress it before deploying to production.
+- **Hero video** (`Web/src/assets/videos/`) is about 44 MB (stored with Git LFS). Compress it before deploying to production.
+- **Crop maps are from 2010.** MapSPAM 2020 needs a short form on Harvard Dataverse. Crops that spread since 2010, such as sunflower and sesame, may be under-weighted.
+- **Market prices** cover 8 crops with current data (maize, rice, beans, Irish potato, sorghum, finger and bulrush millet, wheat). They are market prices; farm-gate prices are lower.
+- **Climate data** comes from the free Open-Meteo tier, which limits how many new locations can be looked up per minute. Each location is cached for 30 days.
+- **Disease detection** is less accurate on real field photos than on clean leaf photos (see [Disease detection](#disease-detection)).
