@@ -100,7 +100,7 @@ git lfs install
 ```bash
 git clone https://github.com/gloriaglory/Agrosmart.git
 cd Agrosmart
-git lfs pull        # downloads the .keras disease model (~170 MB)
+git lfs pull        # downloads the disease model, crop model and landing video (~240 MB)
 ```
 
 ### 2. Backend

@@ -1,1 +1,3 @@
 *.keras filter=lfs diff=lfs merge=lfs -text
+*.mp4 filter=lfs diff=lfs merge=lfs -text
+crop_recommendation/crop_predictor/ml_models/prevalence/*.txt filter=lfs diff=lfs merge=lfs -text
